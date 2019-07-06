@@ -66,6 +66,7 @@ defmodule AuthX.Schemas.User do
     |> validate_email()
     |> validate_password()
     |> put_pass_hash()
+    |> unique_constraint(:email)
   end
 
   defp validate_email(%{changes: %{email: email}} = changeset) do

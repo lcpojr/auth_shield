@@ -27,7 +27,7 @@ defmodule AuthX.MixProject do
     ]
   end
 
-  def application(:prod) do
+  def application do
     [
       mod: {AuthX.Application, []},
       extra_applications: [:logger]
