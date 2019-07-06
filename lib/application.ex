@@ -5,6 +5,6 @@ defmodule AuthX.Application do
 
   @spec start(any(), any()) :: {:error, any()} | {:ok, pid()}
   def start(_type, _args) do
-    Supervisor.start_link([], strategy: :one_for_one)
+    Supervisor.start_link([AuthX.Repo], strategy: :one_for_one, name: AuthX.Supervisor)
   end
 end

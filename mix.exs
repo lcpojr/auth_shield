@@ -8,9 +8,9 @@ defmodule AuthX.MixProject do
   def project do
     [
       name: "AuthX",
-      app: :authex_ex,
+      app: :authx_ex,
       version: @version,
-      elixir: "~> 1.9",
+      elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
@@ -36,16 +36,15 @@ defmodule AuthX.MixProject do
 
   defp deps do
     [
-      # Validations and hash
+      # Domain
       {:burnex, "~> 1.0"},
       {:argon2_elixir, "~> 2.0"},
+      {:uuid, "~> 1.1.8"},
+      {:jason, "~> 1.1"},
 
       # Database
-      {:postgrex, ">= 0.0.0"},
+      {:postgrex, "~> 0.14"},
       {:ecto_sql, "~> 3.1"},
-
-      # Json
-      {:jason, "~> 1.1"},
 
       # Tools
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
