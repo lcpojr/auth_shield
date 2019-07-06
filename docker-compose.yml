@@ -1,0 +1,35 @@
+version: '3'
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks: 
+  postgres_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - postgres_network
+    environment:
+      POSTGRES_DB: authx_ex
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  pg_admin:
+    image: dpage/pgadmin4
+    depends_on: 
+      - postgres
+    ports:
+      - 8080:80
+    networks:
+      - postgres_network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin

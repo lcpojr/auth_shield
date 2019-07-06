@@ -14,6 +14,7 @@ defmodule AuthX.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
+      aliases: aliases(),
       source_url: @url,
       homepage_url: @url,
       maintainers: @maintainers,
@@ -35,6 +36,17 @@ defmodule AuthX.MixProject do
 
   defp deps do
     [
+      # Validations and hash
+      {:burnex, "~> 1.0"},
+      {:argon2_elixir, "~> 2.0"},
+
+      # Database
+      {:postgrex, ">= 0.0.0"},
+      {:ecto_sql, "~> 3.1"},
+
+      # Json
+      {:jason, "~> 1.1"},
+
       # Tools
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
@@ -48,6 +60,23 @@ defmodule AuthX.MixProject do
       main: "AuthX",
       logo: "",
       extras: ["README.md"]
+    ]
+  end
+
+  defp aliases do
+    [
+      "ecto.setup": [
+        "ecto.create -r AuthX.Repo"
+      ],
+      "ecto.reset": [
+        "ecto.drop -r AuthX.Repo",
+        "ecto.setup"
+      ],
+      test: [
+        "ecto.create --quiet -r AuthX.Repo",
+        "ecto.migrate -r AuthX.Repo",
+        "test"
+      ]
     ]
   end
 end
