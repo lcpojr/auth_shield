@@ -7,5 +7,4 @@ config :authx_ex, AuthX.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
   port: 5432
