@@ -9,8 +9,14 @@ defmodule AuthX.Users do
   alias AuthX.Schemas.User
   alias AuthX.Repo
 
-  @doc "Creates a new `__MODULE__` register."
-  @spec insert(params :: map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  @typedoc "Transactional responses of success"
+  @type success_response :: {:ok, User.t()}
+
+  @typedoc "Transactional responses of failed"
+  @type failed_response :: {:error, Ecto.Changeset.t()}
+
+  @doc "Creates a new `User` register."
+  @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %User{}
     |> User.changeset_insert(params)
@@ -22,16 +28,15 @@ defmodule AuthX.Users do
 
   Similar to `insert/1` but raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: {:ok, User.t()}
+  @spec insert!(params :: map()) :: success_response() | no_return()
   def insert!(params) when is_map(params) do
     %User{}
     |> User.changeset_insert(params)
     |> Repo.insert!()
   end
 
-  @doc "Updates a `__MODULE__` register."
-  @spec update(model :: User.t(), params :: map()) ::
-          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  @doc "Updates a `User` register."
+  @spec update(model :: User.t(), params :: map()) :: success_response() | failed_response()
   def update(%User{} = model, params) when is_map(params) do
     model
     |> User.changeset_update(params)
@@ -39,46 +44,45 @@ defmodule AuthX.Users do
   end
 
   @doc """
-  Updates a `__MODULE__` register.
+  Updates a `User` register.
 
   Similar to `update/2` but raises if the changeset is invalid.
   """
-  @spec update!(model :: User.t(), params :: map()) :: {:ok, User.t()}
+  @spec update!(model :: User.t(), params :: map()) :: success_response() | no_return()
   def update!(%User{} = model, params) when is_map(params) do
     model
     |> User.changeset_update(params)
     |> Repo.update()
   end
 
-  @doc "Gets a `__MODULE__` register by its filters."
+  @doc "Gets a `User` register by its filters."
   @spec get_by(filters :: keyword()) :: User.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(User, filters)
 
   @doc """
-  Gets a `__MODULE__` register by its filters.
+  Gets a `User` register by its filters.
 
   Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if more than one entry.
   """
-  @spec get_by!(filters :: keyword()) :: User.t()
+  @spec get_by!(filters :: keyword()) :: User.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(User, filters)
 
-  @doc "Deletes a `__MODULE__` register."
-  @spec delete(model :: User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  @doc "Deletes a `User` register."
+  @spec delete(model :: User.t()) :: success_response() | failed_response()
   def delete(%User{} = model), do: Repo.delete(model)
 
   @doc """
-  Deletes a `__MODULE__` register.
+  Deletes a `User` register.
 
   Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
-  @spec delete!(model :: User.t()) :: {:ok, User.t()}
+  @spec delete!(model :: User.t()) :: success_response() | no_return()
   def delete!(%User{} = model), do: Repo.delete!(model)
 
-  @doc "Changes a `__MODULE__` status."
-  @spec status(model :: User.t(), status :: boolean()) ::
-          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  @doc "Changes a `User` status."
+  @spec status(model :: User.t(), status :: boolean()) :: success_response() | failed_response()
   def status(%User{} = model, status) when is_boolean(status) do
     model
     |> User.changeset_status(%{is_active: status})
@@ -86,36 +90,35 @@ defmodule AuthX.Users do
   end
 
   @doc """
-  Changes a `__MODULE__` status.
+  Changes a `User` status.
 
   Similar to `status/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
-  @spec status!(model :: User.t(), status :: boolean()) ::
-          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  @spec status!(model :: User.t(), status :: boolean()) :: success_response() | no_return()
   def status!(%User{} = model, status) when is_boolean(status) do
     model
     |> User.changeset_status(%{is_active: status})
     |> Repo.update!()
   end
 
-  @doc "Changes a `__MODULE__` status."
+  @doc "Changes a `User` status."
   @spec change_password(model :: User.t(), password :: String.t()) ::
-          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def change_password(%User{} = model, password) when is_binary(status) do
+          success_response() | failed_response()
+  def change_password(%User{} = model, password) when is_binary(password) do
     model
     |> User.changeset_status(%{password: password})
     |> Repo.update()
   end
 
   @doc """
-  Changes a `__MODULE__` password.
+  Changes a `User` password.
 
   Similar to `change_password/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
   @spec change_password!(model :: User.t(), password :: String.t()) ::
-          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+          success_response() | no_return()
   def change_password!(%User{} = model, password) when is_binary(password) do
     model
     |> User.changeset_status(%{password: password})

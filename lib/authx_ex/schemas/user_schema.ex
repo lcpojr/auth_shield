@@ -1,9 +1,9 @@
 defmodule AuthX.Schemas.User do
   @moduledoc """
-  Defines the all the user field and its relations.
+  Defines all the user fields and its relations.
 
   The user is an subject that makes requests to the systems and
-  is used on authentication and authorization request on services.
+  is used on authentication and authorization request.
 
   We do not save users password, only the encripted hash that will
   be used to authenticate in password based forms.
@@ -13,9 +13,9 @@ defmodule AuthX.Schemas.User do
 
   import Ecto.Changeset
 
-  @typedoc """
-  Abstract user module type.
-  """
+  alias AuthX.Schemas.Credentials.PIN
+
+  @typedoc "Abstract user module type."
   @type t :: %__MODULE__{
           id: binary(),
           first_name: String.t(),
@@ -38,6 +38,9 @@ defmodule AuthX.Schemas.User do
     field(:password_hash, :string)
     field(:is_active, :boolean, default: true)
     field(:last_login, :naive_datetime_usec)
+
+    # Credentials
+    has_one(:pin_credential, PIN)
 
     timestamps(type: :naive_datetime_usec)
   end
@@ -106,7 +109,7 @@ defmodule AuthX.Schemas.User do
     |> put_pass_hash()
   end
 
-  defp validate_email(%{changes: %{email: email}} = changeset) do
+  defp validate_email(%{valid?: true, changes: %{email: email}} = changeset) do
     # The email should have valid format and domain.
     # We use `Burnex` to check if the provider is an known temporary email domain.
     #
@@ -125,19 +128,19 @@ defmodule AuthX.Schemas.User do
 
   defp validate_email(changeset), do: changeset
 
-  defp validate_password(%{changes: %{password: pwd}} = changeset) do
+  defp validate_password(%{valid?: true, changes: %{password: pwd}} = changeset) do
     # In order to pass the validation the password should fit the requirements bellow:
     # - at least 1 upper case letter
     # - at least 1 lower case letter
-    # - at least 1 number or special character
+    # - at least one special character
     # - at least 8 characters in length
 
-    regex = ~r/^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?=.[!@#\$%\^&])(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/
+    regex = ~r/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
 
     if Regex.match?(regex, pwd) do
       changeset
     else
-      add_error(changeset, :password, "Password not strong enough")
+      add_error(changeset, :password, "Password does not match the minimun requirements")
     end
   end
 
@@ -149,7 +152,7 @@ defmodule AuthX.Schemas.User do
     #
     # See more in https://hexdocs.pm/argon2_elixir/Argon2.html
 
-    change(changeset, Argon2.add_hash(pwd))
+    change(changeset, %{password_hash: Argon2.hash_pwd_salt(pwd), password: nil})
   end
 
   defp put_pass_hash(changeset), do: changeset
