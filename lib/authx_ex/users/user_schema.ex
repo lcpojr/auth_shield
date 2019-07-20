@@ -13,7 +13,7 @@ defmodule AuthX.Schemas.User do
 
   import Ecto.Changeset
 
-  alias AuthX.Schemas.Credentials.PIN
+  alias AuthX.Schemas.Credentials.{PIN, TOTP}
 
   @typedoc "Abstract user module type."
   @type t :: %__MODULE__{
@@ -24,12 +24,15 @@ defmodule AuthX.Schemas.User do
           password: String.t(),
           password_hash: String.t(),
           is_active: boolean(),
-          last_login: NaiveDateTime.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
 
+  @email_regex ~r/@/
+  @password_regex ~r/^[A-Za-z0-9._%+-+']+@[A-Za-z0-9.-]+\.[A-Za-z]+$/
+
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "users" do
     field(:first_name, :string)
     field(:last_name, :string)
@@ -37,10 +40,10 @@ defmodule AuthX.Schemas.User do
     field(:password, :string, virtual: true)
     field(:password_hash, :string)
     field(:is_active, :boolean, default: true)
-    field(:last_login, :naive_datetime_usec)
 
     # Credentials
     has_one(:pin_credential, PIN)
+    has_one(:totp_credential, TOTP)
 
     timestamps(type: :naive_datetime_usec)
   end
@@ -60,9 +63,8 @@ defmodule AuthX.Schemas.User do
     |> validate_length(:last_name, min: 2, max: 150)
     |> validate_length(:email, min: 7, max: 150)
     |> validate_length(:password, min: 6, max: 150)
+    |> validate_format(:email, @email_regex)
     |> unique_constraint(:email)
-    |> validate_email()
-    |> validate_password()
     |> put_pass_hash()
   end
 
@@ -78,8 +80,8 @@ defmodule AuthX.Schemas.User do
     |> validate_length(:first_name, min: 2, max: 150)
     |> validate_length(:last_name, min: 2, max: 150)
     |> validate_length(:email, min: 7, max: 150)
+    |> validate_format(:email, @email_regex)
     |> unique_constraint(:email)
-    |> validate_email()
   end
 
   @doc """
@@ -109,25 +111,6 @@ defmodule AuthX.Schemas.User do
     |> put_pass_hash()
   end
 
-  defp validate_email(%{valid?: true, changes: %{email: email}} = changeset) do
-    # The email should have valid format and domain.
-    # We use `Burnex` to check if the provider is an known temporary email domain.
-    #
-    # See more in https://hexdocs.pm/burnex/Burnex.html
-
-    regex = ~r/^[A-Za-z0-9._%+-+']+@[A-Za-z0-9.-]+\.[A-Za-z]+$/
-
-    with {:regex, true} <- {:regex, Regex.match?(regex, email)},
-         {:burner, false} <- {:burner, Burnex.is_burner?(email)} do
-      changeset
-    else
-      {:regex, false} -> add_error(changeset, :email, "Invalid email format")
-      {:burner, true} -> add_error(changeset, :email, "Invalid email provider")
-    end
-  end
-
-  defp validate_email(changeset), do: changeset
-
   defp validate_password(%{valid?: true, changes: %{password: pwd}} = changeset) do
     # In order to pass the validation the password should fit the requirements bellow:
     # - at least 1 upper case letter
@@ -135,9 +118,7 @@ defmodule AuthX.Schemas.User do
     # - at least one special character
     # - at least 8 characters in length
 
-    regex = ~r/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
-
-    if Regex.match?(regex, pwd) do
+    if Regex.match?(@password_regex, pwd) do
       changeset
     else
       add_error(changeset, :password, "Password does not match the minimun requirements")
