@@ -36,9 +36,9 @@ defmodule AuthX.Users do
   end
 
   @doc "Updates a `User` register."
-  @spec update(user :: User.t(), params :: map()) :: success_response() | failed_response()
-  def update(%User{} = user, params) when is_map(params) do
-    user
+  @spec update(model :: User.t(), params :: map()) :: success_response() | failed_response()
+  def update(%User{} = model, params) when is_map(params) do
+    model
     |> User.changeset_update(params)
     |> Repo.update()
   end
@@ -48,9 +48,9 @@ defmodule AuthX.Users do
 
   Similar to `update/2` but raises if the changeset is invalid.
   """
-  @spec update!(user :: User.t(), params :: map()) :: success_response() | no_return()
-  def update!(%User{} = user, params) when is_map(params) do
-    user
+  @spec update!(model :: User.t(), params :: map()) :: success_response() | no_return()
+  def update!(%User{} = model, params) when is_map(params) do
+    model
     |> User.changeset_update(params)
     |> Repo.update()
   end
@@ -69,8 +69,8 @@ defmodule AuthX.Users do
   def get_by!(filters) when is_list(filters), do: Repo.get_by(User, filters)
 
   @doc "Deletes a `User` register."
-  @spec delete(user :: User.t()) :: success_response() | failed_response()
-  def delete(%User{} = user), do: Repo.delete(user)
+  @spec delete(model :: User.t()) :: success_response() | failed_response()
+  def delete(%User{} = model), do: Repo.delete(model)
 
   @doc """
   Deletes a `User` register.
@@ -78,13 +78,13 @@ defmodule AuthX.Users do
   Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
-  @spec delete!(user :: User.t()) :: success_response() | no_return()
-  def delete!(%User{} = user), do: Repo.delete!(user)
+  @spec delete!(model :: User.t()) :: success_response() | no_return()
+  def delete!(%User{} = model), do: Repo.delete!(model)
 
   @doc "Changes a `User` status."
-  @spec status(user :: User.t(), status :: boolean()) :: success_response() | failed_response()
-  def status(%User{} = user, status) when is_boolean(status) do
-    user
+  @spec status(model :: User.t(), status :: boolean()) :: success_response() | failed_response()
+  def status(%User{} = model, status) when is_boolean(status) do
+    model
     |> User.changeset_status(%{is_active: status})
     |> Repo.update()
   end
@@ -95,18 +95,18 @@ defmodule AuthX.Users do
   Similar to `status/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
-  @spec status!(user :: User.t(), status :: boolean()) :: success_response() | no_return()
-  def status!(%User{} = user, status) when is_boolean(status) do
-    user
+  @spec status!(model :: User.t(), status :: boolean()) :: success_response() | no_return()
+  def status!(%User{} = model, status) when is_boolean(status) do
+    model
     |> User.changeset_status(%{is_active: status})
     |> Repo.update!()
   end
 
   @doc "Changes a `User` status."
-  @spec change_password(user :: User.t(), password :: String.t()) ::
+  @spec change_password(model :: User.t(), password :: String.t()) ::
           success_response() | failed_response()
-  def change_password(%User{} = user, password) when is_binary(password) do
-    user
+  def change_password(%User{} = model, password) when is_binary(password) do
+    model
     |> User.changeset_status(%{password: password})
     |> Repo.update()
   end
@@ -117,10 +117,10 @@ defmodule AuthX.Users do
   Similar to `change_password/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
-  @spec change_password!(user :: User.t(), password :: String.t()) ::
+  @spec change_password!(model :: User.t(), password :: String.t()) ::
           success_response() | no_return()
-  def change_password!(%User{} = user, password) when is_binary(password) do
-    user
+  def change_password!(%User{} = model, password) when is_binary(password) do
+    model
     |> User.changeset_status(%{password: password})
     |> Repo.update!()
   end

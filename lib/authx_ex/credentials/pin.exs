@@ -49,8 +49,8 @@ defmodule AuthX.Credentials.PIN do
   def get_by!(filters) when is_list(filters), do: Repo.get_by(PIN, filters)
 
   @doc "Deletes a `PIN` register."
-  @spec delete(pin :: PIN.t()) :: success_response() | failed_response()
-  def delete(%PIN{} = pin), do: Repo.delete(pin)
+  @spec delete(model :: PIN.t()) :: success_response() | failed_response()
+  def delete(%PIN{} = model), do: Repo.delete(model)
 
   @doc """
   Deletes a `PIN` register.
@@ -58,8 +58,8 @@ defmodule AuthX.Credentials.PIN do
   Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
   Raises if changeset is invalid.
   """
-  @spec delete!(pin :: PIN.t()) :: success_response() | no_return()
-  def delete!(%PIN{} = pin), do: Repo.delete!(pin)
+  @spec delete!(model :: PIN.t()) :: success_response() | no_return()
+  def delete!(%PIN{} = model), do: Repo.delete!(model)
 
   @doc """
   Checks if the given PIN matches with the credential pin_hash
@@ -67,7 +67,7 @@ defmodule AuthX.Credentials.PIN do
   It calls the `Argon2` to verify and returns `true` if the PIN
   matches and `false` if the PIN doesn't match.
   """
-  @spec check_pin?(pin :: PIN.t(), pin_code :: String.t()) :: boolean()
-  def check_pin?(%PIN{} = pin, code) when is_binary(code),
-    do: Argon2.verify_pass(code, pin.pin_hash)
+  @spec check_pin?(credential :: PIN.t(), pin :: String.t()) :: boolean()
+  def check_pin?(%PIN{} = credential, pin) when is_binary(pin),
+    do: Argon2.verify_pass(pin, credential.pin_hash)
 end

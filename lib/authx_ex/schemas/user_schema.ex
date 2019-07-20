@@ -13,7 +13,7 @@ defmodule AuthX.Schemas.User do
 
   import Ecto.Changeset
 
-  alias AuthX.Schemas.Credentials.{PIN, TOTP}
+  alias AuthX.Schemas.Credentials.PIN
 
   @typedoc "Abstract user module type."
   @type t :: %__MODULE__{
@@ -30,7 +30,6 @@ defmodule AuthX.Schemas.User do
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "users" do
     field(:first_name, :string)
     field(:last_name, :string)
@@ -42,7 +41,6 @@ defmodule AuthX.Schemas.User do
 
     # Credentials
     has_one(:pin_credential, PIN)
-    has_one(:totp_credential, TOTP)
 
     timestamps(type: :naive_datetime_usec)
   end
