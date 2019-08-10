@@ -6,7 +6,7 @@ defmodule AuthX.Credentials.TOTP do
   authorization.
   """
 
-  alias AuthX.Schemas.Credentials.TOTP
+  alias AuthX.Credentials.Schemas.TOTP
   alias AuthX.Repo
 
   @typedoc "Transactional responses of success"
@@ -19,7 +19,7 @@ defmodule AuthX.Credentials.TOTP do
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %TOTP{}
-    |> TOTP.changeset_insert(params)
+    |> TOTP.changeset(params)
     |> Repo.insert()
   end
 
@@ -31,7 +31,7 @@ defmodule AuthX.Credentials.TOTP do
   @spec insert!(params :: map()) :: success_response() | no_return()
   def insert!(params) when is_map(params) do
     %TOTP{}
-    |> TOTP.changeset_insert(params)
+    |> TOTP.changeset(params)
     |> Repo.insert!()
   end
 

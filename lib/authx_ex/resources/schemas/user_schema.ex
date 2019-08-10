@@ -1,8 +1,8 @@
-defmodule AuthX.Schemas.User do
+defmodule AuthX.Resources.Schemas.User do
   @moduledoc """
   Defines all the user fields and its relations.
 
-  The user is an subject that makes requests to the systems and
+  The user is a resource and an subject that makes requests to the systems and
   is used on authentication and authorization request.
 
   We do not save users password, only the encripted hash that will
@@ -13,7 +13,8 @@ defmodule AuthX.Schemas.User do
 
   import Ecto.Changeset
 
-  alias AuthX.Schemas.Credentials.{PIN, TOTP}
+  alias AuthX.Credentials.Schemas.{PIN, TOTP}
+  alias Authx.Resources.Schemas.Role
 
   @typedoc "Abstract user module type."
   @type t :: %__MODULE__{
@@ -24,6 +25,9 @@ defmodule AuthX.Schemas.User do
           password: String.t(),
           password_hash: String.t(),
           is_active: boolean(),
+          pin_credential: PIN.t(),
+          totp_credential: TOTP.t(),
+          roles: list(Role.t()),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
@@ -44,6 +48,9 @@ defmodule AuthX.Schemas.User do
     # Credentials
     has_one(:pin_credential, PIN)
     has_one(:totp_credential, TOTP)
+
+    # Authorizations
+    has_many(:roles, Role)
 
     timestamps(type: :naive_datetime_usec)
   end

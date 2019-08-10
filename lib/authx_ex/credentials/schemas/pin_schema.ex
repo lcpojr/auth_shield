@@ -1,4 +1,4 @@
-defmodule AuthX.Schemas.Credentials.PIN do
+defmodule AuthX.Credentials.Schemas.PIN do
   @moduledoc """
   PIN (Personal Identification Number) is an credencial owned by
   users that is used on authentication and authorization requests.
@@ -11,7 +11,7 @@ defmodule AuthX.Schemas.Credentials.PIN do
 
   import Ecto.Changeset
 
-  alias AuthX.Schemas.User
+  alias AuthX.Resources.Schemas.User
 
   @typedoc """
   Abstract pin module type.
@@ -26,6 +26,7 @@ defmodule AuthX.Schemas.Credentials.PIN do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @required_fields [:pin, :user_id]
   schema "pin_credentials" do
     field(:pin, :string, virtual: true)
     field(:pin_hash, :string)
@@ -41,11 +42,11 @@ defmodule AuthX.Schemas.Credentials.PIN do
   It defines validations and also generates the password hash if
   necessary.
   """
-  @spec changeset_insert(model :: t(), params :: map()) :: Ecto.Changeset.t()
-  def changeset_insert(%__MODULE__{} = model, params) when is_map(params) do
+  @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
-    |> cast(params, [:pin, :user_id])
-    |> validate_required([:pin, :user_id])
+    |> cast(params, @required_fields)
+    |> validate_required(@required_fields)
     |> validate_length(:pin, min: 4, max: 6)
     |> unique_constraint(:user_id)
     |> validate_pin()

@@ -6,7 +6,7 @@ defmodule AuthX.Credentials.PIN do
   authorization.
   """
 
-  alias AuthX.Schemas.Credentials.PIN
+  alias AuthX.Credentials.Schemas.PIN
   alias AuthX.Repo
 
   @typedoc "Transactional responses of success"
@@ -19,7 +19,7 @@ defmodule AuthX.Credentials.PIN do
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %PIN{}
-    |> PIN.changeset_insert(params)
+    |> PIN.changeset(params)
     |> Repo.insert()
   end
 
@@ -31,7 +31,7 @@ defmodule AuthX.Credentials.PIN do
   @spec insert!(params :: map()) :: success_response() | no_return()
   def insert!(params) when is_map(params) do
     %PIN{}
-    |> PIN.changeset_insert(params)
+    |> PIN.changeset(params)
     |> Repo.insert!()
   end
 

@@ -1,4 +1,4 @@
-defmodule AuthX.Schemas.Credentials.TOTP do
+defmodule AuthX.Credentials.Schemas.TOTP do
   @moduledoc """
   TOTP  (Time-based One Time Password) is an extension of the HOTP (HMAC-based One-time Password).
 
@@ -10,7 +10,7 @@ defmodule AuthX.Schemas.Credentials.TOTP do
 
   import Ecto.Changeset
 
-  alias AuthX.Schemas.User
+  alias AuthX.Resources.Schemas.User
 
   @typedoc """
   Abstract totp module type.
@@ -27,13 +27,14 @@ defmodule AuthX.Schemas.Credentials.TOTP do
           updated_at: NaiveDateTime.t()
         }
 
-  @characters String.split("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVv0123456789", "")
+  @characters String.split("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", "")
   @issuer "AuthX"
   @digits 6
   @period 30
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @required_fields [:user_id, :email]
   schema "totp_credentials" do
     field(:secret, :string)
     field(:email, :string, virtual: true)
@@ -53,11 +54,11 @@ defmodule AuthX.Schemas.Credentials.TOTP do
   It defines validations and also generates the password hash if
   necessary.
   """
-  @spec changeset_insert(model :: t(), params :: map()) :: Ecto.Changeset.t()
-  def changeset_insert(%__MODULE__{} = model, params) when is_map(params) do
+  @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
-    |> cast(params, [:user_id, :email, :issuer, :digits, :period])
-    |> validate_required([:user_id, :email])
+    |> cast(params, @required_fields ++ [:issuer, :digits, :period])
+    |> validate_required(@required_fields)
     |> validate_number(:digits, greater_than_or_equal_to: 4)
     |> validate_number(:period, greater_than_or_equal_to: 30)
     |> unique_constraint(:user_id)

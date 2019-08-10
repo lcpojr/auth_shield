@@ -6,7 +6,7 @@ defmodule AuthX.Users do
   authorization.
   """
 
-  alias AuthX.Schemas.User
+  alias AuthX.Resources.Schemas.User
   alias AuthX.Repo
 
   @typedoc "Transactional responses of success"
