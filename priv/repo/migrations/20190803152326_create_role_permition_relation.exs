@@ -3,8 +3,6 @@ defmodule AuthX.Repo.Migrations.CreateRolePermitionsRelation do
 
   def change do
     create table(:roles_permissions, primary_key: false) do
-      add(:id, :uuid, primary_key: true)
-
       add(:role_id, references(:roles, type: :uuid, on_delete: :delete_all), primary_key: true)
 
       add(:permission_id, references(:permissions, type: :uuid, on_delete: :delete_all),

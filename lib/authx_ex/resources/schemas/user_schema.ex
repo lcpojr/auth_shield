@@ -14,7 +14,7 @@ defmodule AuthX.Resources.Schemas.User do
   import Ecto.Changeset
 
   alias AuthX.Credentials.Schemas.{PIN, TOTP}
-  alias Authx.Resources.Schemas.Role
+  alias AuthX.Resources.Schemas.{Role, UsersRoles}
 
   @typedoc "Abstract user module type."
   @type t :: %__MODULE__{
@@ -50,7 +50,7 @@ defmodule AuthX.Resources.Schemas.User do
     has_one(:totp_credential, TOTP)
 
     # Authorizations
-    has_many(:roles, Role)
+    many_to_many(:roles, Role, join_through: UsersRoles)
 
     timestamps(type: :naive_datetime_usec)
   end
@@ -89,6 +89,18 @@ defmodule AuthX.Resources.Schemas.User do
     |> validate_length(:email, min: 7, max: 150)
     |> validate_format(:email, @email_regex)
     |> unique_constraint(:email)
+  end
+
+  @doc """
+  Generates an `%Ecto.Changeset{}` struct with the changes.
+
+  It changes the related roles list.
+  """
+  @spec changeset_roles(model :: t(), roles :: list(Role.t())) :: Ecto.Changeset.t()
+  def changeset_roles(%__MODULE__{} = model, roles) do
+    model
+    |> cast(%{}, [])
+    |> put_assoc(:roles, roles)
   end
 
   @doc """

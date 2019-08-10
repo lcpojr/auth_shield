@@ -3,7 +3,7 @@ defmodule AuthX.Resources.Roles do
   Implements an interface to deal with database transactions as inserts, updates, deletes, etc.
   """
 
-  alias AuthX.Resources.Schemas.Role
+  alias AuthX.Resources.Schemas.{Role, Permission}
   alias AuthX.Repo
 
   @typedoc "Transactional responses of success"
@@ -77,4 +77,33 @@ defmodule AuthX.Resources.Roles do
   """
   @spec delete!(role :: Role.t()) :: success_response() | no_return()
   def delete!(%Role{} = role), do: Repo.delete!(role)
+
+  @doc """
+  Changes an set of `Permission` of the `Role`.
+
+  It will add or remove permissions from the list, so you should pass
+  the all list every time you use this function.
+  """
+  @spec change_permissions(role :: Role.t(), permissions :: list(Permission.t())) ::
+          success_response() | failed_response()
+  def change_permissions(%Role{} = role, permissions) do
+    role
+    |> Repo.preload(:permissions)
+    |> Role.changeset_permissions(permissions)
+    |> Repo.update()
+  end
+
+  @doc """
+  Changes an set of `Permission` of the `Role`.
+
+  Similar to `appeappend_permissionnd_role/2` but raises if the changeset is invalid.
+  """
+  @spec change_permissions!(role :: Role.t(), permissions :: list(Permission.t())) ::
+          success_response() | no_return()
+  def change_permissions!(%Role{} = role, permissions) do
+    role
+    |> Repo.preload(:permissions)
+    |> Role.changeset_permissions(permissions)
+    |> Repo.update!()
+  end
 end

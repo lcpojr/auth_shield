@@ -10,7 +10,7 @@ defmodule AuthX.Resources.Schemas.Role do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.{Permission, User}
+  alias AuthX.Resources.Schemas.{Permission, RolesPermissions, User, UsersRoles}
 
   @typedoc """
   Abstract role module type.
@@ -31,8 +31,8 @@ defmodule AuthX.Resources.Schemas.Role do
     field(:name, :string)
     field(:description, :string)
 
-    has_many(:users, User)
-    has_many(:permissions, Permission)
+    many_to_many(:users, User, join_through: UsersRoles)
+    many_to_many(:permissions, Permission, join_through: RolesPermissions)
 
     timestamps(type: :naive_datetime_usec)
   end
@@ -45,5 +45,18 @@ defmodule AuthX.Resources.Schemas.Role do
     |> validate_required([:name])
     |> validate_length(:name, min: 1)
     |> unique_constraint(:name)
+  end
+
+  @doc """
+  Generates an `%Ecto.Changeset{}` struct with the changes.
+
+  It changes the related permissions list.
+  """
+  @spec changeset_permissions(model :: t(), permissions :: list(Permission.t())) ::
+          Ecto.Changeset.t()
+  def changeset_permissions(%__MODULE__{} = model, permissions) do
+    model
+    |> cast(%{}, [])
+    |> put_assoc(:permissions, permissions)
   end
 end

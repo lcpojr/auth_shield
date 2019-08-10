@@ -10,7 +10,7 @@ defmodule AuthX.Resources.Schemas.Permission do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.Role
+  alias AuthX.Resources.Schemas.{Role, RolesPermissions}
 
   @typedoc """
   Abstract permission module type.
@@ -30,7 +30,7 @@ defmodule AuthX.Resources.Schemas.Permission do
     field(:name, :string)
     field(:description, :string)
 
-    has_many(:roles, Role)
+    many_to_many(:roles, Role, join_through: RolesPermissions)
 
     timestamps(type: :naive_datetime_usec)
   end

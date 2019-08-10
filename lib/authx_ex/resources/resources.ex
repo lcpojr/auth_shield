@@ -5,6 +5,30 @@ defmodule AuthX.Resources do
 
   alias AuthX.Resources.{Permissions, Roles, Users}
 
+  # Users
+  defdelegate insert_user(params), to: Users, as: :insert
+  defdelegate insert_user!(params), to: Users, as: :insert!
+
+  defdelegate update_user(user, params), to: Users, as: :update
+  defdelegate update_user!(user, params), to: Users, as: :update!
+
+  defdelegate get_user_by(filters), to: Users, as: :get_by
+  defdelegate get_user_by!(filters), to: Users, as: :get_by!
+
+  defdelegate delete_user(user), to: Users, as: :delete
+  defdelegate delete_user!(user), to: Users, as: :delete!
+
+  defdelegate change_status_user(user, status), to: Users, as: :status
+  defdelegate change_status_user!(user, status), to: Users, as: :status!
+
+  defdelegate change_password_user(user, password), to: Users, as: :change_password
+  defdelegate change_password_user!(user, password), to: Users, as: :change_password!
+
+  defdelegate check_password_user?(user, password), to: Users, as: :check_password?
+
+  defdelegate change_roles_user(role, permission), to: Users, as: :change_roles
+  defdelegate change_roles_user!(role, permission), to: Users, as: :change_roles!
+
   # Permissions
   defdelegate insert_permission(params), to: Permissions, as: :insert
   defdelegate insert_permission!(params), to: Permissions, as: :insert!
@@ -31,24 +55,6 @@ defmodule AuthX.Resources do
   defdelegate delete_role(role), to: Roles, as: :delete
   defdelegate delete_role!(role), to: Roles, as: :delete!
 
-  # Users
-  defdelegate insert_user(params), to: Users, as: :insert
-  defdelegate insert_user!(params), to: Users, as: :insert!
-
-  defdelegate update_user(user, params), to: Users, as: :update
-  defdelegate update_user!(user, params), to: Users, as: :update!
-
-  defdelegate get_user_by(filters), to: Users, as: :get_by
-  defdelegate get_user_by!(filters), to: Users, as: :get_by!
-
-  defdelegate delete_user(user), to: Users, as: :delete
-  defdelegate delete_user!(user), to: Users, as: :delete!
-
-  defdelegate change_status_user(user, status), to: Users, as: :status
-  defdelegate change_status_user!(user, status), to: Users, as: :status!
-
-  defdelegate change_password_user(user, password), to: Users, as: :change_password
-  defdelegate change_password_user!(user, password), to: Users, as: :change_password!
-
-  defdelegate check_password_user?(user, password), to: Users, as: :check_password?
+  defdelegate change_permissions_role(role, permission), to: Roles, as: :change_permissions
+  defdelegate change_permissions_role!(role, permission), to: Roles, as: :change_permissions!
 end

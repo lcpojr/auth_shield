@@ -23,6 +23,7 @@ defmodule AuthX.Resources.Schemas.UsersRoles do
         }
 
   @primary_key false
+  @foreign_key_type :binary_id
   @required_fields [:user_id, :role_id]
   schema "users_roles" do
     belongs_to(:user, User, primary_key: true)

@@ -23,6 +23,7 @@ defmodule AuthX.Resources.Schemas.RolesPermissions do
         }
 
   @primary_key false
+  @foreign_key_type :binary_id
   @required_fields [:role_id, :permission_id]
   schema "roles_permissions" do
     belongs_to(:role, Role, primary_key: true)

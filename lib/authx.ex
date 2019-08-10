@@ -31,12 +31,15 @@ defmodule AuthX do
 
   defdelegate check_password_user?(user, password), to: Users, as: :check_password?
 
+  defdelegate change_roles_user(user, role), to: Users, as: :change_roles
+  defdelegate change_roles_user!(user, role), to: Users, as: :change_roles!
+
   # Permissions
-  defdelegate insert_permission(params), to: Permissions, as: :insert
-  defdelegate insert_permission!(params), to: Permissions, as: :insert!
+  defdelegate create_permission(params), to: Permissions, as: :insert
+  defdelegate create_permission!(params), to: Permissions, as: :insert!
 
   defdelegate get_permission_by(filters), to: Permissions, as: :get_by
-  defdelegate get_roget_permission_byle_by!(filters), to: Permissions, as: :get_by!
+  defdelegate get_permission_by!(filters), to: Permissions, as: :get_by!
 
   defdelegate update_permission(permission, params), to: Permissions, as: :update
   defdelegate update_permission!(permission, params), to: Permissions, as: :update!
@@ -56,6 +59,9 @@ defmodule AuthX do
 
   defdelegate delete_role(user), to: Roles, as: :delete
   defdelegate delete_role!(user), to: Roles, as: :delete!
+
+  defdelegate change_permissions_role(role, permission), to: Roles, as: :change_permissions
+  defdelegate change_permissions_role!(role, permission), to: Roles, as: :change_permissions!
 
   # Credentials PIN
   defdelegate create_pin(params), to: PIN, as: :insert

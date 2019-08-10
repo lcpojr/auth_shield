@@ -6,7 +6,7 @@ defmodule AuthX.Resources.Users do
   authorization.
   """
 
-  alias AuthX.Resources.Schemas.User
+  alias AuthX.Resources.Schemas.{Role, User}
   alias AuthX.Repo
 
   @typedoc "Transactional responses of success"
@@ -134,4 +134,33 @@ defmodule AuthX.Resources.Users do
   @spec check_password?(user :: User.t(), password :: String.t()) :: boolean()
   def check_password?(%User{} = user, password) when is_binary(password),
     do: Argon2.verify_pass(password, user.password_hash)
+
+  @doc """
+  Changes an set of `Role` of the `User`.
+
+  It will add or remove roles from the list, so you should pass
+  the all list every time you use this function.
+  """
+  @spec change_roles(user :: User.t(), roles :: list(Role.t())) ::
+          success_response() | failed_response()
+  def change_roles(%User{} = user, roles) do
+    user
+    |> Repo.preload(:roles)
+    |> User.changeset_roles(roles)
+    |> Repo.update()
+  end
+
+  @doc """
+  Changes an set of `Role` of the `User`.
+
+  Similar to `append_role/2` but raises if the changeset is invalid.
+  """
+  @spec change_roles!(user :: User.t(), roles :: list(Role.t())) ::
+          success_response() | no_return()
+  def change_roles!(%User{} = user, roles) do
+    user
+    |> Repo.preload(:roles)
+    |> User.changeset_roles(roles)
+    |> Repo.update!()
+  end
 end
