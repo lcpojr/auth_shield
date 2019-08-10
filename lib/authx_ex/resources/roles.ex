@@ -1,6 +1,17 @@
 defmodule AuthX.Resources.Roles do
   @moduledoc """
-  Implements an interface to deal with database transactions as inserts, updates, deletes, etc.
+  Roles are used to define an group of permissions that the user has. It usually works
+  as an definition of the person function in the company.
+
+  We use this to implement and Role-based access control (RBAC).
+
+  RBAC is a policy-neutral access-control mechanism defined around roles and privileges.
+
+  The components of RBAC such as role-permissions and user-role relationships make it simple
+  to perform user assignments.
+
+  This module implements an interface to deal with database transactions
+  as inserts, updates, deletes, etc.
   """
 
   alias AuthX.Resources.Schemas.{Role, Permission}

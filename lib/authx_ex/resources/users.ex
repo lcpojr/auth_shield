@@ -1,9 +1,14 @@
 defmodule AuthX.Resources.Users do
   @moduledoc """
-  Implements an interface to deal with database transactions as inserts, updates, deletes, etc.
+  Users are the base identity in our architecture. It is used to
+  authenticate an profile or to authorize an action given its set of
+  roles.
 
-  It will also be used to verify user credentials on authentication and permissions on
-  authorization.
+  We use an Role-based access control architecture as an approach to restricting
+  system access to authorized users, so our resources contains users, roles and permissions.
+
+  This module implements an interface to deal with database transactions
+  as inserts, updates, deletes, etc.
   """
 
   alias AuthX.Resources.Schemas.{Role, User}

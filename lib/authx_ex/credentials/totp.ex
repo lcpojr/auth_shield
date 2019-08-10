@@ -1,9 +1,14 @@
 defmodule AuthX.Credentials.TOTP do
   @moduledoc """
-  Implements an interface to deal with database transactions as inserts, updates, deletes, etc.
+  Time-based One-Time Password (TOTP) is an extension of
+  the HMAC-based One-time Password algorithm (HOTP) generating
+  a one-time password by instead taking uniqueness from the current time.
 
-  It will also be used to verify user credentials on authentication and permissions on
-  authorization.
+  It is usually used with mobile applications that receives the secret key and
+  generates the code to be used in authentications.
+
+  Thi module implements an interface to deal with database transactions
+  as inserts, updates, deletes, etc.
   """
 
   alias AuthX.Credentials.Schemas.TOTP

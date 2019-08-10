@@ -1,7 +1,6 @@
 defmodule AuthX.Credentials.Schemas.PIN do
   @moduledoc """
-  PIN (Personal Identification Number) is an credencial owned by
-  users that is used on authentication and authorization requests.
+  PIN (Personal Identification Number) schema model.
 
   We do not save users pin, only the encripted hash that will
   be used to authenticate.

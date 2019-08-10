@@ -1,6 +1,16 @@
 defmodule AuthX.Credentials do
   @moduledoc """
-  Implements an interface to deal with credential requests.
+  Credentials are means to proof that an identity is valid
+  in authentications.
+
+  There are multiple types of credentials and we implements
+  three of them.
+
+    - password (An sequence of digits that only the user known's);
+    - pin (An code of 4 or 6 digits that usually are only numbers);
+    - totp (An time based code generated in other factor or device);
+
+  This module provides an interaface that delegates to the specific credential functions.
   """
 
   alias AuthX.Credentials.{PIN, TOTP}

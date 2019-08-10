@@ -1,5 +1,6 @@
 defmodule AuthX.Authentication do
   @moduledoc """
+  Implements a set of functions to deal with authentication requests.
   """
 
   alias AuthX.{Credentials, Resources}

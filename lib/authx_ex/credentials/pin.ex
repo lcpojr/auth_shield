@@ -1,9 +1,13 @@
 defmodule AuthX.Credentials.PIN do
   @moduledoc """
-  Implements an interface to deal with database transactions as inserts, updates, deletes, etc.
+  A personal identification number (PIN), or sometimes redundantly a PIN number,
+  is a numeric or alpha-numeric password used in the process of authenticating a user accessing a system.
 
-  It will also be used to verify user credentials on authentication and permissions on
-  authorization.
+  It is usually used in ATM oe POS transactions to authenticate identities and
+  secure access control.
+
+  This module implements an interface to deal with database transactions
+  as inserts, updates, deletes, etc.
   """
 
   alias AuthX.Credentials.Schemas.PIN

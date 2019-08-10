@@ -1,6 +1,6 @@
 defmodule AuthX.Credentials.Schemas.TOTP do
   @moduledoc """
-  TOTP  (Time-based One Time Password) is an extension of the HOTP (HMAC-based One-time Password).
+  TOTP (Time-based One Time Password) shema model.
 
   We generates a one-time password from sharing a secret key randomly generated that should
   be known only for us and the client.

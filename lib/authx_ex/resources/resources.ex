@@ -1,6 +1,13 @@
 defmodule AuthX.Resources do
   @moduledoc """
-  Implements an interface to deal with resources.
+  Resources can be used to definy many things but in authorization and authentication
+  we use it as a form to declare something we need in order to deal with identities
+  and access control.
+
+  We use an Role-based access control architecture as an approach to restricting
+  system access to authorized users, so our resources contains users, roles and permissions.
+
+  This module provides an interaface that delegates to the specific resource functions.
   """
 
   alias AuthX.Resources.{Permissions, Roles, Users}
