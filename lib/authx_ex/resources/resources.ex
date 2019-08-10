@@ -5,7 +5,6 @@ defmodule AuthX.Resources do
 
   alias AuthX.Resources.{Permissions, Roles, Users}
 
-
   # Permissions
   defdelegate insert_permission(params), to: Permissions, as: :insert
   defdelegate insert_permission!(params), to: Permissions, as: :insert!
