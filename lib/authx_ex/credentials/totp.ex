@@ -11,6 +11,8 @@ defmodule AuthX.Credentials.TOTP do
   as inserts, updates, deletes, etc.
   """
 
+  require Ecto.Query
+
   alias AuthX.Credentials.Schemas.TOTP
   alias AuthX.Repo
 
@@ -38,6 +40,14 @@ defmodule AuthX.Credentials.TOTP do
     %TOTP{}
     |> TOTP.changeset(params)
     |> Repo.insert!()
+  end
+
+  @doc "Returns a list of `TOTP` by its filters"
+  @spec list(filters :: keyword()) :: list(TOTP.t())
+  def list(filters \\ []) when is_list(filters) do
+    TOTP
+    |> Ecto.Query.where([u], ^filters)
+    |> Repo.all()
   end
 
   @doc "Gets a `TOTP` register by its filters."

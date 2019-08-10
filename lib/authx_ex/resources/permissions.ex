@@ -14,6 +14,8 @@ defmodule AuthX.Resources.Permissions do
   as inserts, updates, deletes, etc.
   """
 
+  require Ecto.Query
+
   alias AuthX.Resources.Schemas.Permission
   alias AuthX.Repo
 
@@ -62,6 +64,14 @@ defmodule AuthX.Resources.Permissions do
     permission
     |> Permission.changeset(params)
     |> Repo.update()
+  end
+
+  @doc "Returns a list of `Permission` by its filters"
+  @spec list(filters :: keyword()) :: list(Permission.t())
+  def list(filters \\ []) when is_list(filters) do
+    Permission
+    |> Ecto.Query.where([u], ^filters)
+    |> Repo.all()
   end
 
   @doc "Gets a `Permissions` register by its filters."

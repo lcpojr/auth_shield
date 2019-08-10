@@ -11,6 +11,8 @@ defmodule AuthX.Resources.Users do
   as inserts, updates, deletes, etc.
   """
 
+  require Ecto.Query
+
   alias AuthX.Resources.Schemas.{Role, User}
   alias AuthX.Repo
 
@@ -58,6 +60,14 @@ defmodule AuthX.Resources.Users do
     user
     |> User.changeset_update(params)
     |> Repo.update()
+  end
+
+  @doc "Returns a list of `User` by its filters"
+  @spec list(filters :: keyword()) :: list(User.t())
+  def list(filters \\ []) when is_list(filters) do
+    User
+    |> Ecto.Query.where([u], ^filters)
+    |> Repo.all()
   end
 
   @doc "Gets a `User` register by its filters."

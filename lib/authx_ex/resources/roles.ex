@@ -14,6 +14,8 @@ defmodule AuthX.Resources.Roles do
   as inserts, updates, deletes, etc.
   """
 
+  require Ecto.Query
+
   alias AuthX.Resources.Schemas.{Role, Permission}
   alias AuthX.Repo
 
@@ -61,6 +63,14 @@ defmodule AuthX.Resources.Roles do
     role
     |> Role.changeset(params)
     |> Repo.update()
+  end
+
+  @doc "Returns a list of `Role` by its filters"
+  @spec list(filters :: keyword()) :: list(Role.t())
+  def list(filters \\ []) when is_list(filters) do
+    Role
+    |> Ecto.Query.where([u], ^filters)
+    |> Repo.all()
   end
 
   @doc "Gets a `Role` register by its filters."

@@ -10,6 +10,8 @@ defmodule AuthX.Credentials.PIN do
   as inserts, updates, deletes, etc.
   """
 
+  require Ecto.Query
+
   alias AuthX.Credentials.Schemas.PIN
   alias AuthX.Repo
 
@@ -37,6 +39,14 @@ defmodule AuthX.Credentials.PIN do
     %PIN{}
     |> PIN.changeset(params)
     |> Repo.insert!()
+  end
+
+  @doc "Returns a list of `PIN` by its filters"
+  @spec list(filters :: keyword()) :: list(PIN.t())
+  def list(filters \\ []) when is_list(filters) do
+    PIN
+    |> Ecto.Query.where([u], ^filters)
+    |> Repo.all()
   end
 
   @doc "Gets a `PIN` register by its filters."

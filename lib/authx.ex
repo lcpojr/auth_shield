@@ -17,6 +17,8 @@ defmodule AuthX do
   defdelegate update_user(user, params), to: Users, as: :update
   defdelegate update_user!(user, params), to: Users, as: :update!
 
+  defdelegate list_user(filters), to: Users, as: :list
+
   defdelegate get_user_by(filters), to: Users, as: :get_by
   defdelegate get_user_by!(filters), to: Users, as: :get_by!
 
@@ -38,6 +40,8 @@ defmodule AuthX do
   defdelegate create_permission(params), to: Permissions, as: :insert
   defdelegate create_permission!(params), to: Permissions, as: :insert!
 
+  defdelegate list_permission(filters), to: Permissions, as: :list
+
   defdelegate get_permission_by(filters), to: Permissions, as: :get_by
   defdelegate get_permission_by!(filters), to: Permissions, as: :get_by!
 
@@ -54,6 +58,8 @@ defmodule AuthX do
   defdelegate update_role(user, params), to: Roles, as: :update
   defdelegate update_role!(user, params), to: Roles, as: :update!
 
+  defdelegate list_role(filters), to: Roles, as: :list
+
   defdelegate get_role_by(filters), to: Roles, as: :get_by
   defdelegate get_role_by!(filters), to: Roles, as: :get_by!
 
@@ -67,6 +73,8 @@ defmodule AuthX do
   defdelegate create_pin(params), to: PIN, as: :insert
   defdelegate create_pin!(params), to: PIN, as: :insert!
 
+  defdelegate list_pin(filters), to: PIN, as: :list
+
   defdelegate get_pin_by(filters), to: PIN, as: :get_by
   defdelegate get_pin_by!(filters), to: PIN, as: :get_by!
 
@@ -78,6 +86,8 @@ defmodule AuthX do
   # Credentials TOTP
   defdelegate create_totp(params), to: TOTP, as: :insert
   defdelegate create_totp!(params), to: TOTP, as: :insert!
+
+  defdelegate list_totp(filters), to: TOTP, as: :list
 
   defdelegate get_totp_by(filters), to: TOTP, as: :get_by
   defdelegate get_totp_by!(filters), to: TOTP, as: :get_by!

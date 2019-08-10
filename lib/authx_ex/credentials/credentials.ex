@@ -19,6 +19,8 @@ defmodule AuthX.Credentials do
   defdelegate insert_pin(params), to: PIN, as: :insert
   defdelegate insert_pin!(params), to: PIN, as: :insert!
 
+  defdelegate list_pin(filters), to: PIN, as: :list
+
   defdelegate get_pin_by(filters), to: PIN, as: :get_by
   defdelegate get_pin_by!(filters), to: PIN, as: :get_by!
 
@@ -30,6 +32,8 @@ defmodule AuthX.Credentials do
   # TOTP credential
   defdelegate insert_totp(params), to: TOTP, as: :insert
   defdelegate insert_totp!(params), to: TOTP, as: :insert!
+
+  defdelegate list_totp(filters), to: TOTP, as: :list
 
   defdelegate get_totp_by(filters), to: TOTP, as: :get_by
   defdelegate get_totp_by!(filters), to: TOTP, as: :get_by!
