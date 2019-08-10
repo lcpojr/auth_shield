@@ -3,7 +3,21 @@ defmodule AuthX.Resources do
   Implements an interface to deal with resources.
   """
 
-  alias AuthX.Resources.{Roles, Users}
+  alias AuthX.Resources.{Permissions, Roles, Users}
+
+
+  # Permissions
+  defdelegate insert_permission(params), to: Permissions, as: :insert
+  defdelegate insert_permission!(params), to: Permissions, as: :insert!
+
+  defdelegate get_permission_by(filters), to: Permissions, as: :get_by
+  defdelegate get_permission_by!(filters), to: Permissions, as: :get_by!
+
+  defdelegate update_permission(permission, params), to: Permissions, as: :update
+  defdelegate update_permission!(permission, params), to: Permissions, as: :update!
+
+  defdelegate delete_permission(permission), to: Permissions, as: :delete
+  defdelegate delete_permission!(permission), to: Permissions, as: :delete!
 
   # Roles
   defdelegate insert_role(params), to: Roles, as: :insert

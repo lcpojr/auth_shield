@@ -4,7 +4,7 @@ defmodule AuthX do
   """
 
   alias AuthX.Authentication
-  alias AuthX.Resources.{Roles, Users}
+  alias AuthX.Resources.{Permissions, Roles, Users}
   alias AuthX.Credentials.{PIN, TOTP}
 
   # Authentication
@@ -30,6 +30,19 @@ defmodule AuthX do
   defdelegate change_password_user!(user, password), to: Users, as: :change_password!
 
   defdelegate check_password_user?(user, password), to: Users, as: :check_password?
+
+  # Permissions
+  defdelegate insert_permission(params), to: Permissions, as: :insert
+  defdelegate insert_permission!(params), to: Permissions, as: :insert!
+
+  defdelegate get_permission_by(filters), to: Permissions, as: :get_by
+  defdelegate get_roget_permission_byle_by!(filters), to: Permissions, as: :get_by!
+
+  defdelegate update_permission(permission, params), to: Permissions, as: :update
+  defdelegate update_permission!(permission, params), to: Permissions, as: :update!
+
+  defdelegate delete_permission(permission), to: Permissions, as: :delete
+  defdelegate delete_permission!(permission), to: Permissions, as: :delete!
 
   # Resources Roles
   defdelegate create_role(params), to: Roles, as: :insert
