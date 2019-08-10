@@ -33,8 +33,10 @@ defmodule AuthX.Resources do
 
   defdelegate check_password_user?(user, password), to: Users, as: :check_password?
 
-  defdelegate change_roles_user(role, permission), to: Users, as: :change_roles
-  defdelegate change_roles_user!(role, permission), to: Users, as: :change_roles!
+  defdelegate change_roles_user(user, roles), to: Users, as: :change_roles
+  defdelegate change_roles_user!(user, roles), to: Users, as: :change_roles!
+
+  defdelegate preload_user(user, fields), to: Users, as: :preload
 
   # Permissions
   defdelegate insert_permission(params), to: Permissions, as: :insert

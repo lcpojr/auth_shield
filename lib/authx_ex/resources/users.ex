@@ -178,4 +178,8 @@ defmodule AuthX.Resources.Users do
     |> User.changeset_roles(roles)
     |> Repo.update!()
   end
+
+  @doc "Preloads the user data by the given fields."
+  @spec preload(user :: User.t(), fields :: keyword()) :: User.t()
+  def preload(%User{} = user, fields) when is_list(fields), do: Repo.preload(user, fields)
 end
