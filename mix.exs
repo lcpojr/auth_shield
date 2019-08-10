@@ -66,7 +66,8 @@ defmodule AuthX.MixProject do
   defp aliases do
     [
       "ecto.setup": [
-        "ecto.create -r AuthX.Repo"
+        "ecto.create -r AuthX.Repo",
+        "ecto.migrate -r AuthX.Repo"
       ],
       "ecto.reset": [
         "ecto.drop -r AuthX.Repo",

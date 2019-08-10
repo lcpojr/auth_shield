@@ -62,8 +62,8 @@ defmodule AuthX.Credentials.TOTP do
   def delete!(%TOTP{} = totp), do: Repo.delete!(totp)
 
   @doc "Checks if the give TOTP matches the generated one."
-  @spec valid_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
-  def valid_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
+  @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
+  def check_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
     credential_totp =
       generate_totp(totp.secret, totp.period, totp.digits, datetime_now) |> IO.inspect()
 
