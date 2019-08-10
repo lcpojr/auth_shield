@@ -1,4 +1,4 @@
-defmodule AuthX.Users do
+defmodule AuthX.Resources.Users do
   @moduledoc """
   Implements an interface to deal with database transactions as inserts, updates, deletes, etc.
 
