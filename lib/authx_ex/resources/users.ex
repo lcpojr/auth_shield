@@ -13,8 +13,8 @@ defmodule AuthX.Resources.Users do
 
   require Ecto.Query
 
-  alias AuthX.Resources.Schemas.{Role, User}
   alias AuthX.Repo
+  alias AuthX.Resources.Schemas.{Role, User}
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, User.t()}

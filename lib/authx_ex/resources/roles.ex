@@ -16,8 +16,8 @@ defmodule AuthX.Resources.Roles do
 
   require Ecto.Query
 
-  alias AuthX.Resources.Schemas.{Role, Permission}
   alias AuthX.Repo
+  alias AuthX.Resources.Schemas.{Permission, Role}
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, Role.t()}

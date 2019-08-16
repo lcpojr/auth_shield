@@ -79,8 +79,7 @@ defmodule AuthX.Credentials.TOTP do
   @doc "Checks if the give TOTP matches the generated one."
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
   def check_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
-    credential_totp =
-      generate_totp(totp.secret, totp.period, totp.digits, datetime_now) |> IO.inspect()
+    credential_totp = generate_totp(totp.secret, totp.period, totp.digits, datetime_now)
 
     if credential_totp == code, do: true, else: false
   end

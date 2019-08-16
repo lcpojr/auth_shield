@@ -93,5 +93,5 @@ defmodule AuthX.Credentials.Schemas.TOTP do
     change(changeset, %{qrcode_base64: qrcode_base64})
   end
 
-  defp put_qrcode(changeset), do: changeset |> IO.inspect()
+  defp put_qrcode(changeset), do: changeset
 end
