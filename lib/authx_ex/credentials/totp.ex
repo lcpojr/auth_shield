@@ -46,7 +46,7 @@ defmodule AuthX.Credentials.TOTP do
   @spec list(filters :: keyword()) :: list(TOTP.t())
   def list(filters \\ []) when is_list(filters) do
     TOTP
-    |> Ecto.Query.where([u], ^filters)
+    |> Ecto.Query.where([t], ^filters)
     |> Repo.all()
   end
 

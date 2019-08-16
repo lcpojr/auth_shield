@@ -13,6 +13,7 @@ defmodule AuthX.Resources.Users do
 
   require Ecto.Query
 
+  alias AuthX.Credentials.Passwords
   alias AuthX.Resources.Schemas.{Role, User}
   alias AuthX.Repo
 
@@ -116,39 +117,6 @@ defmodule AuthX.Resources.Users do
     |> User.changeset_status(%{is_active: status})
     |> Repo.update!()
   end
-
-  @doc "Changes a `User` status."
-  @spec change_password(user :: User.t(), password :: String.t()) ::
-          success_response() | failed_response()
-  def change_password(%User{} = user, password) when is_binary(password) do
-    user
-    |> User.changeset_status(%{password: password})
-    |> Repo.update()
-  end
-
-  @doc """
-  Changes a `User` password.
-
-  Similar to `change_password/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
-  """
-  @spec change_password!(user :: User.t(), password :: String.t()) ::
-          success_response() | no_return()
-  def change_password!(%User{} = user, password) when is_binary(password) do
-    user
-    |> User.changeset_status(%{password: password})
-    |> Repo.update!()
-  end
-
-  @doc """
-  Checks if the given password matches with the user password_hash
-
-  It calls the `Argon2` to verify and returns `true` if the password
-  matches and `false` if the passwords doesn't match.
-  """
-  @spec check_password?(user :: User.t(), password :: String.t()) :: boolean()
-  def check_password?(%User{} = user, password) when is_binary(password),
-    do: Argon2.verify_pass(password, user.password_hash)
 
   @doc """
   Changes an set of `Role` of the `User`.

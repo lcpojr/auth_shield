@@ -38,7 +38,7 @@ defmodule AuthX.Credentials.Schemas.PIN do
   @doc """
   Generates an `%Ecto.Changeset{}` struct with the changes.
 
-  It defines validations and also generates the password hash if
+  It defines validations and also generates the pin hash if
   necessary.
   """
   @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()

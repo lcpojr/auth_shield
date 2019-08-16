@@ -70,7 +70,7 @@ defmodule AuthX.Resources.Permissions do
   @spec list(filters :: keyword()) :: list(Permission.t())
   def list(filters \\ []) when is_list(filters) do
     Permission
-    |> Ecto.Query.where([u], ^filters)
+    |> Ecto.Query.where([p], ^filters)
     |> Repo.all()
   end
 

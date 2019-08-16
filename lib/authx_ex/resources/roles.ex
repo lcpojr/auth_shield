@@ -69,7 +69,7 @@ defmodule AuthX.Resources.Roles do
   @spec list(filters :: keyword()) :: list(Role.t())
   def list(filters \\ []) when is_list(filters) do
     Role
-    |> Ecto.Query.where([u], ^filters)
+    |> Ecto.Query.where([r], ^filters)
     |> Repo.all()
   end
 

@@ -3,7 +3,7 @@ defmodule AuthX.Authentication do
   Implements a set of functions to deal with authentication requests.
   """
 
-  alias AuthX.Credentials.{PIN, TOTP}
+  alias AuthX.Credentials.{Passwords, PIN, TOTP}
   alias AuthX.Resources.Users
 
   @typedoc "Authentication possible responses"
@@ -31,7 +31,9 @@ defmodule AuthX.Authentication do
   end
 
   defp do_authenticate(user, %{password: password}) when is_binary(password) do
-    if Users.check_password?(user, password) do
+    pass = Passwords.get_by(user_id: user.id)
+
+    if Passwords.check_password?(pass, password) do
       {:ok, :authenticated}
     else
       {:error, :unauthenticated}

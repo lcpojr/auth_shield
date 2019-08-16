@@ -51,7 +51,7 @@ defmodule AuthX.Credentials.Schemas.TOTP do
   @doc """
   Generates an `%Ecto.Changeset{}` struct with the changes.
 
-  It defines validations and also generates the password hash if
+  It defines validations and also generates the secret if
   necessary.
   """
   @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()

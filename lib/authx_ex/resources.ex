@@ -13,8 +13,8 @@ defmodule AuthX.Resources do
   alias AuthX.Resources.{Permissions, Roles, Users}
 
   # Users
-  defdelegate insert_user(params), to: Users, as: :insert
-  defdelegate insert_user!(params), to: Users, as: :insert!
+  defdelegate create_user(params), to: Users, as: :insert
+  defdelegate create_user!(params), to: Users, as: :insert!
 
   defdelegate update_user(user, params), to: Users, as: :update
   defdelegate update_user!(user, params), to: Users, as: :update!
@@ -28,19 +28,14 @@ defmodule AuthX.Resources do
   defdelegate change_status_user(user, status), to: Users, as: :status
   defdelegate change_status_user!(user, status), to: Users, as: :status!
 
-  defdelegate change_password_user(user, password), to: Users, as: :change_password
-  defdelegate change_password_user!(user, password), to: Users, as: :change_password!
-
-  defdelegate check_password_user?(user, password), to: Users, as: :check_password?
-
   defdelegate change_roles_user(user, roles), to: Users, as: :change_roles
   defdelegate change_roles_user!(user, roles), to: Users, as: :change_roles!
 
   defdelegate preload_user(user, fields), to: Users, as: :preload
 
   # Permissions
-  defdelegate insert_permission(params), to: Permissions, as: :insert
-  defdelegate insert_permission!(params), to: Permissions, as: :insert!
+  defdelegate create_permission(params), to: Permissions, as: :insert
+  defdelegate create_permission!(params), to: Permissions, as: :insert!
 
   defdelegate get_permission_by(filters), to: Permissions, as: :get_by
   defdelegate get_permission_by!(filters), to: Permissions, as: :get_by!
@@ -52,8 +47,8 @@ defmodule AuthX.Resources do
   defdelegate delete_permission!(permission), to: Permissions, as: :delete!
 
   # Roles
-  defdelegate insert_role(params), to: Roles, as: :insert
-  defdelegate insert_role!(params), to: Roles, as: :insert!
+  defdelegate create_role(params), to: Roles, as: :insert
+  defdelegate create_role!(params), to: Roles, as: :insert!
 
   defdelegate get_role_by(filters), to: Roles, as: :get_by
   defdelegate get_role_by!(filters), to: Roles, as: :get_by!

@@ -13,11 +13,25 @@ defmodule AuthX.Credentials do
   This module provides an interaface that delegates to the specific credential functions.
   """
 
-  alias AuthX.Credentials.{PIN, TOTP}
+  alias AuthX.Credentials.{Passwords, PIN, TOTP}
 
-  # PIN credential
-  defdelegate insert_pin(params), to: PIN, as: :insert
-  defdelegate insert_pin!(params), to: PIN, as: :insert!
+  # Password
+  defdelegate create_password(params), to: Passwords, as: :insert
+  defdelegate create_password!(params), to: Passwords, as: :insert!
+
+  defdelegate list_password(filters), to: Passwords, as: :list
+
+  defdelegate get_password_by(filters), to: Passwords, as: :get_by
+  defdelegate get_password_by!(filters), to: Passwords, as: :get_by!
+
+  defdelegate delete_password(pin), to: Passwords, as: :delete
+  defdelegate delete_password!(pin), to: Passwords, as: :delete!
+
+  defdelegate check_password?(pin, pin_code), to: Passwords, as: :check_password?
+
+  # PIN
+  defdelegate create_pin(params), to: PIN, as: :insert
+  defdelegate create_pin!(params), to: PIN, as: :insert!
 
   defdelegate list_pin(filters), to: PIN, as: :list
 
@@ -29,9 +43,9 @@ defmodule AuthX.Credentials do
 
   defdelegate check_pin?(pin, pin_code), to: PIN, as: :check_pin?
 
-  # TOTP credential
-  defdelegate insert_totp(params), to: TOTP, as: :insert
-  defdelegate insert_totp!(params), to: TOTP, as: :insert!
+  # TOTP
+  defdelegate create_totp(params), to: TOTP, as: :insert
+  defdelegate create_totp!(params), to: TOTP, as: :insert!
 
   defdelegate list_totp(filters), to: TOTP, as: :list
 

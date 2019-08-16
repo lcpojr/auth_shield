@@ -45,7 +45,7 @@ defmodule AuthX.Credentials.PIN do
   @spec list(filters :: keyword()) :: list(PIN.t())
   def list(filters \\ []) when is_list(filters) do
     PIN
-    |> Ecto.Query.where([u], ^filters)
+    |> Ecto.Query.where([p], ^filters)
     |> Repo.all()
   end
 
