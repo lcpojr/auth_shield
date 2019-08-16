@@ -13,7 +13,6 @@ defmodule AuthX.Resources.Users do
 
   require Ecto.Query
 
-  alias AuthX.Credentials.Passwords
   alias AuthX.Resources.Schemas.{Role, User}
   alias AuthX.Repo
 

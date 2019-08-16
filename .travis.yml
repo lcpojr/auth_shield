@@ -1,0 +1,9 @@
+language: elixir
+elixir: 
+  - '1.9'
+otp_release:
+  - '22.0.7'
+services:
+  - postgresql
+before_script:
+  - MIX_ENV=test mix ecto.setup
