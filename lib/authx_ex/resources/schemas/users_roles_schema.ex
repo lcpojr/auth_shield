@@ -40,6 +40,7 @@ defmodule AuthX.Resources.Schemas.UsersRoles do
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:role_id)
-    |> unique_constraint([:user, :role], name: :user_id_role_id_unique_index)
+    |> unique_constraint(:user, name: :user_id_role_id_unique_index)
+    |> unique_constraint(:role, name: :user_id_role_id_unique_index)
   end
 end

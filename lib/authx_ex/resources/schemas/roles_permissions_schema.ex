@@ -40,6 +40,7 @@ defmodule AuthX.Resources.Schemas.RolesPermissions do
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:role_id)
     |> foreign_key_constraint(:permission_id)
-    |> unique_constraint([:role, :permission], name: :role_id_permission_id_unique_index)
+    |> unique_constraint(:role, name: :role_id_permission_id_unique_index)
+    |> unique_constraint(:permission, name: :role_id_permission_id_unique_index)
   end
 end
