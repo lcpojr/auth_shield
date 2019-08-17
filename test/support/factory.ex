@@ -33,10 +33,30 @@ defmodule AuthX.Factory do
   end
 
   def pin_factory do
-    %PIN{pin_hash: Argon2.hash_pwd_salt("123456")}
+    %PIN{pin: "123456", pin_hash: Argon2.hash_pwd_salt("123456")}
   end
 
   def totp_factory do
-    %TOTP{secret: TOTP.generate_random_secret()}
+    secret = TOTP.generate_random_secret()
+    issuer = "AuthX"
+    email = "email@authx.com"
+    label = :http_uri.encode("#{issuer}:#{email}")
+    digits = 6
+    period = 30
+
+    qrcode_base64 =
+      "otpauth://totp/#{label}?secret=#{secret}&issuer=#{issuer}&digits=#{digits}&period=#{period}&algorithm=SHA1"
+      |> EQRCode.encode()
+      |> EQRCode.png()
+      |> Base.encode64(padding: false)
+
+    %TOTP{
+      secret: secret,
+      email: email,
+      issuer: issuer,
+      digits: digits,
+      period: period,
+      qrcode_base64: qrcode_base64
+    }
   end
 end

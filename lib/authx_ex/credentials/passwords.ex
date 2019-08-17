@@ -61,6 +61,14 @@ defmodule AuthX.Credentials.Passwords do
     |> Repo.update()
   end
 
+  @doc "Returns a list of `Password` by its filters"
+  @spec list(filters :: keyword()) :: list(Password.t())
+  def list(filters \\ []) when is_list(filters) do
+    Password
+    |> Ecto.Query.where([p], ^filters)
+    |> Repo.all()
+  end
+
   @doc "Gets a `Password` register by its filters."
   @spec get_by(filters :: keyword()) :: Password.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Password, filters)
@@ -84,14 +92,6 @@ defmodule AuthX.Credentials.Passwords do
   """
   @spec delete!(password :: Password.t()) :: Password.t() | no_return()
   def delete!(%Password{} = password), do: Repo.delete!(password)
-
-  @doc "Returns a list of `Password` by its filters"
-  @spec list(filters :: keyword()) :: list(Password.t())
-  def list(filters \\ []) when is_list(filters) do
-    Password
-    |> Ecto.Query.where([p], ^filters)
-    |> Repo.all()
-  end
 
   @doc """
   Checks if the given password matches with the saved password_hash

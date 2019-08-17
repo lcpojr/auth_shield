@@ -77,64 +77,7 @@ defmodule AuthX.Credentials.TOTP do
   @doc "Checks if the give TOTP matches the generated one."
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
   def check_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
-    credential_totp = generate_totp(totp.secret, totp.period, totp.digits, datetime_now)
-
+    credential_totp = TOTP.generate_totp(totp.secret, totp.period, totp.digits, datetime_now)
     if credential_totp == code, do: true, else: false
-  end
-
-  defp generate_totp(secret, period, digits, datetime) do
-    secret
-    |> generate_hmac(period, datetime)
-    |> hmac_sha1_truncate()
-    |> generate_hotp(digits)
-  end
-
-  defp generate_hmac(secret, period, datetime) do
-    # Generates a HMAC encoded in SHA-1.
-    #
-    # HMAC (Hash-based Message Authentication Code) is a specific type of
-    # message authentication code (MAC) involving a cryptographic hash
-    # function and a secret cryptographic key.
-
-    # Decodes the secret in `Base32`
-    key =
-      secret
-      |> String.upcase()
-      |> Base.decode32!(padding: false)
-
-    # Generating time factor
-    moving_factor =
-      datetime
-      |> DateTime.to_unix()
-      |> Integer.floor_div(period)
-      |> Integer.to_string(16)
-      |> String.pad_leading(16, "0")
-      |> String.upcase()
-      |> Base.decode16!(padding: false)
-
-    # Generate SHA-1
-    :crypto.hmac(:sha, key, moving_factor)
-  end
-
-  defp hmac_sha1_truncate(hmac) do
-    # Generate a digest and truncate it to obtain a password
-
-    # Get the offset from last  4-bits
-    <<_::19-binary, _::4, offset::4>> = hmac
-
-    # Get the 4-bytes starting from the offset
-    <<_::size(offset)-binary, p::4-binary, _::binary>> = hmac
-
-    # Return the last 31-bits
-    <<_::1, truncated_hmac::31>> = p
-
-    truncated_hmac
-  end
-
-  defp generate_hotp(truncated_hmac, digits) do
-    truncated_hmac
-    |> rem(1_000_000)
-    |> Integer.to_string()
-    |> String.pad_leading(digits, ["0"])
   end
 end
