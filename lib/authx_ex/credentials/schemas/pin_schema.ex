@@ -32,7 +32,7 @@ defmodule AuthX.Credentials.Schemas.PIN do
 
     belongs_to(:user, User)
 
-    timestamps(type: :naive_datetime_usec)
+    timestamps()
   end
 
   @doc """

@@ -19,7 +19,7 @@ defmodule AuthX.Credentials do
   defdelegate create_password(params), to: Passwords, as: :insert
   defdelegate create_password!(params), to: Passwords, as: :insert!
 
-  defdelegate list_password(filters), to: Passwords, as: :list
+  defdelegate list_password(filters \\ []), to: Passwords, as: :list
 
   defdelegate get_password_by(filters), to: Passwords, as: :get_by
   defdelegate get_password_by!(filters), to: Passwords, as: :get_by!
@@ -33,7 +33,7 @@ defmodule AuthX.Credentials do
   defdelegate create_pin(params), to: PIN, as: :insert
   defdelegate create_pin!(params), to: PIN, as: :insert!
 
-  defdelegate list_pin(filters), to: PIN, as: :list
+  defdelegate list_pin(filters \\ []), to: PIN, as: :list
 
   defdelegate get_pin_by(filters), to: PIN, as: :get_by
   defdelegate get_pin_by!(filters), to: PIN, as: :get_by!
@@ -47,7 +47,7 @@ defmodule AuthX.Credentials do
   defdelegate create_totp(params), to: TOTP, as: :insert
   defdelegate create_totp!(params), to: TOTP, as: :insert!
 
-  defdelegate list_totp(filters), to: TOTP, as: :list
+  defdelegate list_totp(filters \\ []), to: TOTP, as: :list
 
   defdelegate get_totp_by(filters), to: TOTP, as: :get_by
   defdelegate get_totp_by!(filters), to: TOTP, as: :get_by!
@@ -55,6 +55,5 @@ defmodule AuthX.Credentials do
   defdelegate delete_totp(totp), to: TOTP, as: :delete
   defdelegate delete_totp!(totp), to: TOTP, as: :delete!
 
-  defdelegate check_totp?(totp, totp_code), to: TOTP, as: :check_totp?
-  defdelegate check_totp?(totp, totp_code, datetime), to: TOTP, as: :check_totp?
+  defdelegate check_totp?(totp, totp_code, datetime \\ Timex.now()), to: TOTP, as: :check_totp?
 end

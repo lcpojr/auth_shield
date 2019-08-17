@@ -31,9 +31,9 @@ defmodule AuthX.Credentials.Passwords do
   @doc """
   Creates a new `__MODULE__` register.
 
-  Similar to `insert/1` but raises if the changeset is invalid.
+  Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: success_response() | no_return()
+  @spec insert!(params :: map()) :: Password.t() | no_return()
   def insert!(params) when is_map(params) do
     %Password{}
     |> Password.changeset(params)
@@ -52,9 +52,9 @@ defmodule AuthX.Credentials.Passwords do
   @doc """
   Updates a `Password` register.
 
-  Similar to `update/2` but raises if the changeset is invalid.
+  Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(password :: Password.t(), params :: map()) :: success_response() | no_return()
+  @spec update!(password :: Password.t(), params :: map()) :: Password.t() | no_return()
   def update!(%Password{} = password, params) when is_map(params) do
     password
     |> Password.changeset(params)
@@ -68,8 +68,7 @@ defmodule AuthX.Credentials.Passwords do
   @doc """
   Gets a `Password` register by its filters.
 
-  Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if more than one entry.
+  Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: Password.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(Password, filters)
@@ -81,10 +80,9 @@ defmodule AuthX.Credentials.Passwords do
   @doc """
   Deletes a `Password` register.
 
-  Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(password :: Password.t()) :: success_response() | no_return()
+  @spec delete!(password :: Password.t()) :: Password.t() | no_return()
   def delete!(%Password{} = password), do: Repo.delete!(password)
 
   @doc "Returns a list of `Password` by its filters"

@@ -50,7 +50,7 @@ defmodule AuthX.Resources.Schemas.User do
     has_one(:totp_credential, TOTP)
     has_one(:password_credential, Password)
 
-    timestamps(type: :naive_datetime_usec)
+    timestamps()
   end
 
   @doc """
@@ -68,8 +68,8 @@ defmodule AuthX.Resources.Schemas.User do
     |> validate_length(:last_name, min: 2, max: 150)
     |> validate_length(:email, min: 7, max: 150)
     |> validate_format(:email, @email_regex)
-    |> unique_constraint(:email)
     |> cast_assoc(:password_credential, required: true, with: &Password.changeset_assoc/2)
+    |> unique_constraint(:email)
   end
 
   @doc """

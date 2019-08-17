@@ -19,6 +19,8 @@ defmodule AuthX.Resources do
   defdelegate update_user(user, params), to: Users, as: :update
   defdelegate update_user!(user, params), to: Users, as: :update!
 
+  defdelegate list_users(params \\ []), to: Users, as: :list
+
   defdelegate get_user_by(filters), to: Users, as: :get_by
   defdelegate get_user_by!(filters), to: Users, as: :get_by!
 
@@ -37,6 +39,8 @@ defmodule AuthX.Resources do
   defdelegate create_permission(params), to: Permissions, as: :insert
   defdelegate create_permission!(params), to: Permissions, as: :insert!
 
+  defdelegate list_permissions(params \\ []), to: Permissions, as: :list
+
   defdelegate get_permission_by(filters), to: Permissions, as: :get_by
   defdelegate get_permission_by!(filters), to: Permissions, as: :get_by!
 
@@ -49,6 +53,8 @@ defmodule AuthX.Resources do
   # Roles
   defdelegate create_role(params), to: Roles, as: :insert
   defdelegate create_role!(params), to: Roles, as: :insert!
+
+  defdelegate list_roles(params \\ []), to: Roles, as: :list
 
   defdelegate get_role_by(filters), to: Roles, as: :get_by
   defdelegate get_role_by!(filters), to: Roles, as: :get_by!

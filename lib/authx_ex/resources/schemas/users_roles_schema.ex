@@ -29,7 +29,7 @@ defmodule AuthX.Resources.Schemas.UsersRoles do
     belongs_to(:user, User, primary_key: true)
     belongs_to(:role, Role, primary_key: true)
 
-    timestamps(type: :naive_datetime_usec)
+    timestamps()
   end
 
   @doc "Generates an `%Ecto.Changeset{}` struct with the changes."

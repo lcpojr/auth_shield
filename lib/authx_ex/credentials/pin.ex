@@ -32,9 +32,9 @@ defmodule AuthX.Credentials.PIN do
   @doc """
   Creates a new `PIN` register.
 
-  Similar to `insert/1` but raises if the changeset is invalid.
+  Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: success_response() | no_return()
+  @spec insert!(params :: map()) :: PIN.t() | no_return()
   def insert!(params) when is_map(params) do
     %PIN{}
     |> PIN.changeset(params)
@@ -56,8 +56,7 @@ defmodule AuthX.Credentials.PIN do
   @doc """
   Gets a `PIN` register by its filters.
 
-  Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if more than one entry.
+  Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: PIN.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(PIN, filters)
@@ -69,10 +68,9 @@ defmodule AuthX.Credentials.PIN do
   @doc """
   Deletes a `PIN` register.
 
-  Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(pin :: PIN.t()) :: success_response() | no_return()
+  @spec delete!(pin :: PIN.t()) :: PIN.t() | no_return()
   def delete!(%PIN{} = pin), do: Repo.delete!(pin)
 
   @doc """

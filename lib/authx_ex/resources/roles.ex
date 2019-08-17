@@ -36,9 +36,9 @@ defmodule AuthX.Resources.Roles do
   @doc """
   Creates a new `__MODULE__` register.
 
-  Similar to `insert/1` but raises if the changeset is invalid.
+  Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: success_response() | no_return()
+  @spec insert!(params :: map()) :: Role.t() | no_return()
   def insert!(params) when is_map(params) do
     %Role{}
     |> Role.changeset(params)
@@ -56,13 +56,13 @@ defmodule AuthX.Resources.Roles do
   @doc """
   Updates a `Role` register.
 
-  Similar to `update/2` but raises if the changeset is invalid.
+  Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(role :: Role.t(), params :: map()) :: success_response() | no_return()
+  @spec update!(role :: Role.t(), params :: map()) :: Role.t() | no_return()
   def update!(%Role{} = role, params) when is_map(params) do
     role
     |> Role.changeset(params)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   @doc "Returns a list of `Role` by its filters"
@@ -80,8 +80,7 @@ defmodule AuthX.Resources.Roles do
   @doc """
   Gets a `Role` register by its filters.
 
-  Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if more than one entry.
+  Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: Role.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(Role, filters)
@@ -93,10 +92,9 @@ defmodule AuthX.Resources.Roles do
   @doc """
   Deletes a `Role` register.
 
-  Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(role :: Role.t()) :: success_response() | no_return()
+  @spec delete!(role :: Role.t()) :: Role.t() | no_return()
   def delete!(%Role{} = role), do: Repo.delete!(role)
 
   @doc """
@@ -107,7 +105,7 @@ defmodule AuthX.Resources.Roles do
   """
   @spec change_permissions(role :: Role.t(), permissions :: list(Permission.t())) ::
           success_response() | failed_response()
-  def change_permissions(%Role{} = role, permissions) do
+  def change_permissions(%Role{} = role, permissions) when is_list(permissions) do
     role
     |> Repo.preload(:permissions)
     |> Role.changeset_permissions(permissions)
@@ -117,11 +115,11 @@ defmodule AuthX.Resources.Roles do
   @doc """
   Changes an set of `Permission` of the `Role`.
 
-  Similar to `appeappend_permissionnd_role/2` but raises if the changeset is invalid.
+  Similar to `appeappend_permissionnd_role/2` but returns the struct or raises if the changeset is invalid.
   """
   @spec change_permissions!(role :: Role.t(), permissions :: list(Permission.t())) ::
-          success_response() | no_return()
-  def change_permissions!(%Role{} = role, permissions) do
+          Role.t() | no_return()
+  def change_permissions!(%Role{} = role, permissions) when is_list(permissions) do
     role
     |> Repo.preload(:permissions)
     |> Role.changeset_permissions(permissions)

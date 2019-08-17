@@ -45,7 +45,7 @@ defmodule AuthX.Credentials.Schemas.TOTP do
 
     belongs_to(:user, User)
 
-    timestamps(type: :naive_datetime_usec)
+    timestamps()
   end
 
   @doc """
@@ -66,10 +66,17 @@ defmodule AuthX.Credentials.Schemas.TOTP do
     |> put_qrcode()
   end
 
+  @doc """
+  Generates and random string that contains the alphabet letters
+  and is used as `__MODULE__` secret.
+  """
+  @spec generate_random_secret() :: String.t()
+  def generate_random_secret do
+    Enum.reduce(1..20, "", fn _, acc -> acc <> Enum.random(@characters) end)
+  end
+
   defp put_random_secret(%{valid?: true} = changeset) do
-    # Generates and random string that contains the alphabet letters
-    secret = Enum.reduce(1..20, "", fn _, acc -> acc <> Enum.random(@characters) end)
-    change(changeset, %{secret: secret})
+    change(changeset, %{secret: generate_random_secret()})
   end
 
   defp put_random_secret(changeset), do: changeset

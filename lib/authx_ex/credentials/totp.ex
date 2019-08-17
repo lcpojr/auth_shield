@@ -33,9 +33,9 @@ defmodule AuthX.Credentials.TOTP do
   @doc """
   Creates a new `TOTP` register.
 
-  Similar to `insert/1` but raises if the changeset is invalid.
+  Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: success_response() | no_return()
+  @spec insert!(params :: map()) :: TOTP.t() | no_return()
   def insert!(params) when is_map(params) do
     %TOTP{}
     |> TOTP.changeset(params)
@@ -57,8 +57,7 @@ defmodule AuthX.Credentials.TOTP do
   @doc """
   Gets a `TOTP` register by its filters.
 
-  Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if more than one entry.
+  Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: TOTP.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(TOTP, filters)
@@ -70,10 +69,9 @@ defmodule AuthX.Credentials.TOTP do
   @doc """
   Deletes a `TOTP` register.
 
-  Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(totp :: TOTP.t()) :: success_response() | no_return()
+  @spec delete!(totp :: TOTP.t()) :: TOTP.t() | no_return()
   def delete!(%TOTP{} = totp), do: Repo.delete!(totp)
 
   @doc "Checks if the give TOTP matches the generated one."

@@ -36,9 +36,9 @@ defmodule AuthX.Resources.Permissions do
   @doc """
   Creates a new `__MODULE__` register.
 
-  Similar to `insert/1` but raises if the changeset is invalid.
+  Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: success_response() | no_return()
+  @spec insert!(params :: map()) :: Permission.t() | no_return()
   def insert!(params) when is_map(params) do
     %Permission{}
     |> Permission.changeset(params)
@@ -57,13 +57,13 @@ defmodule AuthX.Resources.Permissions do
   @doc """
   Updates a `Permissions` register.
 
-  Similar to `update/2` but raises if the changeset is invalid.
+  Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(permission :: Permission.t(), params :: map()) :: success_response() | no_return()
+  @spec update!(permission :: Permission.t(), params :: map()) :: Permission.t() | no_return()
   def update!(%Permission{} = permission, params) when is_map(params) do
     permission
     |> Permission.changeset(params)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   @doc "Returns a list of `Permission` by its filters"
@@ -81,8 +81,7 @@ defmodule AuthX.Resources.Permissions do
   @doc """
   Gets a `Permissions` register by its filters.
 
-  Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if more than one entry.
+  Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: Permission.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(Permission, filters)
@@ -94,9 +93,8 @@ defmodule AuthX.Resources.Permissions do
   @doc """
   Deletes a `Permissions` register.
 
-  Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(permission :: Permission.t()) :: success_response() | no_return()
+  @spec delete!(permission :: Permission.t()) :: Permission.t() | no_return()
   def delete!(%Permission{} = permission), do: Repo.delete!(permission)
 end

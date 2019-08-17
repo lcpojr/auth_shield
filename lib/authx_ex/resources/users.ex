@@ -33,9 +33,9 @@ defmodule AuthX.Resources.Users do
   @doc """
   Creates a new `__MODULE__` register.
 
-  Similar to `insert/1` but raises if the changeset is invalid.
+  Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: success_response() | no_return()
+  @spec insert!(params :: map()) :: User.t() | no_return()
   def insert!(params) when is_map(params) do
     %User{}
     |> User.changeset_insert(params)
@@ -53,13 +53,13 @@ defmodule AuthX.Resources.Users do
   @doc """
   Updates a `User` register.
 
-  Similar to `update/2` but raises if the changeset is invalid.
+  Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(user :: User.t(), params :: map()) :: success_response() | no_return()
+  @spec update!(user :: User.t(), params :: map()) :: User.t() | no_return()
   def update!(%User{} = user, params) when is_map(params) do
     user
     |> User.changeset_update(params)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   @doc "Returns a list of `User` by its filters"
@@ -77,8 +77,7 @@ defmodule AuthX.Resources.Users do
   @doc """
   Gets a `User` register by its filters.
 
-  Similar to `get_by/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if more than one entry.
+  Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: User.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by(User, filters)
@@ -90,10 +89,9 @@ defmodule AuthX.Resources.Users do
   @doc """
   Deletes a `User` register.
 
-  Similar to `delete/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(user :: User.t()) :: success_response() | no_return()
+  @spec delete!(user :: User.t()) :: User.t() | no_return()
   def delete!(%User{} = user), do: Repo.delete!(user)
 
   @doc "Changes a `User` status."
@@ -107,10 +105,9 @@ defmodule AuthX.Resources.Users do
   @doc """
   Changes a `User` status.
 
-  Similar to `status/1` but raises `Ecto.NoResultsError` if no record was found.
-  Raises if changeset is invalid.
+  Similar to `status/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec status!(user :: User.t(), status :: boolean()) :: success_response() | no_return()
+  @spec status!(user :: User.t(), status :: boolean()) :: User.t() | no_return()
   def status!(%User{} = user, status) when is_boolean(status) do
     user
     |> User.changeset_status(%{is_active: status})
@@ -125,7 +122,7 @@ defmodule AuthX.Resources.Users do
   """
   @spec change_roles(user :: User.t(), roles :: list(Role.t())) ::
           success_response() | failed_response()
-  def change_roles(%User{} = user, roles) do
+  def change_roles(%User{} = user, roles) when is_list(roles) do
     user
     |> Repo.preload(:roles)
     |> User.changeset_roles(roles)
@@ -135,11 +132,10 @@ defmodule AuthX.Resources.Users do
   @doc """
   Changes an set of `Role` of the `User`.
 
-  Similar to `append_role/2` but raises if the changeset is invalid.
+  Similar to `append_role/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec change_roles!(user :: User.t(), roles :: list(Role.t())) ::
-          success_response() | no_return()
-  def change_roles!(%User{} = user, roles) do
+  @spec change_roles!(user :: User.t(), roles :: list(Role.t())) :: User.t() | no_return()
+  def change_roles!(%User{} = user, roles) when is_list(roles) do
     user
     |> Repo.preload(:roles)
     |> User.changeset_roles(roles)

@@ -8,3 +8,5 @@ config :authx_ex, AuthX.Repo,
   password: "postgres",
   hostname: "localhost",
   port: 5432
+
+import_config "#{Mix.env()}.exs"

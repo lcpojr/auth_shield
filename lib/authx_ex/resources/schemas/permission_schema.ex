@@ -32,7 +32,7 @@ defmodule AuthX.Resources.Schemas.Permission do
 
     many_to_many(:roles, Role, join_through: RolesPermissions)
 
-    timestamps(type: :naive_datetime_usec)
+    timestamps()
   end
 
   @doc "Generates an `%Ecto.Changeset{}` struct with the changes."
