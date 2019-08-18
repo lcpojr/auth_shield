@@ -132,29 +132,4 @@ defmodule AuthX.Credentials.TOTPTest do
       assert_raise Ecto.StaleEntryError, fn -> TOTP.delete!(ctx.totp) end
     end
   end
-
-  describe "check_totp?/3" do
-    setup ctx do
-      params = params_for(:totp) |> Map.put(:user_id, ctx.user.id)
-      {:ok, totp: insert(:totp, params)}
-    end
-
-    test "returns true if the given code is equal to the generated", ctx do
-      assert date_now = Timex.now()
-
-      assert code =
-               TOTPSchema.generate_totp(
-                 ctx.totp.secret,
-                 ctx.totp.period,
-                 ctx.totp.digits,
-                 date_now
-               )
-
-      assert true == TOTP.check_totp?(ctx.totp, code, date_now)
-    end
-
-    test "returns false if the given code is equal to the generated", ctx do
-      assert false == TOTP.check_totp?(ctx.totp, "ZdiRoKEGwKFMEWUqDwDq")
-    end
-  end
 end

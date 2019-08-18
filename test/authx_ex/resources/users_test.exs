@@ -7,23 +7,19 @@ defmodule AuthX.Resources.UsersTest do
   describe "insert/1" do
     test "creates a new user on database" do
       # Preparing params
-      assert user_params = params_for(:user)
-      assert credential_params = params_for(:password)
-      assert params = Map.put(user_params, :password_credential, credential_params)
+      assert params = Map.put(params_for(:user), :password_credential, params_for(:password))
 
       # Inserting user
       assert {:ok, user} = Users.insert(params)
-      assert user == User |> Repo.get(user.id) |> Repo.preload(:password_credential)
+      assert user == Repo.get(User, user.id) |> Repo.preload(:password_credential)
     end
 
     test "fails if user already exist" do
       # Preparing params
-      assert user_params = params_for(:user)
-      assert credential_params = params_for(:password)
-      assert params = Map.put(user_params, :password_credential, credential_params)
+      assert params = Map.put(params_for(:user), :password_credential, params_for(:password))
 
       # Inserting user
-      assert _user = insert(:user, user_params)
+      assert _user = insert(:user, params)
 
       # Inserting duplicated user
       assert {:error, changeset} = Users.insert(params)
@@ -55,9 +51,7 @@ defmodule AuthX.Resources.UsersTest do
   describe "insert!/1" do
     test "creates a new user on database" do
       # Preparing params
-      assert user_params = params_for(:user)
-      assert credential_params = params_for(:password)
-      assert params = Map.put(user_params, :password_credential, credential_params)
+      assert params = Map.put(params_for(:user), :password_credential, params_for(:password))
 
       # Inserting user
       assert user = Users.insert!(params)
@@ -67,12 +61,10 @@ defmodule AuthX.Resources.UsersTest do
     test "fails if user already exist" do
       assert_raise Ecto.InvalidChangesetError, fn ->
         # Preparing params
-        assert user_params = params_for(:user)
-        assert credential_params = params_for(:password)
-        assert params = Map.put(user_params, :password_credential, credential_params)
+        assert params = Map.put(params_for(:user), :password_credential, params_for(:password))
 
         # Inserting user
-        assert _user = insert(:user, user_params)
+        assert _user = insert(:user, params)
 
         # Inserting duplicated user
         assert Users.insert!(params)

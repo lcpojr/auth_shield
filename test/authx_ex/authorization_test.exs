@@ -2,22 +2,18 @@ defmodule AuthX.AuthorizationTest do
   use AuthX.DataCase, async: true
 
   alias AuthX.Authorization
-  alias AuthX.Resources.Schemas.{RolesPermissions, User, UsersRoles}
+  alias AuthX.Resources.Schemas.User
 
   describe "authorize/1" do
     setup do
-      {:ok, user: insert(:user), role: insert(:role), permission: insert(:permission)}
+      permission = insert(:permission)
+      role = insert(:role, Map.put(params_for(:role), :permissions, [permission]))
+      user = insert(:user, Map.put(params_for(:user), :roles, [role]))
+      {:ok, user: user, role: role, permission: permission}
     end
 
     test "authorizes if the user has the required role", ctx do
       assert user = Repo.update!(User.changeset_status(ctx.user, %{is_active: true}))
-
-      assert Repo.insert(
-               UsersRoles.changeset(%UsersRoles{}, %{
-                 user_id: user.id,
-                 role_id: ctx.role.id
-               })
-             )
 
       assert {:ok, :authorized} ==
                Authorization.authorize(%{
@@ -29,20 +25,6 @@ defmodule AuthX.AuthorizationTest do
     test "authorizes if the user role has the required permission", ctx do
       assert user = Repo.update!(User.changeset_status(ctx.user, %{is_active: true}))
 
-      assert Repo.insert(
-               UsersRoles.changeset(%UsersRoles{}, %{
-                 user_id: user.id,
-                 role_id: ctx.role.id
-               })
-             )
-
-      assert Repo.insert(
-               RolesPermissions.changeset(%RolesPermissions{}, %{
-                 role_id: ctx.role.id,
-                 permission_id: ctx.permission.id
-               })
-             )
-
       assert {:ok, :authorized} ==
                Authorization.authorize(%{
                  email: user.email,
@@ -51,20 +33,6 @@ defmodule AuthX.AuthorizationTest do
     end
 
     test "unauthorizes if user is not active", ctx do
-      assert Repo.insert(
-               UsersRoles.changeset(%UsersRoles{}, %{
-                 user_id: ctx.user.id,
-                 role_id: ctx.role.id
-               })
-             )
-
-      assert Repo.insert(
-               RolesPermissions.changeset(%RolesPermissions{}, %{
-                 role_id: ctx.role.id,
-                 permission_id: ctx.permission.id
-               })
-             )
-
       assert {:error, :unauthorized} ==
                Authorization.authorize(%{
                  email: ctx.user.email,
@@ -84,7 +52,7 @@ defmodule AuthX.AuthorizationTest do
       assert {:error, :unauthorized} ==
                Authorization.authorize(%{
                  email: ctx.user.email,
-                 roles: [ctx.role.name]
+                 roles: ["any-role"]
                })
     end
 
