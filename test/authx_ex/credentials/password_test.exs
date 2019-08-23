@@ -73,7 +73,7 @@ defmodule AuthX.Credentials.PasswordTest do
 
   describe "list/1" do
     setup do
-      users = insert_list(10, :user)
+      users = insert_list(3, :user)
 
       pins =
         Enum.map(users, &insert(:password, params_for(:password) |> Map.put(:user_id, &1.id)))
@@ -101,6 +101,18 @@ defmodule AuthX.Credentials.PasswordTest do
 
     test "can get password by database fields", ctx do
       assert password = Passwords.get_by(user_id: ctx.user.id)
+      assert password.id == ctx.password.id
+    end
+  end
+
+  describe "get_by!/1" do
+    setup ctx do
+      params = params_for(:password) |> Map.put(:user_id, ctx.user.id)
+      {:ok, password: insert(:password, params)}
+    end
+
+    test "can get password by database fields", ctx do
+      assert password = Passwords.get_by!(user_id: ctx.user.id)
       assert password.id == ctx.password.id
     end
   end

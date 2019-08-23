@@ -25,7 +25,17 @@ defmodule AuthX.Resources.Permissions do
   @typedoc "Transactional responses of failed"
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
-  @doc "Creates a new `Permissions` register."
+  @doc """
+  Creates a new `AuthX.Resources.Schemas.Permission` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Permissions.insert(%{
+      name: "can_create_users",
+      description: "Has permission to create users on the system"
+    })
+    ```
+  """
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %Permission{}
@@ -34,7 +44,7 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Creates a new `__MODULE__` register.
+  Creates a new `AuthX.Resources.Schemas.Permission` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -45,7 +55,17 @@ defmodule AuthX.Resources.Permissions do
     |> Repo.insert!()
   end
 
-  @doc "Updates a `Permissions` register."
+  @doc """
+  Updates a `AuthX.Resources.Schemas.Permission` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Permissions.update(permission, %{
+      name: "can_update_users",
+      description: "Has permission to update users on the system"
+    })
+    ```
+  """
   @spec update(permission :: Permission.t(), params :: map()) ::
           success_response() | failed_response()
   def update(%Permission{} = permission, params) when is_map(params) do
@@ -55,7 +75,7 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Updates a `Permissions` register.
+  Updates a `AuthX.Resources.Schemas.Permission` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -66,7 +86,18 @@ defmodule AuthX.Resources.Permissions do
     |> Repo.update!()
   end
 
-  @doc "Returns a list of `Permission` by its filters"
+  @doc """
+  Returns a list of `AuthX.Resources.Schemas.Permission` by its filters
+
+  ## Exemples:
+    ```elixir
+    # Getting the all list
+    AuthX.Resources.Permissions.list()
+
+    # Filtering the list by field
+    AuthX.Resources.Permissions.list(name: "can_create_users")
+    ```
+  """
   @spec list(filters :: keyword()) :: list(Permission.t())
   def list(filters \\ []) when is_list(filters) do
     Permission
@@ -74,24 +105,38 @@ defmodule AuthX.Resources.Permissions do
     |> Repo.all()
   end
 
-  @doc "Gets a `Permissions` register by its filters."
+  @doc """
+  Gets a `AuthX.Resources.Schemas.Permission` register by its filters.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Permissions.get_by(name: "can_create_users")
+    ```
+  """
   @spec get_by(filters :: keyword()) :: Permission.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Permission, filters)
 
   @doc """
-  Gets a `Permissions` register by its filters.
+  Gets a `AuthX.Resources.Schemas.Permission` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: Permission.t() | no_return()
-  def get_by!(filters) when is_list(filters), do: Repo.get_by(Permission, filters)
+  def get_by!(filters) when is_list(filters), do: Repo.get_by!(Permission, filters)
 
-  @doc "Deletes a `Permissions` register."
+  @doc """
+  Deletes a `AuthX.Resources.Schemas.Permission` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Permissions.delete(permission)
+    ```
+  """
   @spec delete(permission :: Permission.t()) :: success_response() | failed_response()
   def delete(%Permission{} = permission), do: Repo.delete(permission)
 
   @doc """
-  Deletes a `Permissions` register.
+  Deletes a `AuthX.Resources.Schemas.Permission` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """

@@ -92,7 +92,7 @@ defmodule AuthX.Resources.PermissionsTest do
 
   describe "list/1" do
     setup do
-      {:ok, permissions: insert_list(10, :permission)}
+      {:ok, permissions: insert_list(3, :permission)}
     end
 
     test "return a list of permissions", ctx do
@@ -113,6 +113,16 @@ defmodule AuthX.Resources.PermissionsTest do
 
     test "can get permission by database fields", ctx do
       assert ctx.permission == Permissions.get_by(name: ctx.permission.name)
+    end
+  end
+
+  describe "get_by!/1" do
+    setup do
+      {:ok, permission: insert(:permission)}
+    end
+
+    test "can get permission by database fields", ctx do
+      assert ctx.permission == Permissions.get_by!(name: ctx.permission.name)
     end
   end
 

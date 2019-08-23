@@ -73,7 +73,7 @@ defmodule AuthX.Credentials.PINTest do
 
   describe "list/1" do
     setup do
-      users = insert_list(10, :user)
+      users = insert_list(3, :user)
       pins = Enum.map(users, &insert(:pin, params_for(:pin) |> Map.put(:user_id, &1.id)))
       {:ok, users: users, ids: Enum.map(pins, & &1.id)}
     end
@@ -98,6 +98,18 @@ defmodule AuthX.Credentials.PINTest do
 
     test "can get pin by database fields", ctx do
       assert pin = PIN.get_by(user_id: ctx.user.id)
+      assert pin.id == ctx.pin.id
+    end
+  end
+
+  describe "get_by!/1" do
+    setup ctx do
+      params = params_for(:pin) |> Map.put(:user_id, ctx.user.id)
+      {:ok, pin: insert(:pin, params)}
+    end
+
+    test "can get pin by database fields", ctx do
+      assert pin = PIN.get_by!(user_id: ctx.user.id)
       assert pin.id == ctx.pin.id
     end
   end

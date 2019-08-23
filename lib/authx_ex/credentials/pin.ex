@@ -21,7 +21,17 @@ defmodule AuthX.Credentials.PIN do
   @typedoc "Transactional responses of failed"
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
-  @doc "Creates a new `PIN` register."
+  @doc """
+  Creates a new `AuthX.Credentials.Schemas.PIN` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.PIN.insert(%{
+      user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
+      pin: "332456"
+    })
+    ```
+  """
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %PIN{}
@@ -30,7 +40,7 @@ defmodule AuthX.Credentials.PIN do
   end
 
   @doc """
-  Creates a new `PIN` register.
+  Creates a new `AuthX.Credentials.Schemas.PIN` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -41,7 +51,18 @@ defmodule AuthX.Credentials.PIN do
     |> Repo.insert!()
   end
 
-  @doc "Returns a list of `PIN` by its filters"
+  @doc """
+  Returns a list of `AuthX.Credentials.Schemas.PIN` by its filters
+
+  ## Exemples:
+    ```elixir
+    # Getting the all list
+    AuthX.Credentials.PIN.list()
+
+    # Filtering the list by field
+    AuthX.Credentials.PIN.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    ```
+  """
   @spec list(filters :: keyword()) :: list(PIN.t())
   def list(filters \\ []) when is_list(filters) do
     PIN
@@ -49,24 +70,38 @@ defmodule AuthX.Credentials.PIN do
     |> Repo.all()
   end
 
-  @doc "Gets a `PIN` register by its filters."
+  @doc """
+  Gets a `AuthX.Credentials.Schemas.PIN` register by its filters.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.PIN.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    ```
+  """
   @spec get_by(filters :: keyword()) :: PIN.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(PIN, filters)
 
   @doc """
-  Gets a `PIN` register by its filters.
+  Gets a `AuthX.Credentials.Schemas.PIN` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: PIN.t() | no_return()
-  def get_by!(filters) when is_list(filters), do: Repo.get_by(PIN, filters)
+  def get_by!(filters) when is_list(filters), do: Repo.get_by!(PIN, filters)
 
-  @doc "Deletes a `PIN` register."
+  @doc """
+  Deletes a `AuthX.Credentials.Schemas.PIN` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.PIN.delete(pin)
+    ```
+  """
   @spec delete(pin :: PIN.t()) :: success_response() | failed_response()
   def delete(%PIN{} = pin), do: Repo.delete(pin)
 
   @doc """
-  Deletes a `PIN` register.
+  Deletes a `AuthX.Credentials.Schemas.PIN` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -74,10 +109,15 @@ defmodule AuthX.Credentials.PIN do
   def delete!(%PIN{} = pin), do: Repo.delete!(pin)
 
   @doc """
-  Checks if the given PIN matches with the credential pin_hash
+  Checks if the given PIN code matches with the credential pin_hash
 
   It calls the `Argon2` to verify and returns `true` if the PIN
   matches and `false` if the PIN doesn't match.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.PIN.check_pin?(pin, "332456")
+    ```
   """
   @spec check_pin?(pin :: PIN.t(), pin_code :: String.t()) :: boolean()
   def check_pin?(%PIN{} = pin, code) when is_binary(code),

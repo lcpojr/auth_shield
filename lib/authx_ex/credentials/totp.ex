@@ -22,7 +22,27 @@ defmodule AuthX.Credentials.TOTP do
   @typedoc "Transactional responses of failed"
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
-  @doc "Creates a new `TOTP` register."
+  @doc """
+  Creates a new `AuthX.Credentials.Schemas.TOTP` register.
+
+  ## Exemples:
+    ```elixir
+    # Simple insert
+    AuthX.Credentials.TOTP.insert(%{
+      user_id: ecb4c67d-6380-4984-ae04-1563e885d59e",
+      email: "lucas@gmail.com"
+    })
+
+    # All parameters
+    AuthX.Credentials.TOTP.insert(%{
+      user_id: ecb4c67d-6380-4984-ae04-1563e885d59e",
+      email: "lucas@gmail.com",
+      issuer: "MyWebpage",
+      digits: 4,
+      period: 60
+    })
+    ```
+  """
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %TOTP{}
@@ -31,7 +51,7 @@ defmodule AuthX.Credentials.TOTP do
   end
 
   @doc """
-  Creates a new `TOTP` register.
+  Creates a new `AuthX.Credentials.Schemas.TOTP` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -42,7 +62,18 @@ defmodule AuthX.Credentials.TOTP do
     |> Repo.insert!()
   end
 
-  @doc "Returns a list of `TOTP` by its filters"
+  @doc """
+  Returns a list of `AuthX.Credentials.Schemas.TOTP` by its filters
+
+  ## Exemples:
+    ```elixir
+    # Getting the all list
+    AuthX.Credentials.TOTP.list()
+
+    # Filtering the list by field
+    AuthX.Credentials.TOTP.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    ```
+  """
   @spec list(filters :: keyword()) :: list(TOTP.t())
   def list(filters \\ []) when is_list(filters) do
     TOTP
@@ -50,31 +81,56 @@ defmodule AuthX.Credentials.TOTP do
     |> Repo.all()
   end
 
-  @doc "Gets a `TOTP` register by its filters."
+  @doc """
+  Gets a `AuthX.Credentials.Schemas.TOTP` register by its filters.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.TOTP.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    ```
+  """
   @spec get_by(filters :: keyword()) :: TOTP.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(TOTP, filters)
 
   @doc """
-  Gets a `TOTP` register by its filters.
+  Gets a `AuthX.Credentials.Schemas.TOTP` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: TOTP.t() | no_return()
-  def get_by!(filters) when is_list(filters), do: Repo.get_by(TOTP, filters)
+  def get_by!(filters) when is_list(filters), do: Repo.get_by!(TOTP, filters)
 
-  @doc "Deletes a `TOTP` register."
+  @doc """
+  Deletes a `AuthX.Credentials.Schemas.TOTP` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.TOTP.delete(totp)
+    ```
+  """
   @spec delete(totp :: TOTP.t()) :: success_response() | failed_response()
   def delete(%TOTP{} = totp), do: Repo.delete(totp)
 
   @doc """
-  Deletes a `TOTP` register.
+  Deletes a `AuthX.Credentials.Schemas.TOTP` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec delete!(totp :: TOTP.t()) :: TOTP.t() | no_return()
   def delete!(%TOTP{} = totp), do: Repo.delete!(totp)
 
-  @doc "Checks if the give TOTP matches the generated one."
+  @doc """
+  Checks if the given TOTP code matches the generated one.
+
+  ## Exemples:
+    ```elixir
+    # Using default timestamp
+    AuthX.Credentials.TOTP.check_pin?(totp, "332456")
+
+    # Defining timestamp
+    AuthX.Credentials.TOTP.check_pin?(totp, "332456", Timex.now("America/Chicago"))
+    ```
+  """
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
   def check_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
     credential_totp = TOTP.generate_totp(totp.secret, totp.period, totp.digits, datetime_now)

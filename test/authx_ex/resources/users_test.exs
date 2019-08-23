@@ -118,7 +118,7 @@ defmodule AuthX.Resources.UsersTest do
 
   describe "list/1" do
     setup do
-      {:ok, users: insert_list(10, :user)}
+      {:ok, users: insert_list(3, :user)}
     end
 
     test "return a list of Users", ctx do
@@ -140,6 +140,16 @@ defmodule AuthX.Resources.UsersTest do
 
     test "can get user by database fields", ctx do
       assert ctx.user == Users.get_by(email: ctx.user.email)
+    end
+  end
+
+  describe "get_by!/1" do
+    setup do
+      {:ok, user: insert(:user)}
+    end
+
+    test "can get user by database fields", ctx do
+      assert ctx.user == Users.get_by!(email: ctx.user.email)
     end
   end
 

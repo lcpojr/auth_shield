@@ -25,7 +25,17 @@ defmodule AuthX.Resources.Roles do
   @typedoc "Transactional responses of failed"
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
-  @doc "Creates a new `Role` register."
+  @doc """
+  Creates a new `AuthX.Resources.Schemas.Role` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Roles.insert(%{
+      name: "admin",
+      description: "System administrator"
+    })
+    ```
+  """
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %Role{}
@@ -34,7 +44,7 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Creates a new `__MODULE__` register.
+  Creates a new `AuthX.Resources.Schemas.Role` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -45,7 +55,16 @@ defmodule AuthX.Resources.Roles do
     |> Repo.insert!()
   end
 
-  @doc "Updates a `Role` register."
+  @doc """
+  Updates a `AuthX.Resources.Schemas.Role` register.
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Roles.update(role, %{
+      name: "sales",
+      description: "The sales user roles"
+    })
+    ```
+  """
   @spec update(role :: Role.t(), params :: map()) :: success_response() | failed_response()
   def update(%Role{} = role, params) when is_map(params) do
     role
@@ -54,7 +73,7 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Updates a `Role` register.
+  Updates a `AuthX.Resources.Schemas.Role` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -65,7 +84,18 @@ defmodule AuthX.Resources.Roles do
     |> Repo.update!()
   end
 
-  @doc "Returns a list of `Role` by its filters"
+  @doc """
+  Returns a list of `AuthX.Resources.Schemas.Role` by its filters
+
+  ## Exemples:
+    ```elixir
+    # Getting the all list
+    AuthX.Resources.Roles.list()
+
+    # Filtering the list by field
+    AuthX.Resources.Roles.list(name: "admin")
+    ```
+  """
   @spec list(filters :: keyword()) :: list(Role.t())
   def list(filters \\ []) when is_list(filters) do
     Role
@@ -73,7 +103,14 @@ defmodule AuthX.Resources.Roles do
     |> Repo.all()
   end
 
-  @doc "Gets a `Role` register by its filters."
+  @doc """
+  Gets a `AuthX.Resources.Schemas.Role` register by its filters.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Roles.get_by(name: "admin")
+    ```
+  """
   @spec get_by(filters :: keyword()) :: Role.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Role, filters)
 
@@ -83,14 +120,21 @@ defmodule AuthX.Resources.Roles do
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: Role.t() | no_return()
-  def get_by!(filters) when is_list(filters), do: Repo.get_by(Role, filters)
+  def get_by!(filters) when is_list(filters), do: Repo.get_by!(Role, filters)
 
-  @doc "Deletes a `Role` register."
+  @doc """
+  Deletes a `AuthX.Resources.Schemas.Role` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Roles.delete(role)
+    ```
+  """
   @spec delete(role :: Role.t()) :: success_response() | failed_response()
   def delete(%Role{} = role), do: Repo.delete(role)
 
   @doc """
-  Deletes a `Role` register.
+  Deletes a `AuthX.Resources.Schemas.Role` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -98,10 +142,15 @@ defmodule AuthX.Resources.Roles do
   def delete!(%Role{} = role), do: Repo.delete!(role)
 
   @doc """
-  Changes an set of `Permission` of the `Role`.
+  Changes an set of `AuthX.Resources.Schemas.Permission` of the `AuthX.Resources.Schemas.Role`.
 
   It will add or remove permissions from the list, so you should pass
   the all list every time you use this function.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Resources.Roles.change_permissions(role, permissions)
+    ```
   """
   @spec change_permissions(role :: Role.t(), permissions :: list(Permission.t())) ::
           success_response() | failed_response()
@@ -113,7 +162,7 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Changes an set of `Permission` of the `Role`.
+  Changes an set of `AuthX.Resources.Schemas.Permission` of the `AuthX.Resources.Schemas.Role`.
 
   Similar to `appeappend_permissionnd_role/2` but returns the struct or raises if the changeset is invalid.
   """

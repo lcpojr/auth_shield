@@ -4,6 +4,8 @@ defmodule AuthX.Credentials.Schemas.PIN do
 
   We do not save users pin, only the encripted hash that will
   be used to authenticate.
+
+  To see more about how we hash the pin check `Argon2`.
   """
 
   use Ecto.Schema
@@ -36,7 +38,7 @@ defmodule AuthX.Credentials.Schemas.PIN do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   It defines validations and also generates the pin hash if
   necessary.
@@ -70,7 +72,7 @@ defmodule AuthX.Credentials.Schemas.PIN do
 
   defp put_pin_hash(%{valid?: true, changes: %{pin: pin}} = changeset) do
     # Append the PIN hash to the changeset
-    # We use `Argon2 to hash and verify the PIN
+    # We use `Argon2` to hash and verify the PIN
     #
     # See more in https://hexdocs.pm/argon2_elixir/Argon2.html
 

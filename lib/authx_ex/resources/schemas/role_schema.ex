@@ -37,7 +37,7 @@ defmodule AuthX.Resources.Schemas.Role do
     timestamps()
   end
 
-  @doc "Generates an `%Ecto.Changeset{}` struct with the changes."
+  @doc "Generates an `Ecto.Changeset` struct with the changes."
   @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
@@ -48,7 +48,7 @@ defmodule AuthX.Resources.Schemas.Role do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   It changes the related permissions list.
   """

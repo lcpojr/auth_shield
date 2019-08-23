@@ -35,7 +35,7 @@ defmodule AuthX.Resources.Schemas.Permission do
     timestamps()
   end
 
-  @doc "Generates an `%Ecto.Changeset{}` struct with the changes."
+  @doc "Generates an `Ecto.Changeset` struct with the changes."
   @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model

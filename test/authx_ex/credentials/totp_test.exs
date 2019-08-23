@@ -73,7 +73,7 @@ defmodule AuthX.Credentials.TOTPTest do
 
   describe "list/1" do
     setup do
-      users = insert_list(10, :user)
+      users = insert_list(3, :user)
 
       pins = Enum.map(users, &insert(:totp, params_for(:totp) |> Map.put(:user_id, &1.id)))
 
@@ -100,6 +100,18 @@ defmodule AuthX.Credentials.TOTPTest do
 
     test "can get totp by database fields", ctx do
       assert totp = TOTP.get_by(user_id: ctx.user.id)
+      assert totp.id == ctx.totp.id
+    end
+  end
+
+  describe "get_by!/1" do
+    setup ctx do
+      params = params_for(:totp) |> Map.put(:user_id, ctx.user.id)
+      {:ok, totp: insert(:totp, params)}
+    end
+
+    test "can get totp by database fields", ctx do
+      assert totp = TOTP.get_by!(user_id: ctx.user.id)
       assert totp.id == ctx.totp.id
     end
   end

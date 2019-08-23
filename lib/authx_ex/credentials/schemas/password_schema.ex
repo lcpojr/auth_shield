@@ -4,6 +4,8 @@ defmodule AuthX.Credentials.Schemas.Password do
 
   We do not save users password, only the encripted hash that will
   be used to authenticate.
+
+  To see more about how we hash the password check `Argon2`.
   """
 
   use Ecto.Schema
@@ -36,7 +38,7 @@ defmodule AuthX.Credentials.Schemas.Password do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   It defines validations and also generates the password hash if
   necessary.
@@ -52,7 +54,7 @@ defmodule AuthX.Credentials.Schemas.Password do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` to be used on assoc with the user.
+  Generates an `Ecto.Changeset` to be used on assoc with the user.
 
   It defines validations and also generates the password hash if
   necessary.
@@ -69,7 +71,7 @@ defmodule AuthX.Credentials.Schemas.Password do
 
   defp put_pass_hash(%{valid?: true, changes: %{password: pwd}} = changeset) do
     # Append the password hash to the changeset
-    # We use `Argon2 to hash and verify the password
+    # We use `Argon2` to hash and verify the password
     #
     # See more in https://hexdocs.pm/argon2_elixir/Argon2.html
 

@@ -65,8 +65,14 @@ defmodule AuthX.MixProject do
   defp docs do
     [
       main: "AuthX",
-      logo: "",
-      extras: ["README.md"]
+      extras: ["README.md", "docs/database.md"],
+      deps: [
+        postgrex: "https://hexdocs.pm/postgrex/readme.html",
+        ecto_sql: "https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html",
+        argon2_elixir: "https://hexdocs.pm/argon2_elixir/api-reference.html",
+        timex: "https://hexdocs.pm/timex/getting-started.html",
+        eqrcode: "https://hexdocs.pm/eqrcode/readme.html"
+      ]
     ]
   end
 

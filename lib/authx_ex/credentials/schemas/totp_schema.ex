@@ -4,6 +4,8 @@ defmodule AuthX.Credentials.Schemas.TOTP do
 
   We generates a one-time password from sharing a secret key randomly generated that should
   be known only for us and the client.
+
+  To see more about how we generate the qrcode check `EQRCode`.
   """
 
   use Ecto.Schema
@@ -49,7 +51,7 @@ defmodule AuthX.Credentials.Schemas.TOTP do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   It defines validations and also generates the secret if
   necessary.

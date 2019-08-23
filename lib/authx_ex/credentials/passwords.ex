@@ -20,7 +20,17 @@ defmodule AuthX.Credentials.Passwords do
   @typedoc "Transactional responses of failed"
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
-  @doc "Creates a new `Password` register."
+  @doc """
+  Creates a new `AuthX.Credentials.Schemas.Password` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.Passwords.insert(%{
+      user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
+      password: "Mypass@rd123"
+    })
+    ```
+  """
   @spec insert(params :: map()) :: success_response() | failed_response()
   def insert(params) when is_map(params) do
     %Password{}
@@ -29,7 +39,7 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Creates a new `__MODULE__` register.
+  Creates a new `AuthX.Credentials.Schemas.Password` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -40,7 +50,17 @@ defmodule AuthX.Credentials.Passwords do
     |> Repo.insert!()
   end
 
-  @doc "Updates a `Password` register."
+  @doc """
+  Updates a `AuthX.Credentials.Schemas.Password` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.Passwords.update(password, %{
+      user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
+      password: "Mypass@rd123"
+    })
+    ```
+  """
   @spec update(password :: Password.t(), params :: map()) ::
           success_response() | failed_response()
   def update(%Password{} = password, params) when is_map(params) do
@@ -50,7 +70,7 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Updates a `Password` register.
+  Updates a `AuthX.Credentials.Schemas.Password` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -61,7 +81,18 @@ defmodule AuthX.Credentials.Passwords do
     |> Repo.update()
   end
 
-  @doc "Returns a list of `Password` by its filters"
+  @doc """
+  Returns a list of `AuthX.Credentials.Schemas.Password` by its filters
+
+  ## Exemples:
+    ```elixir
+    # Getting the all list
+    AuthX.Credentials.Passwords.list()
+
+    # Filtering the list by field
+    AuthX.Credentials.Passwords.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    ```
+  """
   @spec list(filters :: keyword()) :: list(Password.t())
   def list(filters \\ []) when is_list(filters) do
     Password
@@ -69,24 +100,38 @@ defmodule AuthX.Credentials.Passwords do
     |> Repo.all()
   end
 
-  @doc "Gets a `Password` register by its filters."
+  @doc """
+  Gets a `AuthX.Credentials.Schemas.Password` register by its filters.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.Passwords.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    ```
+  """
   @spec get_by(filters :: keyword()) :: Password.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Password, filters)
 
   @doc """
-  Gets a `Password` register by its filters.
+  Gets a `AuthX.Credentials.Schemas.Password` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
   @spec get_by!(filters :: keyword()) :: Password.t() | no_return()
-  def get_by!(filters) when is_list(filters), do: Repo.get_by(Password, filters)
+  def get_by!(filters) when is_list(filters), do: Repo.get_by!(Password, filters)
 
-  @doc "Deletes a `Password` register."
+  @doc """
+  Deletes a `AuthX.Credentials.Schemas.Password` register.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.Passwords.delete(password)
+    ```
+  """
   @spec delete(password :: Password.t()) :: success_response() | failed_response()
   def delete(%Password{} = password), do: Repo.delete(password)
 
   @doc """
-  Deletes a `Password` register.
+  Deletes a `AuthX.Credentials.Schemas.Password` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -98,6 +143,11 @@ defmodule AuthX.Credentials.Passwords do
 
   It calls the `Argon2` to verify and returns `true` if the password
   matches and `false` if the passwords doesn't match.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Credentials.Passwords.check_password?(password, "345617")
+    ```
   """
   @spec check_password?(password :: Password.t(), code :: String.t()) :: boolean()
   def check_password?(%Password{} = password, code) when is_binary(code),

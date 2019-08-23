@@ -90,7 +90,7 @@ defmodule AuthX.Resources.RolesTest do
 
   describe "list/1" do
     setup do
-      {:ok, roles: insert_list(10, :role)}
+      {:ok, roles: insert_list(3, :role)}
     end
 
     test "return a list of roles", ctx do
@@ -111,6 +111,16 @@ defmodule AuthX.Resources.RolesTest do
 
     test "can get role by database fields", ctx do
       assert ctx.role == Roles.get_by(name: ctx.role.name)
+    end
+  end
+
+  describe "get_by!/1" do
+    setup do
+      {:ok, role: insert(:role)}
+    end
+
+    test "can get role by database fields", ctx do
+      assert ctx.role == Roles.get_by!(name: ctx.role.name)
     end
   end
 

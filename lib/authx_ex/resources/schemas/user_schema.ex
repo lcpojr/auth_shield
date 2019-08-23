@@ -54,7 +54,7 @@ defmodule AuthX.Resources.Schemas.User do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   It defines validations and also generates the password hash if
   necessary.
@@ -73,7 +73,7 @@ defmodule AuthX.Resources.Schemas.User do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   THIS DOES NOT CHANGE THE `password` and `is_active`.
   """
@@ -89,7 +89,7 @@ defmodule AuthX.Resources.Schemas.User do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   It changes the related roles list.
   """
@@ -101,7 +101,7 @@ defmodule AuthX.Resources.Schemas.User do
   end
 
   @doc """
-  Generates an `%Ecto.Changeset{}` struct with the changes.
+  Generates an `Ecto.Changeset` struct with the changes.
 
   THIS ONLY ACCEPTS the `is_active` field.
   """
