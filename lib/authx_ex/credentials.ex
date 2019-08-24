@@ -24,10 +24,10 @@ defmodule AuthX.Credentials do
   defdelegate get_password_by(filters), to: Passwords, as: :get_by
   defdelegate get_password_by!(filters), to: Passwords, as: :get_by!
 
-  defdelegate delete_password(pin), to: Passwords, as: :delete
-  defdelegate delete_password!(pin), to: Passwords, as: :delete!
+  defdelegate delete_password(password), to: Passwords, as: :delete
+  defdelegate delete_password!(password), to: Passwords, as: :delete!
 
-  defdelegate check_password?(pin, pin_code), to: Passwords, as: :check_password?
+  defdelegate check_password?(password, pass_code), to: Passwords, as: :check_password?
 
   # PIN
   defdelegate create_pin(params), to: PIN, as: :insert

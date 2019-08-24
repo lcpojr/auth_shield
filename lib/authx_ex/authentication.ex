@@ -8,101 +8,82 @@ defmodule AuthX.Authentication do
   authorized users or in a data authentication server.
   """
 
-  alias AuthX.Credentials.{Passwords, PIN, TOTP}
-  alias AuthX.Resources.Users
+  alias AuthX.Credentials
+  alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
+  alias AuthX.Resources.Schemas.User
 
   @typedoc "Authentication possible responses"
   @type responses :: {:ok, :authenticated} | {:error, :unauthenticated}
 
-  @typedoc "Authentication by password params"
-  @type auth_pass :: %{email: String.t(), password: String.t()}
+  @doc """
+  Authenticates the user by password credential.
 
-  @typedoc "Authentication by pin params"
-  @type auth_pin :: %{email: String.t(), pin: String.t()}
+  If the user is active and the password credentials are right it
+  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
 
-  @typedoc "Authentication by totp params"
-  @type auth_totp :: %{email: String.t(), totp: String.t()}
+  ## Exemples:
+    ```elixir
+    AuthX.Authentication.authenticate_password(user, "Mypass@rd23")
+    ```
+  """
+  @spec authenticate_password(user :: User.t(), pass_code :: String.t()) :: responses()
+  def authenticate_password(%User{} = user, pass_code) when is_binary(pass_code) do
+    with {:active?, true} <- {:active?, user.is_active},
+         {:cred, %Password{} = pass} <- {:cred, Credentials.get_password_by(user_id: user.id)},
+         {:pass?, true} <- {:pass?, Credentials.check_password?(pass, pass_code)} do
+      {:ok, :authenticated}
+    else
+      {:active?, false} -> {:error, :unauthenticated}
+      {:cred, nil} -> {:error, :unauthenticated}
+      {:pass?, false} -> {:error, :unauthenticated}
+    end
+  end
 
   @doc """
-  Authenticate the user by its credentials.
+  Authenticates the user by PIN credential.
 
-  ## Authenticating by Password:
-    If the user is active and the password credentials are right it will return `{:ok, :authenticated}`
-    otherwiese `{:error, :unauthorized}`.
+  If the user is active and the password credentials are right it
+  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
 
-    If you need to know more about how we deal with passwords check `AuthX.Credentials.Passwords`.
-
+  ## Exemples:
     ```elixir
-    AuthX.Authentication.authenticate(%{
-      email: "my-email@authx.com",
-      password: "My_passw@rd2"
-    })
+    AuthX.Authentication.authenticate_pin(user, "332145")
     ```
-
-  ## Authenticating by PIN:
-  If the user is active and the pin credentials are right it will return `{:ok, :authenticated}`
-  otherwiese `{:error, :unauthorized}`.
-
-  If you need to know more about how we deal with pin check `AuthX.Credentials.PIN`.
-
-  ```elixir
-  AuthX.Authentication.authenticate(%{
-    email: "my-email@authx.com",
-    pin: "332145"
-  })
-  ```
-
-  ## Authenticating by TOTP:
-  If the user is active and the totp credentials are right it will return `{:ok, :authenticated}`
-  otherwiese `{:error, :unauthorized}`.
-
-  If you need to know more about how we deal with pin check `AuthX.Credentials.TOTP`.
-
-  ```elixir
-  AuthX.Authentication.authenticate(%{
-    email: "my-email@authx.com",
-    totp: "103245"
-  })
-  ```
   """
-  @spec authenticate(params :: auth_pass() | auth_pin() | auth_totp()) :: responses()
-  def authenticate(%{email: email} = params) when is_map(params) do
-    with {:user, user} when not is_nil(user) <- {:user, Users.get_by(email: email)},
-         {:active?, true} <- {:active?, user.is_active} do
-      do_authenticate(user, params)
+  @spec authenticate_pin(user :: User.t(), pin_code :: String.t()) :: responses()
+  def authenticate_pin(%User{} = user, pin_code) when is_binary(pin_code) do
+    with {:active?, true} <- {:active?, user.is_active},
+         {:cred, %PIN{} = pin} <- {:cred, Credentials.get_pin_by(user_id: user.id)},
+         {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, pin_code)} do
+      {:ok, :authenticated}
     else
-      {:user, nil} -> {:error, :unauthenticated}
       {:active?, false} -> {:error, :unauthenticated}
+      {:cred, nil} -> {:error, :unauthenticated}
+      {:pass?, false} -> {:error, :unauthenticated}
     end
   end
 
-  defp do_authenticate(user, %{password: password}) when is_binary(password) do
-    pass = Passwords.get_by(user_id: user.id)
+  @doc """
+  Authenticates the user by TOTP credential.
 
-    if Passwords.check_password?(pass, password) do
+  If the user is active and the password credentials are right it
+  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
+
+  ## Exemples:
+    ```elixir
+    AuthX.Authentication.authenticate_totp(user, "332145")
+    ```
+  """
+  @spec authenticate_totp(user :: User.t(), totp_code :: String.t()) :: responses()
+  def authenticate_totp(%User{} = user, totp_code) when is_binary(totp_code) do
+    with {:active?, true} <- {:active?, user.is_active},
+         {:cred, %TOTP{} = totp} <- {:cred, Credentials.get_totp_by(user_id: user.id)},
+         {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, totp_code)} do
       {:ok, :authenticated}
     else
-      {:error, :unauthenticated}
-    end
-  end
-
-  defp do_authenticate(user, %{pin: code}) when is_binary(code) do
-    pin = PIN.get_by(user_id: user.id)
-
-    if PIN.check_pin?(pin, code) do
-      {:ok, :authenticated}
-    else
-      {:error, :unauthenticated}
-    end
-  end
-
-  defp do_authenticate(user, %{totp: code}) when is_binary(code) do
-    pin = TOTP.get_by(user_id: user.id)
-
-    if TOTP.check_totp?(pin, code) do
-      {:ok, :authenticated}
-    else
-      {:error, :unauthenticated}
+      {:active?, false} -> {:error, :unauthenticated}
+      {:cred, nil} -> {:error, :unauthenticated}
+      {:pass?, false} -> {:error, :unauthenticated}
     end
   end
 end

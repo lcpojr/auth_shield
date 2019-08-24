@@ -9,71 +9,102 @@ defmodule AuthX.Authorization do
   privileges for users changing his set of roles and its defined permissions.
   """
 
-  alias AuthX.Resources.Users
+  alias AuthX.Resources
+  alias AuthX.Resources.Schemas.User
 
   @typedoc "Authorization possible responses"
   @type responses :: {:ok, :authorized} | {:error, :unauthorized}
 
-  @typedoc "Authorization by role"
-  @type auth_role :: %{email: String.t(), roles: list(String.t())}
-
-  @typedoc "Authorization by permission"
-  @type auth_perm :: %{email: String.t(), permissions: list(String.t())}
+  @typedoc "The type of check that will be performed on role or permission resources"
+  @type check_opts :: [rule: :all | :any]
 
   @doc """
-  Authorize the user by its resources.
+  Authorize an resource user by its roles.
 
-  ## Authorizing by role
-    If the user is active and has one of the given roles it will return `{:ok, :authorized}`
-    otherwiese `{:error, :unauthorized}`.
+  If the user is active and has the given role or, depending of the options, one of the roles it
+  will return `{:ok, :authorized}` otherwiese `{:error, :unauthorized}`.
 
+  ## Exemples:
     ```elixir
-    AuthX.Authentication.authorize(%{
-      "email": "my-email@authx.com",
-      roles: ["partner"]
-    })
-    ```
+    # Checking if the user has all the roles passed
+    AuthX.Authorization.authorize_roles(user, ["admin"], rule: :all)
 
-  ## Authorizing by permissions
-    If the user is active and one of his roles has the required permissions `{:ok, :authorized}`
-    otherwiese `{:error, :unauthorized}`.
-
-    ```elixir
-    AuthX.Authentication.authorize(%{
-      "email": "my-email@authx.com",
-      permissions: ["can_read_contacts"]
-    })
+    # Checking if the user one of the roles passed
+    AuthX.Authorization.authorize_roles(user, ["admin", "root"], rule: :any)
     ```
   """
-  @spec authorize(params :: auth_role() | auth_perm()) :: responses()
-  def authorize(%{email: email} = params) when is_map(params) do
-    with {:user, user} when not is_nil(user) <- {:user, Users.get_by(email: email)},
-         {:active?, true} <- {:active?, user.is_active} do
-      do_authorize(user, params)
+  @spec authorize_roles(user :: User.t(), roles :: list(String.t()), opts :: check_opts()) ::
+          responses()
+  def authorize_roles(%User{} = user, roles, opts \\ []) when is_list(roles) do
+    with {:active?, true} <- {:active?, user.is_active},
+         {:user, %User{} = user} <- {:user, Resources.preload_user(user, [:roles])} do
+      check_user_roles(user.roles, roles, opts[:rule] || :all)
     else
-      {:user, nil} -> {:error, :unauthorized}
       {:active?, false} -> {:error, :unauthorized}
+      {:user, nil} -> {:error, :unauthorized}
     end
   end
 
-  defp do_authorize(user, %{roles: roles}) when is_list(roles) do
-    user = Users.preload(user, [:roles])
+  defp check_user_roles(user_roles, roles, :all) do
+    if Enum.all?(user_roles, &(&1.name in roles)) do
+      {:ok, :authorized}
+    else
+      {:error, :unauthorized}
+    end
+  end
 
-    user.roles
-    |> Enum.any?(&(&1.name in roles))
+  defp check_user_roles(user_roles, roles, :any) do
+    if Enum.any?(user_roles, &(&1.name in roles)) do
+      {:ok, :authorized}
+    else
+      {:error, :unauthorized}
+    end
+  end
+
+  @doc """
+  Authorize an resource user by its role permissions.
+
+  If the user is active and one of its roles has the given permission or, depending of the options,
+  one of the permissions it will return `{:ok, :authorized}` otherwiese `{:error, :unauthorized}`.
+
+  ## Exemples:
+    ```elixir
+    # Checking if the user has all the roles passed
+    AuthX.Authorization.authorize_permissions(user, ["can_create_user"], rule: :all)
+
+    # Checking if the user one of the roles passed
+    AuthX.Authorization.authorize_permissions(user, ["can_create_role", "can_create_permission"], rule: :any)
+    ```
+  """
+  @spec authorize_permissions(
+          user :: User.t(),
+          permissions :: list(String.t()),
+          opts :: check_opts()
+        ) ::
+          responses()
+  def authorize_permissions(%User{} = user, permissions, opts \\ []) when is_list(permissions) do
+    with {:active?, true} <- {:active?, user.is_active},
+         {:user, %User{} = user} <- {:user, Resources.preload_user(user, roles: :permissions)} do
+      check_user_permissions(user.roles, permissions, opts[:rule] || :all)
+    else
+      {:active?, false} -> {:error, :unauthorized}
+      {:user, nil} -> {:error, :unauthorized}
+      {:pass?, nil} -> {:error, :unauthorized}
+    end
+  end
+
+  defp check_user_permissions(user_roles, permissions, :all) do
+    user_roles
+    |> Enum.all?(fn role -> Enum.all?(role.permissions, &(&1.name in permissions)) end)
     |> case do
       true -> {:ok, :authorized}
       false -> {:error, :unauthorized}
     end
   end
 
-  defp do_authorize(user, %{permissions: permissions}) when is_list(permissions) do
-    user = Users.preload(user, roles: :permissions)
-
-    user.roles
-    |> Enum.any?(fn role ->
-      Enum.all?(role.permissions, &(&1.name in permissions))
-    end)
+  defp check_user_permissions(user_roles, permissions, :any) do
+    user_roles
+    |> Enum.any?(fn role -> Enum.all?(role.permissions, &(&1.name in permissions)) end)
     |> case do
       true -> {:ok, :authorized}
       false -> {:error, :unauthorized}

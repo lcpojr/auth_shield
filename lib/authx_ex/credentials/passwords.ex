@@ -149,7 +149,7 @@ defmodule AuthX.Credentials.Passwords do
     AuthX.Credentials.Passwords.check_password?(password, "345617")
     ```
   """
-  @spec check_password?(password :: Password.t(), code :: String.t()) :: boolean()
-  def check_password?(%Password{} = password, code) when is_binary(code),
-    do: Argon2.verify_pass(code, password.password_hash)
+  @spec check_password?(password :: Password.t(), pass_code :: String.t()) :: boolean()
+  def check_password?(%Password{} = password, pass_code) when is_binary(pass_code),
+    do: Argon2.verify_pass(pass_code, password.password_hash)
 end
