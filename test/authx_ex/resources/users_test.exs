@@ -121,7 +121,7 @@ defmodule AuthX.Resources.UsersTest do
       {:ok, users: insert_list(3, :user)}
     end
 
-    test "return a list of Users", ctx do
+    test "return a list of users", ctx do
       assert users = Users.list()
       assert users == ctx.users
     end

@@ -8,12 +8,25 @@ defmodule AuthX.Authentication do
   authorized users or in a data authentication server.
   """
 
+  alias AuthX.Authentication.Sessions
   alias AuthX.Credentials
   alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
   alias AuthX.Resources.Schemas.User
 
   @typedoc "Authentication possible responses"
   @type responses :: {:ok, :authenticated} | {:error, :unauthenticated}
+
+  # Session
+  defdelegate create_session(params), to: Sessions, as: :insert
+  defdelegate create_session!(params), to: Sessions, as: :insert!
+
+  defdelegate update_session(session, params), to: Sessions, as: :update
+  defdelegate update_session!(session, params), to: Sessions, as: :update!
+
+  defdelegate list_session(filters), to: Sessions, as: :list
+
+  defdelegate get_session_by(params), to: Sessions, as: :get_by
+  defdelegate get_session_by!(params), to: Sessions, as: :get_by!
 
   @doc """
   Authenticates the user by password credential.

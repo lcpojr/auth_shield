@@ -3,8 +3,19 @@ defmodule AuthX.Factory do
 
   use ExMachina.Ecto, repo: AuthX.Repo
 
+  alias AuthX.Authentication.Schemas.Session
   alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
   alias AuthX.Resources.Schemas.{Permission, Role, User}
+
+  def session_factory do
+    %Session{
+      user: insert(:user),
+      ip_address: sequence(:session_ip, &"172.31.4._#{&1}"),
+      user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
+      login_at: Timex.now(),
+      expiration: Timex.now() |> Timex.add(Timex.Duration.from_minutes(15))
+    }
+  end
 
   def permission_factory do
     %Permission{

@@ -7,7 +7,7 @@ defmodule AuthX.Repo.Migrations.CreateUserTable do
       add(:first_name, :string, null: false)
       add(:last_name, :string)
       add(:email, :string, null: false)
-      add(:is_active, :boolean, null: false, default: true)
+      add(:is_active, :boolean, null: false, default: false)
 
       timestamps()
     end

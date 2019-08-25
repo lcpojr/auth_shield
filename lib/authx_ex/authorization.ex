@@ -80,8 +80,7 @@ defmodule AuthX.Authorization do
           user :: User.t(),
           permissions :: list(String.t()),
           opts :: check_opts()
-        ) ::
-          responses()
+        ) :: responses()
   def authorize_permissions(%User{} = user, permissions, opts \\ []) when is_list(permissions) do
     with {:active?, true} <- {:active?, user.is_active},
          {:user, %User{} = user} <- {:user, Resources.preload_user(user, roles: :permissions)} do
