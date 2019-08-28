@@ -23,7 +23,7 @@ defmodule AuthX.Authentication.SessionsTest do
 
       assert %{
                expiration: ["can't be blank"],
-               ip_address: ["can't be blank"],
+               remote_ip: ["can't be blank"],
                login_at: ["can't be blank"],
                user_id: ["can't be blank"]
              } == errors_on(changeset)
@@ -31,11 +31,11 @@ defmodule AuthX.Authentication.SessionsTest do
 
     test "fails if params are invalid" do
       assert {:error, changeset} =
-               Sessions.insert(%{expiration: 1, ip_address: 1, login_at: 1, user_id: 1})
+               Sessions.insert(%{expiration: 1, remote_ip: 1, login_at: 1, user_id: 1})
 
       assert %{
                expiration: ["is invalid"],
-               ip_address: ["is invalid"],
+               remote_ip: ["is invalid"],
                login_at: ["is invalid"],
                user_id: ["is invalid"]
              } == errors_on(changeset)
@@ -58,7 +58,7 @@ defmodule AuthX.Authentication.SessionsTest do
 
     test "fails if params are invalid" do
       assert_raise Ecto.InvalidChangesetError, fn ->
-        Sessions.insert!(%{expiration: 1, ip_address: 1, login_at: 1, user_id: 1})
+        Sessions.insert!(%{expiration: 1, remote_ip: 1, login_at: 1, user_id: 1})
       end
     end
   end
@@ -119,7 +119,7 @@ defmodule AuthX.Authentication.SessionsTest do
 
     test "can filter list by database fields", ctx do
       assert [session1 | _] = ctx.sessions
-      assert [session2] = Sessions.list(ip_address: session1.ip_address)
+      assert [session2] = Sessions.list(remote_ip: session1.remote_ip)
       assert session1.id == session2.id
     end
   end

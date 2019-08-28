@@ -44,7 +44,7 @@ defmodule AuthX do
     AuthX.login(
       "lucas@gmail.com",
       "Mypass@rd23",
-      ip_address: "172.31.4.1",
+      remote_ip: "172.31.4.1",
       user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0"
     )
     ```
@@ -72,7 +72,7 @@ defmodule AuthX do
   defp build_session(user, opts) do
     %{
       user_id: user.id,
-      ip_address: opts[:ip_address],
+      remote_ip: opts[:remote_ip],
       user_agent: opts[:user_agent],
       expiration: get_default_expiration(),
       login_at: Timex.now()
@@ -92,18 +92,23 @@ defmodule AuthX do
     AuthX.refresh_session("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec refresh_session(session_id :: String.t()) ::
+  @spec refresh_session(session_id :: String.t() | Session.t()) ::
           {:ok, Session.t()}
           | {:error, :session_expired}
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
   def refresh_session(session_id) when is_binary(session_id) do
-    with {:sess, %Session{} = session} <- {:sess, Authentication.get_session_by(id: session_id)},
-         {:expired?, true} <- {:expired?, Timex.after?(session.expiration, Timex.now())} do
+    case Authentication.get_session_by(id: session_id) do
+      %Session{} = session -> refresh_session(session)
+      nil -> {:error, :session_not_found}
+    end
+  end
+
+  def refresh_session(%Session{} = session) do
+    if Timex.after?(session.expiration, Timex.now()) do
       Authentication.update_session(session, %{expiration: get_default_expiration()})
     else
-      {:sess, nil} -> {:error, :session_not_found}
-      {:expired?, false} -> {:error, :session_expired}
+      {:error, :session_expired}
     end
   end
 
@@ -125,12 +130,17 @@ defmodule AuthX do
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
   def logout(session_id) when is_binary(session_id) do
-    with {:sess, %Session{} = session} <- {:sess, Authentication.get_session_by(id: session_id)},
-         {:expired?, true} <- {:expired?, Timex.after?(session.expiration, Timex.now())} do
+    case Authentication.get_session_by(id: session_id) do
+      %Session{} = session -> logout(session)
+      nil -> {:error, :session_not_found}
+    end
+  end
+
+  def logout(%Session{} = session) do
+    if Timex.after?(session.expiration, Timex.now()) do
       Authentication.update_session(session, %{logout_at: Timex.now()})
     else
-      {:sess, nil} -> {:error, :session_not_found}
-      {:expired?, false} -> {:error, :session_expired}
+      {:error, :session_expired}
     end
   end
 

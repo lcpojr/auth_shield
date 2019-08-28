@@ -9,6 +9,8 @@ defmodule AuthX.Authorization do
   privileges for users changing his set of roles and its defined permissions.
   """
 
+  require Logger
+
   alias AuthX.Resources
   alias AuthX.Resources.Schemas.User
 
@@ -40,8 +42,13 @@ defmodule AuthX.Authorization do
          {:user, %User{} = user} <- {:user, Resources.preload_user(user, [:roles])} do
       check_user_roles(user.roles, roles, opts[:rule] || :all)
     else
-      {:active?, false} -> {:error, :unauthorized}
-      {:user, nil} -> {:error, :unauthorized}
+      {:active?, false} ->
+        Logger.debug("[AuthX.Authorization] failed because user is inactive")
+        {:error, :unauthorized}
+
+      {:user, nil} ->
+        Logger.debug("[AuthX.Authorization] failed because user could not preload roles")
+        {:error, :unauthorized}
     end
   end
 
@@ -49,6 +56,7 @@ defmodule AuthX.Authorization do
     if Enum.all?(user_roles, &(&1.name in roles)) do
       {:ok, :authorized}
     else
+      Logger.debug("[AuthX.Authorization] failed because user does not have all required roles")
       {:error, :unauthorized}
     end
   end
@@ -57,6 +65,7 @@ defmodule AuthX.Authorization do
     if Enum.any?(user_roles, &(&1.name in roles)) do
       {:ok, :authorized}
     else
+      Logger.debug("[AuthX.Authorization] failed because user does not have any required roles")
       {:error, :unauthorized}
     end
   end
@@ -86,9 +95,13 @@ defmodule AuthX.Authorization do
          {:user, %User{} = user} <- {:user, Resources.preload_user(user, roles: :permissions)} do
       check_user_permissions(user.roles, permissions, opts[:rule] || :all)
     else
-      {:active?, false} -> {:error, :unauthorized}
-      {:user, nil} -> {:error, :unauthorized}
-      {:pass?, nil} -> {:error, :unauthorized}
+      {:active?, false} ->
+        Logger.debug("[AuthX.Authorization] failed because user is inactive")
+        {:error, :unauthorized}
+
+      {:user, nil} ->
+        Logger.debug("[AuthX.Authorization] failed because user could not preload permissions")
+        {:error, :unauthorized}
     end
   end
 
@@ -96,8 +109,15 @@ defmodule AuthX.Authorization do
     user_roles
     |> Enum.all?(fn role -> Enum.all?(role.permissions, &(&1.name in permissions)) end)
     |> case do
-      true -> {:ok, :authorized}
-      false -> {:error, :unauthorized}
+      true ->
+        {:ok, :authorized}
+
+      false ->
+        Logger.debug(
+          "[AuthX.Authorization] failed because user does not have all required permission"
+        )
+
+        {:error, :unauthorized}
     end
   end
 
@@ -105,8 +125,15 @@ defmodule AuthX.Authorization do
     user_roles
     |> Enum.any?(fn role -> Enum.all?(role.permissions, &(&1.name in permissions)) end)
     |> case do
-      true -> {:ok, :authorized}
-      false -> {:error, :unauthorized}
+      true ->
+        {:ok, :authorized}
+
+      false ->
+        Logger.debug(
+          "[AuthX.Authorization] failed because user does not have any required permission"
+        )
+
+        {:error, :unauthorized}
     end
   end
 end

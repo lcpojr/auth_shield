@@ -15,7 +15,7 @@ defmodule AuthX.Authentication.Schemas.Session do
   @type t :: %__MODULE__{
           id: binary(),
           user: User.t(),
-          ip_address: String.t(),
+          remote_ip: String.t(),
           user_agent: String.t(),
           expiration: String.t(),
           inserted_at: NaiveDateTime.t(),
@@ -24,9 +24,9 @@ defmodule AuthX.Authentication.Schemas.Session do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  @required_fields [:ip_address, :expiration, :login_at, :user_id]
+  @required_fields [:remote_ip, :expiration, :login_at, :user_id]
   schema "sessions" do
-    field(:ip_address, :string)
+    field(:remote_ip, :string)
     field(:user_agent, :string)
     field(:expiration, :naive_datetime)
     field(:login_at, :naive_datetime)

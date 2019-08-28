@@ -22,7 +22,7 @@ defmodule AuthX.Authentication.Sessions do
     ```elixir
     AuthX.Authentication.Sessions.insert(%{
       user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
-      ip_address: "173.121.3.0",
+      remote_ip: "173.121.3.0",
       user_agent: "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
       expiration: ~U[2019-08-23 23:06:50.424629Z]
     })

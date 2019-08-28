@@ -35,7 +35,7 @@ defmodule AuthXTest do
     test "succeeds if params are valid", ctx do
       assert user = Repo.update!(User.changeset_status(ctx.user, %{is_active: true}))
 
-      assert ip = "172.31.4.1"
+      assert remote_ip = "172.31.4.1"
       assert user_agent = "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0"
 
       assert {:ok, session} =
@@ -44,7 +44,7 @@ defmodule AuthXTest do
                    "email" => ctx.user.email,
                    "password" => "My_passw@rd1"
                  },
-                 ip_address: ip,
+                 remote_ip: remote_ip,
                  user_agent: user_agent
                )
 

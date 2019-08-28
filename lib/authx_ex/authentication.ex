@@ -8,6 +8,8 @@ defmodule AuthX.Authentication do
   authorized users or in a data authentication server.
   """
 
+  require Logger
+
   alias AuthX.Authentication.Sessions
   alias AuthX.Credentials
   alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
@@ -46,9 +48,17 @@ defmodule AuthX.Authentication do
          {:pass?, true} <- {:pass?, Credentials.check_password?(pass, pass_code)} do
       {:ok, :authenticated}
     else
-      {:active?, false} -> {:error, :unauthenticated}
-      {:cred, nil} -> {:error, :unauthenticated}
-      {:pass?, false} -> {:error, :unauthenticated}
+      {:active?, false} ->
+        Logger.debug("[AuthX.Authentication] failed because user is inactive")
+        {:error, :unauthenticated}
+
+      {:cred, nil} ->
+        Logger.debug("[AuthX.Authentication] failed because Password credential was not found")
+        {:error, :unauthenticated}
+
+      {:pass?, false} ->
+        Logger.debug("[AuthX.Authentication] failed because Password was wrong")
+        {:error, :unauthenticated}
     end
   end
 
@@ -70,9 +80,17 @@ defmodule AuthX.Authentication do
          {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, pin_code)} do
       {:ok, :authenticated}
     else
-      {:active?, false} -> {:error, :unauthenticated}
-      {:cred, nil} -> {:error, :unauthenticated}
-      {:pass?, false} -> {:error, :unauthenticated}
+      {:active?, false} ->
+        Logger.debug("[AuthX.Authentication] failed because user is inactive")
+        {:error, :unauthenticated}
+
+      {:cred, nil} ->
+        Logger.debug("[AuthX.Authentication] failed because PIN credential was not found")
+        {:error, :unauthenticated}
+
+      {:pass?, false} ->
+        Logger.debug("[AuthX.Authentication] failed because PIN was wrong")
+        {:error, :unauthenticated}
     end
   end
 
@@ -94,9 +112,17 @@ defmodule AuthX.Authentication do
          {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, totp_code)} do
       {:ok, :authenticated}
     else
-      {:active?, false} -> {:error, :unauthenticated}
-      {:cred, nil} -> {:error, :unauthenticated}
-      {:pass?, false} -> {:error, :unauthenticated}
+      {:active?, false} ->
+        Logger.debug("[AuthX.Authentication] failed because user is inactive")
+        {:error, :unauthenticated}
+
+      {:cred, nil} ->
+        Logger.debug("[AuthX.Authentication] failed because TOTP credential was not found")
+        {:error, :unauthenticated}
+
+      {:pass?, false} ->
+        Logger.debug("[AuthX.Authentication] failed because TOTP was wrong")
+        {:error, :unauthenticated}
     end
   end
 end

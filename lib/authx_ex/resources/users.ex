@@ -59,7 +59,7 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Updates a `User` register.
+  Updates a `AuthX.Resources.Schemas.User` register.
 
   ## Exemples:
     ```elixir
