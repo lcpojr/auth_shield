@@ -3,3 +3,8 @@
 Elixir authentication and authorization framework
 
 AuthX is an simple framework/lib implementation that was created to be used with other frameworks (as Phoenix) or applications in order to provide an simple authentication and authorization management to the services.
+
+
+### Data storage and Database model.
+
+To know more about how we store the data and the database model check the documentation [here](https://github.com/lcpojr/authx_ex/blob/master/docs/database.md).
