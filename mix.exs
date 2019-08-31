@@ -66,7 +66,7 @@ defmodule AuthX.MixProject do
   defp docs do
     [
       main: "AuthX",
-      extras: ["README.md", "docs/database.md"],
+      extras: ["README.md", "docs/database.md", "docs/authentication.md", "docs/authorization.md"],
       deps: [
         postgrex: "https://hexdocs.pm/postgrex/readme.html",
         ecto_sql: "https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html",
