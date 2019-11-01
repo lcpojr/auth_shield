@@ -46,12 +46,10 @@ defmodule AuthShield.MixProject do
       {:argon2_elixir, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:eqrcode, "~> 0.1.6"},
-      {:uuid, "~> 1.1.8"},
-      {:jason, "~> 1.1"},
       {:timex, "~> 3.5"},
 
       # Database
-      {:postgrex, "~> 0.14"},
+      {:postgrex, "~> 0.14", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.1"},
 
       # Tools
