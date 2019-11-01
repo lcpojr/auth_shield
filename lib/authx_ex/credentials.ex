@@ -1,4 +1,4 @@
-defmodule AuthX.Credentials do
+defmodule AuthShield.Credentials do
   @moduledoc """
   Credentials are means to proof that an identity is valid
   in authentications.
@@ -13,7 +13,7 @@ defmodule AuthX.Credentials do
   This module provides an interaface that delegates to the specific credential functions.
   """
 
-  alias AuthX.Credentials.{Passwords, PIN, TOTP}
+  alias AuthShield.Credentials.{Passwords, PIN, TOTP}
 
   # Password
   defdelegate create_password(params), to: Passwords, as: :insert

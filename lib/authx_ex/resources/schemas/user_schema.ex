@@ -1,4 +1,4 @@
-defmodule AuthX.Resources.Schemas.User do
+defmodule AuthShield.Resources.Schemas.User do
   @moduledoc """
   Defines all the user fields and its relations.
 
@@ -13,8 +13,8 @@ defmodule AuthX.Resources.Schemas.User do
 
   import Ecto.Changeset
 
-  alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
-  alias AuthX.Resources.Schemas.{Role, UsersRoles}
+  alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
+  alias AuthShield.Resources.Schemas.{Role, UsersRoles}
 
   @typedoc "Abstract user module type."
   @type t :: %__MODULE__{

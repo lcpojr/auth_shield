@@ -1,4 +1,4 @@
-defmodule AuthX.Validations.Login do
+defmodule AuthShield.Validations.Login do
   @moduledoc false
 
   use Ecto.Schema

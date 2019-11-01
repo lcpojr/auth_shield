@@ -1,4 +1,4 @@
-defmodule AuthX.Authentication.Schemas.Session do
+defmodule AuthShield.Authentication.Schemas.Session do
   @moduledoc """
   User authenticated session.
   """
@@ -7,7 +7,7 @@ defmodule AuthX.Authentication.Schemas.Session do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.User
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc """
   Abstract session module type.

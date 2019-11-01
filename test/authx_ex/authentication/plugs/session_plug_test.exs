@@ -1,8 +1,8 @@
-defmodule AuthX.Authentication.Plugs.AuthSessionTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Authentication.Plugs.AuthSessionTest do
+  use AuthShield.DataCase, async: true
   use Plug.Test
 
-  alias AuthX.Authentication.Plugs.AuthSession
+  alias AuthShield.Authentication.Plugs.AuthSession
 
   describe "GET /users" do
     setup do

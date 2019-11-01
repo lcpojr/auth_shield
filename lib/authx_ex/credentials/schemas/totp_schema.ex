@@ -1,4 +1,4 @@
-defmodule AuthX.Credentials.Schemas.TOTP do
+defmodule AuthShield.Credentials.Schemas.TOTP do
   @moduledoc """
   TOTP (Time-based One Time Password) shema model.
 
@@ -12,7 +12,7 @@ defmodule AuthX.Credentials.Schemas.TOTP do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.User
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc """
   Abstract totp module type.
@@ -30,7 +30,7 @@ defmodule AuthX.Credentials.Schemas.TOTP do
         }
 
   @characters String.split("234567ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", "")
-  @issuer "AuthX"
+  @issuer "AuthShield"
   @digits 6
   @period 30
 

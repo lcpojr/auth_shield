@@ -1,4 +1,4 @@
-defmodule AuthX.Resources.Roles do
+defmodule AuthShield.Resources.Roles do
   @moduledoc """
   Roles are used to define an group of permissions that the user has. It usually works
   as an definition of the person function in the company.
@@ -16,8 +16,8 @@ defmodule AuthX.Resources.Roles do
 
   require Ecto.Query
 
-  alias AuthX.Repo
-  alias AuthX.Resources.Schemas.{Permission, Role}
+  alias AuthShield.Repo
+  alias AuthShield.Resources.Schemas.{Permission, Role}
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, Role.t()}
@@ -26,11 +26,11 @@ defmodule AuthX.Resources.Roles do
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
   @doc """
-  Creates a new `AuthX.Resources.Schemas.Role` register.
+  Creates a new `AuthShield.Resources.Schemas.Role` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Roles.insert(%{
+    AuthShield.Resources.Roles.insert(%{
       name: "admin",
       description: "System administrator"
     })
@@ -44,7 +44,7 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Creates a new `AuthX.Resources.Schemas.Role` register.
+  Creates a new `AuthShield.Resources.Schemas.Role` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -56,10 +56,10 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Updates a `AuthX.Resources.Schemas.Role` register.
+  Updates a `AuthShield.Resources.Schemas.Role` register.
   ## Exemples:
     ```elixir
-    AuthX.Resources.Roles.update(role, %{
+    AuthShield.Resources.Roles.update(role, %{
       name: "sales",
       description: "The sales user roles"
     })
@@ -73,7 +73,7 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Updates a `AuthX.Resources.Schemas.Role` register.
+  Updates a `AuthShield.Resources.Schemas.Role` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -85,15 +85,15 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Returns a list of `AuthX.Resources.Schemas.Role` by its filters
+  Returns a list of `AuthShield.Resources.Schemas.Role` by its filters
 
   ## Exemples:
     ```elixir
     # Getting the all list
-    AuthX.Resources.Roles.list()
+    AuthShield.Resources.Roles.list()
 
     # Filtering the list by field
-    AuthX.Resources.Roles.list(name: "admin")
+    AuthShield.Resources.Roles.list(name: "admin")
     ```
   """
   @spec list(filters :: keyword()) :: list(Role.t())
@@ -104,11 +104,11 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Gets a `AuthX.Resources.Schemas.Role` register by its filters.
+  Gets a `AuthShield.Resources.Schemas.Role` register by its filters.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Roles.get_by(name: "admin")
+    AuthShield.Resources.Roles.get_by(name: "admin")
     ```
   """
   @spec get_by(filters :: keyword()) :: Role.t() | nil
@@ -123,18 +123,18 @@ defmodule AuthX.Resources.Roles do
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Role, filters)
 
   @doc """
-  Deletes a `AuthX.Resources.Schemas.Role` register.
+  Deletes a `AuthShield.Resources.Schemas.Role` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Roles.delete(role)
+    AuthShield.Resources.Roles.delete(role)
     ```
   """
   @spec delete(role :: Role.t()) :: success_response() | failed_response()
   def delete(%Role{} = role), do: Repo.delete(role)
 
   @doc """
-  Deletes a `AuthX.Resources.Schemas.Role` register.
+  Deletes a `AuthShield.Resources.Schemas.Role` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -142,14 +142,14 @@ defmodule AuthX.Resources.Roles do
   def delete!(%Role{} = role), do: Repo.delete!(role)
 
   @doc """
-  Changes an set of `AuthX.Resources.Schemas.Permission` of the `AuthX.Resources.Schemas.Role`.
+  Changes an set of `AuthShield.Resources.Schemas.Permission` of the `AuthShield.Resources.Schemas.Role`.
 
   It will add or remove permissions from the list, so you should pass
   the all list every time you use this function.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Roles.change_permissions(role, permissions)
+    AuthShield.Resources.Roles.change_permissions(role, permissions)
     ```
   """
   @spec change_permissions(role :: Role.t(), permissions :: list(Permission.t())) ::
@@ -162,7 +162,7 @@ defmodule AuthX.Resources.Roles do
   end
 
   @doc """
-  Changes an set of `AuthX.Resources.Schemas.Permission` of the `AuthX.Resources.Schemas.Role`.
+  Changes an set of `AuthShield.Resources.Schemas.Permission` of the `AuthShield.Resources.Schemas.Role`.
 
   Similar to `appeappend_permissionnd_role/2` but returns the struct or raises if the changeset is invalid.
   """

@@ -1,11 +1,11 @@
-defmodule AuthX.Authentication.Plugs.AuthSession do
+defmodule AuthShield.Authentication.Plugs.AuthSession do
   @moduledoc """
   Helper plug for authenticated sessions.
   """
 
   import Plug.Conn
 
-  alias AuthX.Authentication.Schemas.Session
+  alias AuthShield.Authentication.Schemas.Session
   alias Plug.Conn
 
   require Logger
@@ -24,7 +24,7 @@ defmodule AuthX.Authentication.Plugs.AuthSession do
          {:valid_agent?, true} <- {:valid_agent?, session.user_agent == user_agent},
          {:expired?, true} <- {:expired?, Timex.after?(session.expiration, Timex.now())} do
       session
-      |> AuthX.refresh_session()
+      |> AuthShield.refresh_session()
       |> case do
         {:ok, session} ->
           conn

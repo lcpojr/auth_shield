@@ -1,4 +1,4 @@
-defmodule AuthX.Resources.Schemas.RolesPermissions do
+defmodule AuthShield.Resources.Schemas.RolesPermissions do
   @moduledoc """
   Defines the association between roles and permissions.
 
@@ -10,7 +10,7 @@ defmodule AuthX.Resources.Schemas.RolesPermissions do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.{Permission, Role}
+  alias AuthShield.Resources.Schemas.{Permission, Role}
 
   @typedoc """
   Abstract role module type.

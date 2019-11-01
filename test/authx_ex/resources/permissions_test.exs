@@ -1,8 +1,8 @@
-defmodule AuthX.Resources.PermissionsTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Resources.PermissionsTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Resources.Permissions
-  alias AuthX.Resources.Schemas.Permission
+  alias AuthShield.Resources.Permissions
+  alias AuthShield.Resources.Schemas.Permission
 
   describe "insert/1" do
     test "creates a new permission on database" do

@@ -1,4 +1,4 @@
-defmodule AuthX.Authentication do
+defmodule AuthShield.Authentication do
   @moduledoc """
   Implements a set of functions to deal with authentication requests.
 
@@ -10,10 +10,10 @@ defmodule AuthX.Authentication do
 
   require Logger
 
-  alias AuthX.Authentication.Sessions
-  alias AuthX.Credentials
-  alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
-  alias AuthX.Resources.Schemas.User
+  alias AuthShield.Authentication.Sessions
+  alias AuthShield.Credentials
+  alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc "Authentication possible responses"
   @type responses :: {:ok, :authenticated} | {:error, :unauthenticated}
@@ -38,7 +38,7 @@ defmodule AuthX.Authentication do
 
   ## Exemples:
     ```elixir
-    AuthX.Authentication.authenticate_password(user, "Mypass@rd23")
+    AuthShield.Authentication.authenticate_password(user, "Mypass@rd23")
     ```
   """
   @spec authenticate_password(user :: User.t(), pass_code :: String.t()) :: responses()
@@ -49,15 +49,18 @@ defmodule AuthX.Authentication do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[AuthX.Authentication] failed because user is inactive")
+        Logger.debug("[AuthShield.Authentication] failed because user is inactive")
         {:error, :unauthenticated}
 
       {:cred, nil} ->
-        Logger.debug("[AuthX.Authentication] failed because Password credential was not found")
+        Logger.debug(
+          "[AuthShield.Authentication] failed because Password credential was not found"
+        )
+
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[AuthX.Authentication] failed because Password was wrong")
+        Logger.debug("[AuthShield.Authentication] failed because Password was wrong")
         {:error, :unauthenticated}
     end
   end
@@ -70,7 +73,7 @@ defmodule AuthX.Authentication do
 
   ## Exemples:
     ```elixir
-    AuthX.Authentication.authenticate_pin(user, "332145")
+    AuthShield.Authentication.authenticate_pin(user, "332145")
     ```
   """
   @spec authenticate_pin(user :: User.t(), pin_code :: String.t()) :: responses()
@@ -81,15 +84,15 @@ defmodule AuthX.Authentication do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[AuthX.Authentication] failed because user is inactive")
+        Logger.debug("[AuthShield.Authentication] failed because user is inactive")
         {:error, :unauthenticated}
 
       {:cred, nil} ->
-        Logger.debug("[AuthX.Authentication] failed because PIN credential was not found")
+        Logger.debug("[AuthShield.Authentication] failed because PIN credential was not found")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[AuthX.Authentication] failed because PIN was wrong")
+        Logger.debug("[AuthShield.Authentication] failed because PIN was wrong")
         {:error, :unauthenticated}
     end
   end
@@ -102,7 +105,7 @@ defmodule AuthX.Authentication do
 
   ## Exemples:
     ```elixir
-    AuthX.Authentication.authenticate_totp(user, "332145")
+    AuthShield.Authentication.authenticate_totp(user, "332145")
     ```
   """
   @spec authenticate_totp(user :: User.t(), totp_code :: String.t()) :: responses()
@@ -113,15 +116,15 @@ defmodule AuthX.Authentication do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[AuthX.Authentication] failed because user is inactive")
+        Logger.debug("[AuthShield.Authentication] failed because user is inactive")
         {:error, :unauthenticated}
 
       {:cred, nil} ->
-        Logger.debug("[AuthX.Authentication] failed because TOTP credential was not found")
+        Logger.debug("[AuthShield.Authentication] failed because TOTP credential was not found")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[AuthX.Authentication] failed because TOTP was wrong")
+        Logger.debug("[AuthShield.Authentication] failed because TOTP was wrong")
         {:error, :unauthenticated}
     end
   end

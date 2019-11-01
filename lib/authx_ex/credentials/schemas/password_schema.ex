@@ -1,4 +1,4 @@
-defmodule AuthX.Credentials.Schemas.Password do
+defmodule AuthShield.Credentials.Schemas.Password do
   @moduledoc """
   Password schema model.
 
@@ -12,7 +12,7 @@ defmodule AuthX.Credentials.Schemas.Password do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.User
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc """
   Abstract password module type.

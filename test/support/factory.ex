@@ -1,11 +1,11 @@
-defmodule AuthX.Factory do
+defmodule AuthShield.Factory do
   @moduledoc false
 
-  use ExMachina.Ecto, repo: AuthX.Repo
+  use ExMachina.Ecto, repo: AuthShield.Repo
 
-  alias AuthX.Authentication.Schemas.Session
-  alias AuthX.Credentials.Schemas.{Password, PIN, TOTP}
-  alias AuthX.Resources.Schemas.{Permission, Role, User}
+  alias AuthShield.Authentication.Schemas.Session
+  alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
+  alias AuthShield.Resources.Schemas.{Permission, Role, User}
 
   def session_factory do
     %Session{
@@ -35,7 +35,7 @@ defmodule AuthX.Factory do
     %User{
       first_name: sequence(:user_first_name, &"Jane #{&1}"),
       last_name: sequence(:user_last_name, &"Smith #{&1}"),
-      email: sequence(:user_email, &"#{&1}@authx.com")
+      email: sequence(:user_email, &"#{&1}@AuthShield.com")
     }
   end
 
@@ -49,8 +49,8 @@ defmodule AuthX.Factory do
 
   def totp_factory do
     secret = TOTP.generate_random_secret()
-    issuer = "AuthX"
-    email = "email@authx.com"
+    issuer = "AuthShield"
+    email = "email@AuthShield.com"
     label = :http_uri.encode("#{issuer}:#{email}")
     digits = 6
     period = 30

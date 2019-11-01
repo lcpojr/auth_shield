@@ -1,4 +1,4 @@
-defmodule AuthX.Credentials.TOTP do
+defmodule AuthShield.Credentials.TOTP do
   @moduledoc """
   Time-based One-Time Password (TOTP) is an extension of
   the HMAC-based One-time Password algorithm (HOTP) generating
@@ -13,8 +13,8 @@ defmodule AuthX.Credentials.TOTP do
 
   require Ecto.Query
 
-  alias AuthX.Credentials.Schemas.TOTP
-  alias AuthX.Repo
+  alias AuthShield.Credentials.Schemas.TOTP
+  alias AuthShield.Repo
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, TOTP.t()}
@@ -23,18 +23,18 @@ defmodule AuthX.Credentials.TOTP do
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
   @doc """
-  Creates a new `AuthX.Credentials.Schemas.TOTP` register.
+  Creates a new `AuthShield.Credentials.Schemas.TOTP` register.
 
   ## Exemples:
     ```elixir
     # Simple insert
-    AuthX.Credentials.TOTP.insert(%{
+    AuthShield.Credentials.TOTP.insert(%{
       user_id: ecb4c67d-6380-4984-ae04-1563e885d59e",
       email: "lucas@gmail.com"
     })
 
     # All parameters
-    AuthX.Credentials.TOTP.insert(%{
+    AuthShield.Credentials.TOTP.insert(%{
       user_id: ecb4c67d-6380-4984-ae04-1563e885d59e",
       email: "lucas@gmail.com",
       issuer: "MyWebpage",
@@ -51,7 +51,7 @@ defmodule AuthX.Credentials.TOTP do
   end
 
   @doc """
-  Creates a new `AuthX.Credentials.Schemas.TOTP` register.
+  Creates a new `AuthShield.Credentials.Schemas.TOTP` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -63,15 +63,15 @@ defmodule AuthX.Credentials.TOTP do
   end
 
   @doc """
-  Returns a list of `AuthX.Credentials.Schemas.TOTP` by its filters
+  Returns a list of `AuthShield.Credentials.Schemas.TOTP` by its filters
 
   ## Exemples:
     ```elixir
     # Getting the all list
-    AuthX.Credentials.TOTP.list()
+    AuthShield.Credentials.TOTP.list()
 
     # Filtering the list by field
-    AuthX.Credentials.TOTP.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.Credentials.TOTP.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec list(filters :: keyword()) :: list(TOTP.t())
@@ -82,18 +82,18 @@ defmodule AuthX.Credentials.TOTP do
   end
 
   @doc """
-  Gets a `AuthX.Credentials.Schemas.TOTP` register by its filters.
+  Gets a `AuthShield.Credentials.Schemas.TOTP` register by its filters.
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.TOTP.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.Credentials.TOTP.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec get_by(filters :: keyword()) :: TOTP.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(TOTP, filters)
 
   @doc """
-  Gets a `AuthX.Credentials.Schemas.TOTP` register by its filters.
+  Gets a `AuthShield.Credentials.Schemas.TOTP` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -101,18 +101,18 @@ defmodule AuthX.Credentials.TOTP do
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(TOTP, filters)
 
   @doc """
-  Deletes a `AuthX.Credentials.Schemas.TOTP` register.
+  Deletes a `AuthShield.Credentials.Schemas.TOTP` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.TOTP.delete(totp)
+    AuthShield.Credentials.TOTP.delete(totp)
     ```
   """
   @spec delete(totp :: TOTP.t()) :: success_response() | failed_response()
   def delete(%TOTP{} = totp), do: Repo.delete(totp)
 
   @doc """
-  Deletes a `AuthX.Credentials.Schemas.TOTP` register.
+  Deletes a `AuthShield.Credentials.Schemas.TOTP` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -125,10 +125,10 @@ defmodule AuthX.Credentials.TOTP do
   ## Exemples:
     ```elixir
     # Using default timestamp
-    AuthX.Credentials.TOTP.check_pin?(totp, "332456")
+    AuthShield.Credentials.TOTP.check_pin?(totp, "332456")
 
     # Defining timestamp
-    AuthX.Credentials.TOTP.check_pin?(totp, "332456", Timex.now("America/Chicago"))
+    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", Timex.now("America/Chicago"))
     ```
   """
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()

@@ -1,4 +1,4 @@
-defmodule AuthX.Credentials.Schemas.PIN do
+defmodule AuthShield.Credentials.Schemas.PIN do
   @moduledoc """
   PIN (Personal Identification Number) schema model.
 
@@ -12,7 +12,7 @@ defmodule AuthX.Credentials.Schemas.PIN do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.User
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc """
   Abstract pin module type.

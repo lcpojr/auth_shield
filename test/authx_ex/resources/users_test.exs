@@ -1,8 +1,8 @@
-defmodule AuthX.Resources.UsersTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Resources.UsersTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Resources.Schemas.User
-  alias AuthX.Resources.Users
+  alias AuthShield.Resources.Schemas.User
+  alias AuthShield.Resources.Users
 
   describe "insert/1" do
     test "creates a new user on database" do

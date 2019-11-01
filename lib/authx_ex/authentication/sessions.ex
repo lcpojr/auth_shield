@@ -1,4 +1,4 @@
-defmodule AuthX.Authentication.Sessions do
+defmodule AuthShield.Authentication.Sessions do
   @moduledoc """
   Session is a temporary authentication information that is stored on server in order
   to keep the user logged in.
@@ -6,8 +6,8 @@ defmodule AuthX.Authentication.Sessions do
 
   require Ecto.Query
 
-  alias AuthX.Authentication.Schemas.Session
-  alias AuthX.Repo
+  alias AuthShield.Authentication.Schemas.Session
+  alias AuthShield.Repo
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, Session.t()}
@@ -16,11 +16,11 @@ defmodule AuthX.Authentication.Sessions do
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
   @doc """
-  Creates a new `AuthX.Authentication.Schemas.Session` register.
+  Creates a new `AuthShield.Authentication.Schemas.Session` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Authentication.Sessions.insert(%{
+    AuthShield.Authentication.Sessions.insert(%{
       user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
       remote_ip: "173.121.3.0",
       user_agent: "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
@@ -36,7 +36,7 @@ defmodule AuthX.Authentication.Sessions do
   end
 
   @doc """
-  Creates a new `AuthX.Authentication.Schemas.Session` register.
+  Creates a new `AuthShield.Authentication.Schemas.Session` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -48,11 +48,11 @@ defmodule AuthX.Authentication.Sessions do
   end
 
   @doc """
-  Updates a `AuthX.Authentication.Schemas.Session` register.
+  Updates a `AuthShield.Authentication.Schemas.Session` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Authentication.Sessions.update(session, %{expiration: ~U[2019-08-30 23:06:50.424629Z]})
+    AuthShield.Authentication.Sessions.update(session, %{expiration: ~U[2019-08-30 23:06:50.424629Z]})
     ```
   """
   @spec update(session :: Session.t(), params :: map()) :: success_response() | failed_response()
@@ -63,7 +63,7 @@ defmodule AuthX.Authentication.Sessions do
   end
 
   @doc """
-  Updates a `AuthX.Authentication.Schemas.Session` register.
+  Updates a `AuthShield.Authentication.Schemas.Session` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -75,15 +75,15 @@ defmodule AuthX.Authentication.Sessions do
   end
 
   @doc """
-  Returns a list of `AuthX.Authentication.Schemas.Session` by its filters
+  Returns a list of `AuthShield.Authentication.Schemas.Session` by its filters
 
   ## Exemples:
     ```elixir
     # Getting the all list
-    AuthX.Authentication.Sessions.list()
+    AuthShield.Authentication.Sessions.list()
 
     # Filtering the list by field
-    AuthX.Authentication.Sessions.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.Authentication.Sessions.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec list(filters :: keyword()) :: list(Session.t())
@@ -94,18 +94,18 @@ defmodule AuthX.Authentication.Sessions do
   end
 
   @doc """
-  Gets a `AuthX.Authentication.Schemas.Session` register by its filters.
+  Gets a `AuthShield.Authentication.Schemas.Session` register by its filters.
 
   ## Exemples:
     ```elixir
-    AuthX.Authentication.Sessions.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.Authentication.Sessions.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec get_by(filters :: keyword()) :: Session.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Session, filters)
 
   @doc """
-  Gets a `AuthX.Authentication.Schemas.Session` register by its filters.
+  Gets a `AuthShield.Authentication.Schemas.Session` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """

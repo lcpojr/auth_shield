@@ -1,4 +1,4 @@
-defmodule AuthX.Resources.Permissions do
+defmodule AuthShield.Resources.Permissions do
   @moduledoc """
   Permissions are used to define what a set of roles can do in the
   system.
@@ -16,8 +16,8 @@ defmodule AuthX.Resources.Permissions do
 
   require Ecto.Query
 
-  alias AuthX.Repo
-  alias AuthX.Resources.Schemas.Permission
+  alias AuthShield.Repo
+  alias AuthShield.Resources.Schemas.Permission
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, Permission.t()}
@@ -26,11 +26,11 @@ defmodule AuthX.Resources.Permissions do
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
   @doc """
-  Creates a new `AuthX.Resources.Schemas.Permission` register.
+  Creates a new `AuthShield.Resources.Schemas.Permission` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Permissions.insert(%{
+    AuthShield.Resources.Permissions.insert(%{
       name: "can_create_users",
       description: "Has permission to create users on the system"
     })
@@ -44,7 +44,7 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Creates a new `AuthX.Resources.Schemas.Permission` register.
+  Creates a new `AuthShield.Resources.Schemas.Permission` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -56,11 +56,11 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Updates a `AuthX.Resources.Schemas.Permission` register.
+  Updates a `AuthShield.Resources.Schemas.Permission` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Permissions.update(permission, %{
+    AuthShield.Resources.Permissions.update(permission, %{
       name: "can_update_users",
       description: "Has permission to update users on the system"
     })
@@ -75,7 +75,7 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Updates a `AuthX.Resources.Schemas.Permission` register.
+  Updates a `AuthShield.Resources.Schemas.Permission` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -87,15 +87,15 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Returns a list of `AuthX.Resources.Schemas.Permission` by its filters
+  Returns a list of `AuthShield.Resources.Schemas.Permission` by its filters
 
   ## Exemples:
     ```elixir
     # Getting the all list
-    AuthX.Resources.Permissions.list()
+    AuthShield.Resources.Permissions.list()
 
     # Filtering the list by field
-    AuthX.Resources.Permissions.list(name: "can_create_users")
+    AuthShield.Resources.Permissions.list(name: "can_create_users")
     ```
   """
   @spec list(filters :: keyword()) :: list(Permission.t())
@@ -106,18 +106,18 @@ defmodule AuthX.Resources.Permissions do
   end
 
   @doc """
-  Gets a `AuthX.Resources.Schemas.Permission` register by its filters.
+  Gets a `AuthShield.Resources.Schemas.Permission` register by its filters.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Permissions.get_by(name: "can_create_users")
+    AuthShield.Resources.Permissions.get_by(name: "can_create_users")
     ```
   """
   @spec get_by(filters :: keyword()) :: Permission.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Permission, filters)
 
   @doc """
-  Gets a `AuthX.Resources.Schemas.Permission` register by its filters.
+  Gets a `AuthShield.Resources.Schemas.Permission` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -125,18 +125,18 @@ defmodule AuthX.Resources.Permissions do
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Permission, filters)
 
   @doc """
-  Deletes a `AuthX.Resources.Schemas.Permission` register.
+  Deletes a `AuthShield.Resources.Schemas.Permission` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Permissions.delete(permission)
+    AuthShield.Resources.Permissions.delete(permission)
     ```
   """
   @spec delete(permission :: Permission.t()) :: success_response() | failed_response()
   def delete(%Permission{} = permission), do: Repo.delete(permission)
 
   @doc """
-  Deletes a `AuthX.Resources.Schemas.Permission` register.
+  Deletes a `AuthShield.Resources.Schemas.Permission` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """

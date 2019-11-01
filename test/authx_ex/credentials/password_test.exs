@@ -1,8 +1,8 @@
-defmodule AuthX.Credentials.PasswordTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Credentials.PasswordTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Credentials.Passwords
-  alias AuthX.Credentials.Schemas.Password, as: PasswordSchema
+  alias AuthShield.Credentials.Passwords
+  alias AuthShield.Credentials.Schemas.Password, as: PasswordSchema
 
   setup do
     {:ok, user: insert(:user)}

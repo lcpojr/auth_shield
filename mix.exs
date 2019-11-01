@@ -1,14 +1,14 @@
-defmodule AuthX.MixProject do
+defmodule AuthShield.MixProject do
   use Mix.Project
 
   @version "0.0.1"
-  @url "https://github.com/lcpojr/authx_ex"
+  @url "https://github.com/lcpojr/auth_shield"
   @maintainers ["Luiz Carlos", "Yashin Santos"]
 
   def project do
     [
-      name: "AuthX",
-      app: :authx_ex,
+      name: "AuthShield",
+      app: :auth_shield,
       version: @version,
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -30,7 +30,7 @@ defmodule AuthX.MixProject do
 
   def application do
     [
-      mod: {AuthX.Application, []},
+      mod: {AuthShield.Application, []},
       extra_applications: [:logger]
     ]
   end
@@ -65,7 +65,7 @@ defmodule AuthX.MixProject do
 
   defp docs do
     [
-      main: "AuthX",
+      main: "AuthShield",
       extras: ["README.md", "docs/database.md", "docs/authentication.md", "docs/authorization.md"],
       deps: [
         postgrex: "https://hexdocs.pm/postgrex/readme.html",
@@ -80,16 +80,16 @@ defmodule AuthX.MixProject do
   defp aliases do
     [
       "ecto.setup": [
-        "ecto.create -r AuthX.Repo",
-        "ecto.migrate -r AuthX.Repo"
+        "ecto.create -r AuthShield.Repo",
+        "ecto.migrate -r AuthShield.Repo"
       ],
       "ecto.reset": [
-        "ecto.drop -r AuthX.Repo",
+        "ecto.drop -r AuthShield.Repo",
         "ecto.setup"
       ],
       test: [
-        "ecto.create --quiet -r AuthX.Repo",
-        "ecto.migrate -r AuthX.Repo",
+        "ecto.create --quiet -r AuthShield.Repo",
+        "ecto.migrate -r AuthShield.Repo",
         "test"
       ]
     ]

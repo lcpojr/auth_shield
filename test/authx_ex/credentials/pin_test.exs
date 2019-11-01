@@ -1,8 +1,8 @@
-defmodule AuthX.Credentials.PINTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Credentials.PINTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Credentials.PIN
-  alias AuthX.Credentials.Schemas.PIN, as: PINSchema
+  alias AuthShield.Credentials.PIN
+  alias AuthShield.Credentials.Schemas.PIN, as: PINSchema
 
   setup do
     {:ok, user: insert(:user)}

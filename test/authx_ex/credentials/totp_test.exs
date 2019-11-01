@@ -1,8 +1,8 @@
-defmodule AuthX.Credentials.TOTPTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Credentials.TOTPTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Credentials.Schemas.TOTP, as: TOTPSchema
-  alias AuthX.Credentials.TOTP
+  alias AuthShield.Credentials.Schemas.TOTP, as: TOTPSchema
+  alias AuthShield.Credentials.TOTP
 
   setup do
     {:ok, user: insert(:user)}

@@ -1,4 +1,4 @@
-defmodule AuthX.Authorization do
+defmodule AuthShield.Authorization do
   @moduledoc """
   Implements a set of functions to deal with authorization requests.
 
@@ -11,8 +11,8 @@ defmodule AuthX.Authorization do
 
   require Logger
 
-  alias AuthX.Resources
-  alias AuthX.Resources.Schemas.User
+  alias AuthShield.Resources
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc "Authorization possible responses"
   @type responses :: {:ok, :authorized} | {:error, :unauthorized}
@@ -29,10 +29,10 @@ defmodule AuthX.Authorization do
   ## Exemples:
     ```elixir
     # Checking if the user has all the roles passed
-    AuthX.Authorization.authorize_roles(user, ["admin"], rule: :all)
+    AuthShield.Authorization.authorize_roles(user, ["admin"], rule: :all)
 
     # Checking if the user one of the roles passed
-    AuthX.Authorization.authorize_roles(user, ["admin", "root"], rule: :any)
+    AuthShield.Authorization.authorize_roles(user, ["admin", "root"], rule: :any)
     ```
   """
   @spec authorize_roles(user :: User.t(), roles :: list(String.t()), opts :: check_opts()) ::
@@ -43,11 +43,11 @@ defmodule AuthX.Authorization do
       check_user_roles(user.roles, roles, opts[:rule] || :all)
     else
       {:active?, false} ->
-        Logger.debug("[AuthX.Authorization] failed because user is inactive")
+        Logger.debug("[AuthShield.Authorization] failed because user is inactive")
         {:error, :unauthorized}
 
       {:user, nil} ->
-        Logger.debug("[AuthX.Authorization] failed because user could not preload roles")
+        Logger.debug("[AuthShield.Authorization] failed because user could not preload roles")
         {:error, :unauthorized}
     end
   end
@@ -56,7 +56,10 @@ defmodule AuthX.Authorization do
     if Enum.all?(user_roles, &(&1.name in roles)) do
       {:ok, :authorized}
     else
-      Logger.debug("[AuthX.Authorization] failed because user does not have all required roles")
+      Logger.debug(
+        "[AuthShield.Authorization] failed because user does not have all required roles"
+      )
+
       {:error, :unauthorized}
     end
   end
@@ -65,7 +68,10 @@ defmodule AuthX.Authorization do
     if Enum.any?(user_roles, &(&1.name in roles)) do
       {:ok, :authorized}
     else
-      Logger.debug("[AuthX.Authorization] failed because user does not have any required roles")
+      Logger.debug(
+        "[AuthShield.Authorization] failed because user does not have any required roles"
+      )
+
       {:error, :unauthorized}
     end
   end
@@ -79,10 +85,10 @@ defmodule AuthX.Authorization do
   ## Exemples:
     ```elixir
     # Checking if the user has all the roles passed
-    AuthX.Authorization.authorize_permissions(user, ["can_create_user"], rule: :all)
+    AuthShield.Authorization.authorize_permissions(user, ["can_create_user"], rule: :all)
 
     # Checking if the user one of the roles passed
-    AuthX.Authorization.authorize_permissions(user, ["can_create_role", "can_create_permission"], rule: :any)
+    AuthShield.Authorization.authorize_permissions(user, ["can_create_role", "can_create_permission"], rule: :any)
     ```
   """
   @spec authorize_permissions(
@@ -96,11 +102,14 @@ defmodule AuthX.Authorization do
       check_user_permissions(user.roles, permissions, opts[:rule] || :all)
     else
       {:active?, false} ->
-        Logger.debug("[AuthX.Authorization] failed because user is inactive")
+        Logger.debug("[AuthShield.Authorization] failed because user is inactive")
         {:error, :unauthorized}
 
       {:user, nil} ->
-        Logger.debug("[AuthX.Authorization] failed because user could not preload permissions")
+        Logger.debug(
+          "[AuthShield.Authorization] failed because user could not preload permissions"
+        )
+
         {:error, :unauthorized}
     end
   end
@@ -114,7 +123,7 @@ defmodule AuthX.Authorization do
 
       false ->
         Logger.debug(
-          "[AuthX.Authorization] failed because user does not have all required permission"
+          "[AuthShield.Authorization] failed because user does not have all required permission"
         )
 
         {:error, :unauthorized}
@@ -130,7 +139,7 @@ defmodule AuthX.Authorization do
 
       false ->
         Logger.debug(
-          "[AuthX.Authorization] failed because user does not have any required permission"
+          "[AuthShield.Authorization] failed because user does not have any required permission"
         )
 
         {:error, :unauthorized}

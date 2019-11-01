@@ -1,7 +1,7 @@
 {
     "skip_files": [
-        "lib/authx_ex/credentials.ex",
-        "lib/authx_ex/resources.ex",
+        "lib/auth_shield/credentials.ex",
+        "lib/auth_shield/resources.ex",
         "lib/repo.ex"
     ]
 }

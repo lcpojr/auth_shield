@@ -1,20 +1,20 @@
-defmodule AuthX do
+defmodule AuthShield do
   @moduledoc """
   Elixir authentication and authorization framework
   """
 
-  alias AuthX.Authentication
-  alias AuthX.Authentication.Schemas.Session
-  alias AuthX.Resources
-  alias AuthX.Resources.Schemas.User
-  alias AuthX.Validations.{Login, SignUp}
+  alias AuthShield.Authentication
+  alias AuthShield.Authentication.Schemas.Session
+  alias AuthShield.Resources
+  alias AuthShield.Resources.Schemas.User
+  alias AuthShield.Validations.{Login, SignUp}
 
   @doc """
   Creates a new user on the system.
 
   ## Exemples:
     ```elixir
-    AuthX.signup(%{
+    AuthShield.signup(%{
       first_name: "Lucas",
       last_name: "Mesquita",
       email: "lucas@gmail.com",
@@ -35,13 +35,13 @@ defmodule AuthX do
   @doc """
   Login the user by its password credential.
 
-  If the user and its credential is authenticated it will return `{:ok, AuthX.Authentication.Schemas.Session.t()}`.
+  If the user and its credential is authenticated it will return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
 
   This session should be stored and used on authentication to keep users logged.
 
   ## Exemples:
     ```elixir
-    AuthX.login(
+    AuthShield.login(
       "lucas@gmail.com",
       "Mypass@rd23",
       remote_ip: "172.31.4.1",
@@ -83,13 +83,13 @@ defmodule AuthX do
   Refresh the authenticated user session.
 
   If the user is authenticated and has an active session it will
-  return `{:ok, AuthX.Authentication.Schemas.Session.t()}`.
+  return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
 
   This session should be stored and used on authentication to keep users logged.
 
   ## Exemples:
     ```elixir
-    AuthX.refresh_session("ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.refresh_session("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec refresh_session(session_id :: String.t() | Session.t()) ::
@@ -116,13 +116,13 @@ defmodule AuthX do
   Logout the authenticated user session.
 
   If the user is authenticated and has an active session it will
-  return `{:ok, AuthX.Authentication.Schemas.Session.t()}`.
+  return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
 
   This session can be ignored because use is not active anymore.
 
   ## Exemples:
     ```elixir
-    AuthX.logout("ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.logout("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec logout(session_id :: String.t()) ::

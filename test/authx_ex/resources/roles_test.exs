@@ -1,8 +1,8 @@
-defmodule AuthX.Resources.RolesTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Resources.RolesTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Resources.Roles
-  alias AuthX.Resources.Schemas.Role
+  alias AuthShield.Resources.Roles
+  alias AuthShield.Resources.Schemas.Role
 
   describe "insert/1" do
     test "creates a new role on database" do

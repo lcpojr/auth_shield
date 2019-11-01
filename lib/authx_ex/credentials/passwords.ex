@@ -1,4 +1,4 @@
-defmodule AuthX.Credentials.Passwords do
+defmodule AuthShield.Credentials.Passwords do
   @moduledoc """
   A password is an set of characters that only the user should known.
 
@@ -11,8 +11,8 @@ defmodule AuthX.Credentials.Passwords do
 
   require Ecto.Query
 
-  alias AuthX.Credentials.Schemas.Password
-  alias AuthX.Repo
+  alias AuthShield.Credentials.Schemas.Password
+  alias AuthShield.Repo
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, Password.t()}
@@ -21,11 +21,11 @@ defmodule AuthX.Credentials.Passwords do
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
   @doc """
-  Creates a new `AuthX.Credentials.Schemas.Password` register.
+  Creates a new `AuthShield.Credentials.Schemas.Password` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.Passwords.insert(%{
+    AuthShield.Credentials.Passwords.insert(%{
       user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
       password: "Mypass@rd123"
     })
@@ -39,7 +39,7 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Creates a new `AuthX.Credentials.Schemas.Password` register.
+  Creates a new `AuthShield.Credentials.Schemas.Password` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -51,11 +51,11 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Updates a `AuthX.Credentials.Schemas.Password` register.
+  Updates a `AuthShield.Credentials.Schemas.Password` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.Passwords.update(password, %{
+    AuthShield.Credentials.Passwords.update(password, %{
       user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
       password: "Mypass@rd123"
     })
@@ -70,7 +70,7 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Updates a `AuthX.Credentials.Schemas.Password` register.
+  Updates a `AuthShield.Credentials.Schemas.Password` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -82,15 +82,15 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Returns a list of `AuthX.Credentials.Schemas.Password` by its filters
+  Returns a list of `AuthShield.Credentials.Schemas.Password` by its filters
 
   ## Exemples:
     ```elixir
     # Getting the all list
-    AuthX.Credentials.Passwords.list()
+    AuthShield.Credentials.Passwords.list()
 
     # Filtering the list by field
-    AuthX.Credentials.Passwords.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.Credentials.Passwords.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec list(filters :: keyword()) :: list(Password.t())
@@ -101,18 +101,18 @@ defmodule AuthX.Credentials.Passwords do
   end
 
   @doc """
-  Gets a `AuthX.Credentials.Schemas.Password` register by its filters.
+  Gets a `AuthShield.Credentials.Schemas.Password` register by its filters.
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.Passwords.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
+    AuthShield.Credentials.Passwords.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
   @spec get_by(filters :: keyword()) :: Password.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(Password, filters)
 
   @doc """
-  Gets a `AuthX.Credentials.Schemas.Password` register by its filters.
+  Gets a `AuthShield.Credentials.Schemas.Password` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -120,18 +120,18 @@ defmodule AuthX.Credentials.Passwords do
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Password, filters)
 
   @doc """
-  Deletes a `AuthX.Credentials.Schemas.Password` register.
+  Deletes a `AuthShield.Credentials.Schemas.Password` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.Passwords.delete(password)
+    AuthShield.Credentials.Passwords.delete(password)
     ```
   """
   @spec delete(password :: Password.t()) :: success_response() | failed_response()
   def delete(%Password{} = password), do: Repo.delete(password)
 
   @doc """
-  Deletes a `AuthX.Credentials.Schemas.Password` register.
+  Deletes a `AuthShield.Credentials.Schemas.Password` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -146,7 +146,7 @@ defmodule AuthX.Credentials.Passwords do
 
   ## Exemples:
     ```elixir
-    AuthX.Credentials.Passwords.check_password?(password, "345617")
+    AuthShield.Credentials.Passwords.check_password?(password, "345617")
     ```
   """
   @spec check_password?(password :: Password.t(), pass_code :: String.t()) :: boolean()

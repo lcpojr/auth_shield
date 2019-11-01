@@ -10,3 +10,5 @@ erl_crash.dump
 /.elixir_ls/
 .vscode/*
 .formatter.exs
+.tool-versions
+docker-compose.yml

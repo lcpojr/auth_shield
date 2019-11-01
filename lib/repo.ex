@@ -1,4 +1,4 @@
-defmodule AuthX.Repo do
+defmodule AuthShield.Repo do
   @moduledoc false
-  use Ecto.Repo, otp_app: :authx_ex, adapter: Ecto.Adapters.Postgres
+  use Ecto.Repo, otp_app: :auth_shield, adapter: Ecto.Adapters.Postgres
 end

@@ -1,4 +1,4 @@
-defmodule AuthX.DataCase do
+defmodule AuthShield.DataCase do
   @moduledoc false
 
   use ExUnit.CaseTemplate
@@ -7,18 +7,18 @@ defmodule AuthX.DataCase do
 
   using do
     quote do
-      alias Authx.Ecto.Changeset
-      alias AuthX.Repo
+      alias AuthShield.Ecto.Changeset
+      alias AuthShield.Repo
 
-      import AuthX.{DataCase, Factory}
+      import AuthShield.{DataCase, Factory}
     end
   end
 
   setup tags do
-    :ok = Sandbox.checkout(AuthX.Repo)
+    :ok = Sandbox.checkout(AuthShield.Repo)
 
     unless tags[:async] do
-      Sandbox.mode(AuthX.Repo, {:shared, self()})
+      Sandbox.mode(AuthShield.Repo, {:shared, self()})
     end
 
     :ok

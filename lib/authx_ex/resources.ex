@@ -1,4 +1,4 @@
-defmodule AuthX.Resources do
+defmodule AuthShield.Resources do
   @moduledoc """
   Resources can be used to definy many things but in authorization and authentication
   we use it as a form to declare something we need in order to deal with identities
@@ -10,7 +10,7 @@ defmodule AuthX.Resources do
   This module provides an interaface that delegates to the specific resource functions.
   """
 
-  alias AuthX.Resources.{Permissions, Roles, Users}
+  alias AuthShield.Resources.{Permissions, Roles, Users}
 
   # Users
   defdelegate create_user(params), to: Users, as: :insert

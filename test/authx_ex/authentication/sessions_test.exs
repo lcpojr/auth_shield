@@ -1,8 +1,8 @@
-defmodule AuthX.Authentication.SessionsTest do
-  use AuthX.DataCase, async: true
+defmodule AuthShield.Authentication.SessionsTest do
+  use AuthShield.DataCase, async: true
 
-  alias AuthX.Authentication.Schemas.Session
-  alias AuthX.Authentication.Sessions
+  alias AuthShield.Authentication.Schemas.Session
+  alias AuthShield.Authentication.Sessions
 
   setup do
     {:ok, user: insert(:user)}

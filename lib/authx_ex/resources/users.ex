@@ -1,4 +1,4 @@
-defmodule AuthX.Resources.Users do
+defmodule AuthShield.Resources.Users do
   @moduledoc """
   Users are the base identity in our architecture. It is used to
   authenticate an profile or to authorize an action given its set of
@@ -13,8 +13,8 @@ defmodule AuthX.Resources.Users do
 
   require Ecto.Query
 
-  alias AuthX.Repo
-  alias AuthX.Resources.Schemas.{Role, User}
+  alias AuthShield.Repo
+  alias AuthShield.Resources.Schemas.{Role, User}
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, User.t()}
@@ -23,15 +23,15 @@ defmodule AuthX.Resources.Users do
   @type failed_response :: {:error, Ecto.Changeset.t()}
 
   @doc """
-  Creates a new `AuthX.Resources.Schemas.User` register.
+  Creates a new `AuthShield.Resources.Schemas.User` register.
 
   For an user to be authenticate in the system it will need an credential,
-  so when we create an user we also creates a `AuthX.Credentials.Schemas.Password`
-  that can be used to perform actions in `AuthX.Authentication`.
+  so when we create an user we also creates a `AuthShield.Credentials.Schemas.Password`
+  that can be used to perform actions in `AuthShield.Authentication`.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.insert(%{
+    AuthShield.Resources.Users.insert(%{
       first_name: "Lucas",
       last_name: "Mesquita",
       email: "lucas@gmail.com",
@@ -47,7 +47,7 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Creates a new `AuthX.Resources.Schemas.User` register.
+  Creates a new `AuthShield.Resources.Schemas.User` register.
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -59,11 +59,11 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Updates a `AuthX.Resources.Schemas.User` register.
+  Updates a `AuthShield.Resources.Schemas.User` register.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.update(user, %{
+    AuthShield.Resources.Users.update(user, %{
       first_name: "Marcos",
       last_name: "Farias",
       email: "marcos@gmail.com"
@@ -78,7 +78,7 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Updates a `AuthX.Resources.Schemas.User` register.
+  Updates a `AuthShield.Resources.Schemas.User` register.
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -90,15 +90,15 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Returns a list of `AuthX.Resources.Schemas.User` by its filters
+  Returns a list of `AuthShield.Resources.Schemas.User` by its filters
 
   ## Exemples:
     ```elixir
     # Getting the all list
-    AuthX.Resources.Users.list()
+    AuthShield.Resources.Users.list()
 
     # Filtering the list by field
-    AuthX.Resources.Users.list(name: "Lucas")
+    AuthShield.Resources.Users.list(name: "Lucas")
     ```
   """
   @spec list(filters :: keyword()) :: list(User.t())
@@ -109,18 +109,18 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Gets a `AuthX.Resources.Schemas.User` register by its filters.
+  Gets a `AuthShield.Resources.Schemas.User` register by its filters.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.get_by(email: "lucas@gmail.com")
+    AuthShield.Resources.Users.get_by(email: "lucas@gmail.com")
     ```
   """
   @spec get_by(filters :: keyword()) :: User.t() | nil
   def get_by(filters) when is_list(filters), do: Repo.get_by(User, filters)
 
   @doc """
-  Gets a `AuthX.Resources.Schemas.User` register by its filters.
+  Gets a `AuthShield.Resources.Schemas.User` register by its filters.
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -132,14 +132,14 @@ defmodule AuthX.Resources.Users do
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.delete(user)
+    AuthShield.Resources.Users.delete(user)
     ```
   """
   @spec delete(user :: User.t()) :: success_response() | failed_response()
   def delete(%User{} = user), do: Repo.delete(user)
 
   @doc """
-  Deletes a `AuthX.Resources.Schemas.User` register.
+  Deletes a `AuthShield.Resources.Schemas.User` register.
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -151,7 +151,7 @@ defmodule AuthX.Resources.Users do
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.status(user, true)
+    AuthShield.Resources.Users.status(user, true)
     ```
   """
   @spec status(user :: User.t(), status :: boolean()) :: success_response() | failed_response()
@@ -162,7 +162,7 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Changes a `AuthX.Resources.Schemas.User` status.
+  Changes a `AuthShield.Resources.Schemas.User` status.
 
   Similar to `status/1` but returns the struct or raises if the changeset is invalid.
   """
@@ -174,16 +174,16 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Changes an set of `AuthX.Resources.Schemas.Role` of the `AuthX.Resources.Schemas.User`.
+  Changes an set of `AuthShield.Resources.Schemas.Role` of the `AuthShield.Resources.Schemas.User`.
 
   It will add or remove roles from the list, so you should pass
   the complete list every time you use this function.
 
-  Roles are used in `AuthX.Authorization` requests.
+  Roles are used in `AuthShield.Authorization` requests.
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.change_roles(user, roles)
+    AuthShield.Resources.Users.change_roles(user, roles)
     ```
   """
   @spec change_roles(user :: User.t(), roles :: list(Role.t())) ::
@@ -196,7 +196,7 @@ defmodule AuthX.Resources.Users do
   end
 
   @doc """
-  Changes an set of `AuthX.Resources.Schemas.Role` of the `AuthX.Resources.Schemas.User`.
+  Changes an set of `AuthShield.Resources.Schemas.Role` of the `AuthShield.Resources.Schemas.User`.
 
   Similar to `append_role/2` but returns the struct or raises if the changeset is invalid.
   """
@@ -213,7 +213,7 @@ defmodule AuthX.Resources.Users do
 
   ## Exemples:
     ```elixir
-    AuthX.Resources.Users.preload(user, [:roles])
+    AuthShield.Resources.Users.preload(user, [:roles])
     ```
   """
   @spec preload(user :: User.t(), fields :: keyword()) :: User.t()

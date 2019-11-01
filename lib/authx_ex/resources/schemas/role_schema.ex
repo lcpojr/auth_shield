@@ -1,4 +1,4 @@
-defmodule AuthX.Resources.Schemas.Role do
+defmodule AuthShield.Resources.Schemas.Role do
   @moduledoc """
   Defines all roles that an user can have.
 
@@ -10,7 +10,7 @@ defmodule AuthX.Resources.Schemas.Role do
 
   import Ecto.Changeset
 
-  alias AuthX.Resources.Schemas.{Permission, RolesPermissions, User, UsersRoles}
+  alias AuthShield.Resources.Schemas.{Permission, RolesPermissions, User, UsersRoles}
 
   @typedoc """
   Abstract role module type.
