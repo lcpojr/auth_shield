@@ -4,6 +4,7 @@ defmodule AuthShield.MixProject do
   @version "0.0.1"
   @url "https://github.com/lcpojr/auth_shield"
   @maintainers ["Luiz Carlos", "Yashin Santos"]
+  @licenses ["Apache 2.0"]
 
   def project do
     [
@@ -16,10 +17,9 @@ defmodule AuthShield.MixProject do
       deps: deps(),
       docs: docs(),
       aliases: aliases(),
+      package: package(),
+      description: description(),
       source_url: @url,
-      homepage_url: @url,
-      maintainers: @maintainers,
-      description: "Elixir authentication and authorization framework",
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -60,6 +60,20 @@ defmodule AuthShield.MixProject do
       {:ex_machina, "~> 2.3.0", only: :test, runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:excoveralls, "~> 0.11", only: :test}
+    ]
+  end
+
+  defp description, do: "Elixir authentication and authorization"
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE.txt", "CHANGELOG.md"],
+      maintainers: @maintainers,
+      licenses: @licenses,
+      links: %{
+        "GitHub" => "https://github.com/lcpojr/auth_shield",
+        "Docs" => "http://hexdocs.pm/auth_shield"
+      }
     ]
   end
 
