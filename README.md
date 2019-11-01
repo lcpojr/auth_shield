@@ -1,4 +1,4 @@
-# auth_shield [![Build Status](https://travis-ci.com/lcpojr/auth_shield.svg?branch=master)](https://travis-ci.com/lcpojr/auth_shield) [![Coverage Status](https://coveralls.io/repos/github/lcpojr/auth_shield/badge.svg?branch=master)](https://coveralls.io/github/lcpojr/auth_shield?branch=master)
+# Auth Shield [![Build Status](https://travis-ci.com/lcpojr/auth_shield.svg?branch=master)](https://travis-ci.com/lcpojr/auth_shield) [![Coverage Status](https://coveralls.io/repos/github/lcpojr/auth_shield/badge.svg?branch=master)](https://coveralls.io/github/lcpojr/auth_shield?branch=master)
 
 Elixir authentication and authorization
 
