@@ -10,7 +10,7 @@ defmodule AuthShield.Credentials.TOTPTest do
 
   describe "insert/1" do
     setup ctx do
-      {:ok, params: params_for(:totp) |> Map.put(:user_id, ctx.user.id)}
+      {:ok, params: %{params_for(:totp) | user_id: ctx.user.id}}
     end
 
     test "creates a new totp on database", ctx do

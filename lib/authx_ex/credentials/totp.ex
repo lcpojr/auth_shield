@@ -128,12 +128,12 @@ defmodule AuthShield.Credentials.TOTP do
     AuthShield.Credentials.TOTP.check_pin?(totp, "332456")
 
     # Defining timestamp
-    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", Timex.now("America/Chicago"))
+    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", NaiveDateTime.utc_now())
     ```
   """
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
-  def check_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
-    credential_totp = TOTP.generate_totp(totp.secret, totp.period, totp.digits, datetime_now)
+  def check_totp?(%TOTP{} = totp, code, now \\ NaiveDateTime.utc_now()) when is_binary(code) do
+    credential_totp = TOTP.generate_totp(totp.secret, totp.period, totp.digits, now)
     if credential_totp == code, do: true, else: false
   end
 end

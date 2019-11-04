@@ -4,8 +4,8 @@ defmodule AuthX.Repo.Migrations.CreateSessionTable do
   def change do
     create table(:sessions, primary_key: false) do
       add(:id, :uuid, primary_key: true)
-      add(:remote_ip, :string, null: false)
-      add(:user_agent, :string, null: false)
+      add(:remote_ip, :string)
+      add(:user_agent, :string)
       add(:expiration, :naive_datetime, null: false)
       add(:login_at, :naive_datetime, null: false)
       add(:logout_at, :naive_datetime)

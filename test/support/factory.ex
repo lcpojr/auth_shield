@@ -12,8 +12,8 @@ defmodule AuthShield.Factory do
       user: insert(:user),
       remote_ip: sequence(:session_remote_ip, &"172.31.4.#{&1}"),
       user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
-      login_at: Timex.now(),
-      expiration: Timex.now() |> Timex.add(Timex.Duration.from_minutes(15))
+      login_at: NaiveDateTime.utc_now(),
+      expiration: NaiveDateTime.utc_now() |> NaiveDateTime.add(60 * 15, :second)
     }
   end
 
@@ -40,11 +40,19 @@ defmodule AuthShield.Factory do
   end
 
   def password_factory do
-    %Password{password: "My_passw@rd1", password_hash: Argon2.hash_pwd_salt("My_passw@rd1")}
+    %Password{
+      user_id: Ecto.UUID.generate(),
+      password: "My_passw@rd1",
+      password_hash: Argon2.hash_pwd_salt("My_passw@rd1")
+    }
   end
 
   def pin_factory do
-    %PIN{pin: "123456", pin_hash: Argon2.hash_pwd_salt("123456")}
+    %PIN{
+      user_id: Ecto.UUID.generate(),
+      pin: "123456",
+      pin_hash: Argon2.hash_pwd_salt("123456")
+    }
   end
 
   def totp_factory do
@@ -62,6 +70,7 @@ defmodule AuthShield.Factory do
       |> Base.encode64(padding: false)
 
     %TOTP{
+      user_id: Ecto.UUID.generate(),
       secret: secret,
       email: email,
       issuer: issuer,

@@ -10,7 +10,7 @@ defmodule AuthShield.Credentials.PINTest do
 
   describe "insert/1" do
     setup ctx do
-      {:ok, params: params_for(:pin) |> Map.put(:user_id, ctx.user.id)}
+      {:ok, params: %{params_for(:pin) | user_id: ctx.user.id}}
     end
 
     test "creates a new pin on database", ctx do

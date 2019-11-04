@@ -5,9 +5,13 @@ defmodule AuthShield do
 
   alias AuthShield.Authentication
   alias AuthShield.Authentication.Schemas.Session
+  alias AuthShield.Authentication.Sessions
   alias AuthShield.Resources
   alias AuthShield.Resources.Schemas.User
   alias AuthShield.Validations.{Login, SignUp}
+
+  @typedoc "Session options used on authentication plug"
+  @type session_options :: [user_agent: String.t(), remote_ip: String.t()]
 
   @doc """
   Creates a new user on the system.
@@ -18,7 +22,7 @@ defmodule AuthShield do
       first_name: "Lucas",
       last_name: "Mesquita",
       email: "lucas@gmail.com",
-      password: "My_passw@rd2"}
+      password: "My_passw@rd2"
     })
     ```
   """
@@ -42,20 +46,18 @@ defmodule AuthShield do
   ## Exemples:
     ```elixir
     AuthShield.login(
-      "lucas@gmail.com",
-      "Mypass@rd23",
+      %{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"},
       remote_ip: "172.31.4.1",
       user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0"
     )
     ```
   """
-  @spec login(params :: Login.t(), opts :: keyword()) ::
+  @spec login(params :: Login.t(), opts :: session_options()) ::
           {:ok, Session.t()}
           | {:error, :user_not_found}
           | {:error, :unauthenticated}
           | {:error, Ecto.Changeset.t()}
-          | {:error, map()}
-  def login(params, opts \\ []) when is_map(params) do
+  def login(params, opts \\ []) when is_map(params) and is_list(opts) do
     with {:ok, input} <- Login.validate(params),
          {:user, %User{} = user} <- {:user, Resources.get_user_by(email: input.email)},
          {:ok, :authenticated} <- Authentication.authenticate_password(user, input.password) do
@@ -72,10 +74,10 @@ defmodule AuthShield do
   defp build_session(user, opts) do
     %{
       user_id: user.id,
-      remote_ip: opts[:remote_ip],
-      user_agent: opts[:user_agent],
+      remote_ip: opts[:remote_ip] || nil,
+      user_agent: opts[:user_agent] || nil,
       expiration: get_default_expiration(),
-      login_at: Timex.now()
+      login_at: NaiveDateTime.utc_now()
     }
   end
 
@@ -105,10 +107,9 @@ defmodule AuthShield do
   end
 
   def refresh_session(%Session{} = session) do
-    if Timex.after?(session.expiration, Timex.now()) do
-      Authentication.update_session(session, %{expiration: get_default_expiration()})
-    else
-      {:error, :session_expired}
+    case Sessions.is_expired?(session) do
+      false -> Authentication.update_session(session, %{expiration: get_default_expiration()})
+      true -> {:error, :session_expired}
     end
   end
 
@@ -125,7 +126,7 @@ defmodule AuthShield do
     AuthShield.logout("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec logout(session_id :: String.t()) ::
+  @spec logout(session_id :: String.t() | Session.t()) ::
           {:ok, Session.t()}
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
@@ -137,14 +138,19 @@ defmodule AuthShield do
   end
 
   def logout(%Session{} = session) do
-    if Timex.after?(session.expiration, Timex.now()) do
-      Authentication.update_session(session, %{logout_at: Timex.now()})
-    else
-      {:error, :session_expired}
+    case Sessions.is_expired?(session) do
+      false -> Authentication.update_session(session, %{logout_at: NaiveDateTime.utc_now()})
+      true -> {:error, :session_expired}
     end
   end
 
   defp get_default_expiration do
-    Timex.now() |> Timex.add(Timex.Duration.from_minutes(15))
+    expiration =
+      :auth_shield
+      |> Application.get_env(AuthShield)
+      |> Keyword.get(:session_expiration)
+
+    NaiveDateTime.utc_now()
+    |> NaiveDateTime.add(expiration, :second)
   end
 end

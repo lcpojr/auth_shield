@@ -55,5 +55,7 @@ defmodule AuthShield.Credentials do
   defdelegate delete_totp(totp), to: TOTP, as: :delete
   defdelegate delete_totp!(totp), to: TOTP, as: :delete!
 
-  defdelegate check_totp?(totp, totp_code, datetime \\ Timex.now()), to: TOTP, as: :check_totp?
+  defdelegate check_totp?(totp, totp_code, datetime \\ NaiveDateTime.utc_now()),
+    to: TOTP,
+    as: :check_totp?
 end

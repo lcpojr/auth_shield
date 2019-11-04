@@ -46,7 +46,6 @@ defmodule AuthShield.MixProject do
       {:argon2_elixir, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:eqrcode, "~> 0.1.6"},
-      {:timex, "~> 3.5"},
 
       # Database
       {:postgrex, "~> 0.14", only: [:dev, :test], runtime: false},
@@ -83,7 +82,6 @@ defmodule AuthShield.MixProject do
         postgrex: "https://hexdocs.pm/postgrex/readme.html",
         ecto_sql: "https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html",
         argon2_elixir: "https://hexdocs.pm/argon2_elixir/api-reference.html",
-        timex: "https://hexdocs.pm/timex/getting-started.html",
         eqrcode: "https://hexdocs.pm/eqrcode/readme.html"
       ]
     ]

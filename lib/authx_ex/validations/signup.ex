@@ -40,12 +40,7 @@ defmodule AuthShield.Validations.SignUp do
     {password, changes} = Map.pop(changes, :password)
 
     # Parsing params
-    input =
-      changes
-      |> Map.put(:password_credential, %{password: password})
-      |> Map.put(:login_at, Timex.now())
-
-    {:ok, input}
+    {:ok, Map.put(changes, :password_credential, %{password: password})}
   end
 
   defp check_validation(%{valid?: false} = changeset) do

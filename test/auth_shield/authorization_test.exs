@@ -6,8 +6,8 @@ defmodule AuthShield.AuthorizationTest do
 
   setup do
     permission = insert(:permission)
-    role = insert(:role, Map.put(params_for(:role), :permissions, [permission]))
-    user = insert(:user, Map.put(params_for(:user), :roles, [role]))
+    role = insert(:role, permissions: [permission])
+    user = insert(:user, roles: [role])
     {:ok, user: user, role: role, permission: permission}
   end
 

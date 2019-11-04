@@ -10,7 +10,7 @@ defmodule AuthShield.Credentials.PasswordTest do
 
   describe "insert/1" do
     setup ctx do
-      {:ok, params: params_for(:password) |> Map.put(:user_id, ctx.user.id)}
+      {:ok, params: %{params_for(:password) | user_id: ctx.user.id}}
     end
 
     test "creates a new password on database", ctx do
