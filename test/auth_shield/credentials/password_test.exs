@@ -71,6 +71,45 @@ defmodule AuthShield.Credentials.PasswordTest do
     end
   end
 
+  describe "update/2" do
+    setup ctx do
+      {:ok, password: insert(:password, user_id: ctx.user.id)}
+    end
+
+    test "updates a password on database", ctx do
+      assert {:ok, _password} =
+               Passwords.update(
+                 ctx.password,
+                 %{password: "MynewpassW@rd", user_id: ctx.user.id}
+               )
+    end
+
+    test "fails if params are invalid", ctx do
+      assert {:error, changeset} = Passwords.update(ctx.password, %{password: 1, user_id: 1})
+      assert %{password: ["is invalid"], user_id: ["is invalid"]} == errors_on(changeset)
+    end
+  end
+
+  describe "update!/2" do
+    setup ctx do
+      {:ok, password: insert(:password, user_id: ctx.user.id)}
+    end
+
+    test "updates a password on database", ctx do
+      assert {:ok, _password} =
+               Passwords.update!(
+                 ctx.password,
+                 %{password: "MynewpassW@rd", user_id: ctx.user.id}
+               )
+    end
+
+    test "fails if params are invalid", ctx do
+      assert_raise Ecto.InvalidChangesetError, fn ->
+        Passwords.update!(ctx.password, %{name: 1, description: 1})
+      end
+    end
+  end
+
   describe "list/1" do
     setup do
       users = insert_list(3, :user)

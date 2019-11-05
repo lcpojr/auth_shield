@@ -19,11 +19,7 @@ defmodule AuthShield.Resources.Permissions do
   alias AuthShield.Repo
   alias AuthShield.Resources.Schemas.Permission
 
-  @typedoc "Transactional responses of success"
-  @type success_response :: {:ok, Permission.t()}
-
-  @typedoc "Transactional responses of failed"
-  @type failed_response :: {:error, Ecto.Changeset.t()}
+  @behaviour AuthShield.Resources.Behaviour
 
   @doc """
   Creates a new `AuthShield.Resources.Schemas.Permission` register.
@@ -36,7 +32,7 @@ defmodule AuthShield.Resources.Permissions do
     })
     ```
   """
-  @spec insert(params :: map()) :: success_response() | failed_response()
+  @impl true
   def insert(params) when is_map(params) do
     %Permission{}
     |> Permission.changeset(params)
@@ -48,7 +44,7 @@ defmodule AuthShield.Resources.Permissions do
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: Permission.t() | no_return()
+  @impl true
   def insert!(params) when is_map(params) do
     %Permission{}
     |> Permission.changeset(params)
@@ -66,8 +62,7 @@ defmodule AuthShield.Resources.Permissions do
     })
     ```
   """
-  @spec update(permission :: Permission.t(), params :: map()) ::
-          success_response() | failed_response()
+  @impl true
   def update(%Permission{} = permission, params) when is_map(params) do
     permission
     |> Permission.changeset(params)
@@ -79,7 +74,7 @@ defmodule AuthShield.Resources.Permissions do
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(permission :: Permission.t(), params :: map()) :: Permission.t() | no_return()
+  @impl true
   def update!(%Permission{} = permission, params) when is_map(params) do
     permission
     |> Permission.changeset(params)
@@ -98,7 +93,7 @@ defmodule AuthShield.Resources.Permissions do
     AuthShield.Resources.Permissions.list(name: "can_create_users")
     ```
   """
-  @spec list(filters :: keyword()) :: list(Permission.t())
+  @impl true
   def list(filters \\ []) when is_list(filters) do
     Permission
     |> Ecto.Query.where([p], ^filters)
@@ -113,7 +108,7 @@ defmodule AuthShield.Resources.Permissions do
     AuthShield.Resources.Permissions.get_by(name: "can_create_users")
     ```
   """
-  @spec get_by(filters :: keyword()) :: Permission.t() | nil
+  @impl true
   def get_by(filters) when is_list(filters), do: Repo.get_by(Permission, filters)
 
   @doc """
@@ -121,7 +116,7 @@ defmodule AuthShield.Resources.Permissions do
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec get_by!(filters :: keyword()) :: Permission.t() | no_return()
+  @impl true
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Permission, filters)
 
   @doc """
@@ -132,7 +127,7 @@ defmodule AuthShield.Resources.Permissions do
     AuthShield.Resources.Permissions.delete(permission)
     ```
   """
-  @spec delete(permission :: Permission.t()) :: success_response() | failed_response()
+  @impl true
   def delete(%Permission{} = permission), do: Repo.delete(permission)
 
   @doc """
@@ -140,6 +135,6 @@ defmodule AuthShield.Resources.Permissions do
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(permission :: Permission.t()) :: Permission.t() | no_return()
+  @impl true
   def delete!(%Permission{} = permission), do: Repo.delete!(permission)
 end

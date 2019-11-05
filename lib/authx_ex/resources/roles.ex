@@ -19,11 +19,7 @@ defmodule AuthShield.Resources.Roles do
   alias AuthShield.Repo
   alias AuthShield.Resources.Schemas.{Permission, Role}
 
-  @typedoc "Transactional responses of success"
-  @type success_response :: {:ok, Role.t()}
-
-  @typedoc "Transactional responses of failed"
-  @type failed_response :: {:error, Ecto.Changeset.t()}
+  @behaviour AuthShield.Resources.Behaviour
 
   @doc """
   Creates a new `AuthShield.Resources.Schemas.Role` register.
@@ -36,7 +32,7 @@ defmodule AuthShield.Resources.Roles do
     })
     ```
   """
-  @spec insert(params :: map()) :: success_response() | failed_response()
+  @impl true
   def insert(params) when is_map(params) do
     %Role{}
     |> Role.changeset(params)
@@ -48,7 +44,7 @@ defmodule AuthShield.Resources.Roles do
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: Role.t() | no_return()
+  @impl true
   def insert!(params) when is_map(params) do
     %Role{}
     |> Role.changeset(params)
@@ -65,7 +61,7 @@ defmodule AuthShield.Resources.Roles do
     })
     ```
   """
-  @spec update(role :: Role.t(), params :: map()) :: success_response() | failed_response()
+  @impl true
   def update(%Role{} = role, params) when is_map(params) do
     role
     |> Role.changeset(params)
@@ -77,7 +73,7 @@ defmodule AuthShield.Resources.Roles do
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(role :: Role.t(), params :: map()) :: Role.t() | no_return()
+  @impl true
   def update!(%Role{} = role, params) when is_map(params) do
     role
     |> Role.changeset(params)
@@ -96,7 +92,7 @@ defmodule AuthShield.Resources.Roles do
     AuthShield.Resources.Roles.list(name: "admin")
     ```
   """
-  @spec list(filters :: keyword()) :: list(Role.t())
+  @impl true
   def list(filters \\ []) when is_list(filters) do
     Role
     |> Ecto.Query.where([r], ^filters)
@@ -111,7 +107,7 @@ defmodule AuthShield.Resources.Roles do
     AuthShield.Resources.Roles.get_by(name: "admin")
     ```
   """
-  @spec get_by(filters :: keyword()) :: Role.t() | nil
+  @impl true
   def get_by(filters) when is_list(filters), do: Repo.get_by(Role, filters)
 
   @doc """
@@ -119,7 +115,7 @@ defmodule AuthShield.Resources.Roles do
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec get_by!(filters :: keyword()) :: Role.t() | no_return()
+  @impl true
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Role, filters)
 
   @doc """
@@ -130,7 +126,7 @@ defmodule AuthShield.Resources.Roles do
     AuthShield.Resources.Roles.delete(role)
     ```
   """
-  @spec delete(role :: Role.t()) :: success_response() | failed_response()
+  @impl true
   def delete(%Role{} = role), do: Repo.delete(role)
 
   @doc """
@@ -138,7 +134,7 @@ defmodule AuthShield.Resources.Roles do
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(role :: Role.t()) :: Role.t() | no_return()
+  @impl true
   def delete!(%Role{} = role), do: Repo.delete!(role)
 
   @doc """
@@ -152,8 +148,10 @@ defmodule AuthShield.Resources.Roles do
     AuthShield.Resources.Roles.change_permissions(role, permissions)
     ```
   """
-  @spec change_permissions(role :: Role.t(), permissions :: list(Permission.t())) ::
-          success_response() | failed_response()
+  @spec change_permissions(
+          role :: Role.t(),
+          permissions :: list(Permission.t())
+        ) :: {:ok, Role.t()} | {:error, Ecto.Changeset.t()}
   def change_permissions(%Role{} = role, permissions) when is_list(permissions) do
     role
     |> Repo.preload(:permissions)
@@ -166,8 +164,10 @@ defmodule AuthShield.Resources.Roles do
 
   Similar to `appeappend_permissionnd_role/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec change_permissions!(role :: Role.t(), permissions :: list(Permission.t())) ::
-          Role.t() | no_return()
+  @spec change_permissions!(
+          role :: Role.t(),
+          permissions :: list(Permission.t())
+        ) :: Role.t() | no_return()
   def change_permissions!(%Role{} = role, permissions) when is_list(permissions) do
     role
     |> Repo.preload(:permissions)

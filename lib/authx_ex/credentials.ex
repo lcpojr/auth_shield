@@ -13,11 +13,16 @@ defmodule AuthShield.Credentials do
   This module provides an interaface that delegates to the specific credential functions.
   """
 
+  use Delx, otp_app: :auth_shield
+
   alias AuthShield.Credentials.{Passwords, PIN, TOTP}
 
   # Password
   defdelegate create_password(params), to: Passwords, as: :insert
   defdelegate create_password!(params), to: Passwords, as: :insert!
+
+  defdelegate update_password(password, pass_code), to: Passwords, as: :update
+  defdelegate update_password!(password, pass_code), to: Passwords, as: :update!
 
   defdelegate list_password(filters \\ []), to: Passwords, as: :list
 

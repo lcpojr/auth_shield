@@ -11,6 +11,9 @@ defmodule AuthShield.DataCase do
       alias AuthShield.Repo
 
       import AuthShield.{DataCase, Factory}
+      import Mox
+
+      setup :verify_on_exit!
     end
   end
 

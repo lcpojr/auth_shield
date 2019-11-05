@@ -15,11 +15,7 @@ defmodule AuthShield.Credentials.PIN do
   alias AuthShield.Credentials.Schemas.PIN
   alias AuthShield.Repo
 
-  @typedoc "Transactional responses of success"
-  @type success_response :: {:ok, PIN.t()}
-
-  @typedoc "Transactional responses of failed"
-  @type failed_response :: {:error, Ecto.Changeset.t()}
+  @behaviour AuthShield.Credentials.Behaviour
 
   @doc """
   Creates a new `AuthShield.Credentials.Schemas.PIN` register.
@@ -32,7 +28,7 @@ defmodule AuthShield.Credentials.PIN do
     })
     ```
   """
-  @spec insert(params :: map()) :: success_response() | failed_response()
+  @impl true
   def insert(params) when is_map(params) do
     %PIN{}
     |> PIN.changeset(params)
@@ -44,7 +40,7 @@ defmodule AuthShield.Credentials.PIN do
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: PIN.t() | no_return()
+  @impl true
   def insert!(params) when is_map(params) do
     %PIN{}
     |> PIN.changeset(params)
@@ -63,7 +59,7 @@ defmodule AuthShield.Credentials.PIN do
     AuthShield.Credentials.PIN.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec list(filters :: keyword()) :: list(PIN.t())
+  @impl true
   def list(filters \\ []) when is_list(filters) do
     PIN
     |> Ecto.Query.where([p], ^filters)
@@ -78,7 +74,7 @@ defmodule AuthShield.Credentials.PIN do
     AuthShield.Credentials.PIN.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec get_by(filters :: keyword()) :: PIN.t() | nil
+  @impl true
   def get_by(filters) when is_list(filters), do: Repo.get_by(PIN, filters)
 
   @doc """
@@ -86,7 +82,7 @@ defmodule AuthShield.Credentials.PIN do
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec get_by!(filters :: keyword()) :: PIN.t() | no_return()
+  @impl true
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(PIN, filters)
 
   @doc """
@@ -97,7 +93,7 @@ defmodule AuthShield.Credentials.PIN do
     AuthShield.Credentials.PIN.delete(pin)
     ```
   """
-  @spec delete(pin :: PIN.t()) :: success_response() | failed_response()
+  @impl true
   def delete(%PIN{} = pin), do: Repo.delete(pin)
 
   @doc """
@@ -105,7 +101,7 @@ defmodule AuthShield.Credentials.PIN do
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(pin :: PIN.t()) :: PIN.t() | no_return()
+  @impl true
   def delete!(%PIN{} = pin), do: Repo.delete!(pin)
 
   @doc """

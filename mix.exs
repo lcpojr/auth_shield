@@ -56,7 +56,9 @@ defmodule AuthShield.MixProject do
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.3.0", only: :test, runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.11", only: :test}
+      {:excoveralls, "~> 0.11", only: :test},
+      {:mox, "~> 0.5", only: :test},
+      {:delx, "~> 3.0"}
     ]
   end
 
@@ -79,10 +81,10 @@ defmodule AuthShield.MixProject do
       main: "AuthShield",
       extras: ["README.md", "docs/database.md", "docs/authentication.md", "docs/authorization.md"],
       deps: [
-        postgrex: "https://hexdocs.pm/postgrex/readme.html",
         ecto_sql: "https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html",
         argon2_elixir: "https://hexdocs.pm/argon2_elixir/api-reference.html",
-        eqrcode: "https://hexdocs.pm/eqrcode/readme.html"
+        eqrcode: "https://hexdocs.pm/eqrcode/readme.html",
+        delx: "https://hexdocs.pm/delx/readme.html"
       ]
     ]
   end

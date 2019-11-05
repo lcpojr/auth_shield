@@ -1,10 +1,26 @@
 defmodule AuthShieldTest do
   use AuthShield.DataCase, async: true
 
+  alias AuthShield.{DelegatorMock, Credentials, Resources}
   alias AuthShield.Authentication.Schemas.Session
 
   describe "signup/1" do
     test "succeeds if params are valid" do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :create_user}, {Resources.Users, :insert}, [params] ->
+          assert password_hash = Argon2.hash_pwd_salt(params.password_credential.password)
+
+          assert password_credential =
+                   Map.merge(params.password_credential, %{
+                     password_hash: password_hash
+                   })
+
+          {:ok, insert(:user, %{params | password_credential: password_credential})}
+        end
+      )
+
       assert {:ok, _user} =
                AuthShield.signup(%{
                  "first_name" => "Lucas",
@@ -27,7 +43,36 @@ defmodule AuthShieldTest do
   describe "login/1" do
     test "succeeds if params are valid" do
       user = insert(:user, is_active: true)
-      insert(:password, user_id: user.id)
+      password = insert(:password, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          true
+        end
+      )
 
       assert {:ok, %Session{}} =
                AuthShield.login(%{
@@ -45,6 +90,14 @@ defmodule AuthShieldTest do
     end
 
     test "fails if user does not exist" do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [_filters] ->
+          nil
+        end
+      )
+
       assert {:error, :user_not_found} ==
                AuthShield.login(%{
                  "email" => "wrong_email@gmail.com",
@@ -54,7 +107,36 @@ defmodule AuthShieldTest do
 
     test "fails if password is wrong" do
       user = insert(:user, is_active: true)
-      insert(:password, user_id: user.id)
+      password = insert(:password, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          false
+        end
+      )
 
       assert {:error, :unauthenticated} ==
                AuthShield.login(%{

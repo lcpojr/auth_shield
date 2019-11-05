@@ -14,11 +14,7 @@ defmodule AuthShield.Credentials.Passwords do
   alias AuthShield.Credentials.Schemas.Password
   alias AuthShield.Repo
 
-  @typedoc "Transactional responses of success"
-  @type success_response :: {:ok, Password.t()}
-
-  @typedoc "Transactional responses of failed"
-  @type failed_response :: {:error, Ecto.Changeset.t()}
+  @behaviour AuthShield.Credentials.Behaviour
 
   @doc """
   Creates a new `AuthShield.Credentials.Schemas.Password` register.
@@ -31,7 +27,7 @@ defmodule AuthShield.Credentials.Passwords do
     })
     ```
   """
-  @spec insert(params :: map()) :: success_response() | failed_response()
+  @impl true
   def insert(params) when is_map(params) do
     %Password{}
     |> Password.changeset(params)
@@ -43,7 +39,7 @@ defmodule AuthShield.Credentials.Passwords do
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: Password.t() | no_return()
+  @impl true
   def insert!(params) when is_map(params) do
     %Password{}
     |> Password.changeset(params)
@@ -61,8 +57,10 @@ defmodule AuthShield.Credentials.Passwords do
     })
     ```
   """
-  @spec update(password :: Password.t(), params :: map()) ::
-          success_response() | failed_response()
+  @spec update(
+          password :: Password.t(),
+          params :: map()
+        ) :: {:ok, Password.t()} | {:error, Ecto.Changeset.t()}
   def update(%Password{} = password, params) when is_map(params) do
     password
     |> Password.changeset(params)
@@ -74,7 +72,7 @@ defmodule AuthShield.Credentials.Passwords do
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(password :: Password.t(), params :: map()) :: Password.t() | no_return()
+  @spec update!(password :: Password.t(), params :: map()) :: {:ok, Password.t()} | no_return()
   def update!(%Password{} = password, params) when is_map(params) do
     password
     |> Password.changeset(params)
@@ -93,7 +91,7 @@ defmodule AuthShield.Credentials.Passwords do
     AuthShield.Credentials.Passwords.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec list(filters :: keyword()) :: list(Password.t())
+  @impl true
   def list(filters \\ []) when is_list(filters) do
     Password
     |> Ecto.Query.where([p], ^filters)
@@ -108,7 +106,7 @@ defmodule AuthShield.Credentials.Passwords do
     AuthShield.Credentials.Passwords.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec get_by(filters :: keyword()) :: Password.t() | nil
+  @impl true
   def get_by(filters) when is_list(filters), do: Repo.get_by(Password, filters)
 
   @doc """
@@ -116,7 +114,7 @@ defmodule AuthShield.Credentials.Passwords do
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec get_by!(filters :: keyword()) :: Password.t() | no_return()
+  @impl true
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Password, filters)
 
   @doc """
@@ -127,7 +125,7 @@ defmodule AuthShield.Credentials.Passwords do
     AuthShield.Credentials.Passwords.delete(password)
     ```
   """
-  @spec delete(password :: Password.t()) :: success_response() | failed_response()
+  @impl true
   def delete(%Password{} = password), do: Repo.delete(password)
 
   @doc """
@@ -135,7 +133,7 @@ defmodule AuthShield.Credentials.Passwords do
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(password :: Password.t()) :: Password.t() | no_return()
+  @impl true
   def delete!(%Password{} = password), do: Repo.delete!(password)
 
   @doc """
