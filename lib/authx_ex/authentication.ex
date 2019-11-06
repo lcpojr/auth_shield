@@ -8,6 +8,8 @@ defmodule AuthShield.Authentication do
   authorized users or in a data authentication server.
   """
 
+  use Delx, otp_app: :auth_shield
+
   require Logger
 
   alias AuthShield.Authentication.Sessions

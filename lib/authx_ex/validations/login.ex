@@ -19,7 +19,7 @@ defmodule AuthShield.Validations.Login do
 
   @doc "Validates if the given params are valid"
   @spec validate(params :: map()) :: {:ok, __MODULE__.t()}
-  def validate(params) when is_map(params) do
+  def validate(params, opts \\ []) when is_map(params) when is_list(opts) do
     %__MODULE__{}
     |> cast(params, @required_fields)
     |> validate_required(@required_fields)
@@ -29,9 +29,7 @@ defmodule AuthShield.Validations.Login do
     |> check_validation()
   end
 
-  defp check_validation(%{valid?: true, changes: changes}) do
-    {:ok, changes}
-  end
+  defp check_validation(%{valid?: true, changes: changes}), do: {:ok, changes}
 
   defp check_validation(%{valid?: false} = changeset) do
     errors =

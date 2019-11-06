@@ -16,11 +16,7 @@ defmodule AuthShield.Resources.Users do
   alias AuthShield.Repo
   alias AuthShield.Resources.Schemas.{Role, User}
 
-  @typedoc "Transactional responses of success"
-  @type success_response :: {:ok, User.t()}
-
-  @typedoc "Transactional responses of failed"
-  @type failed_response :: {:error, Ecto.Changeset.t()}
+  @behaviour AuthShield.Resources.Behaviour
 
   @doc """
   Creates a new `AuthShield.Resources.Schemas.User` register.
@@ -39,7 +35,7 @@ defmodule AuthShield.Resources.Users do
     })
     ```
   """
-  @spec insert(params :: map()) :: success_response() | failed_response()
+  @impl true
   def insert(params) when is_map(params) do
     %User{}
     |> User.changeset_insert(params)
@@ -51,7 +47,7 @@ defmodule AuthShield.Resources.Users do
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: User.t() | no_return()
+  @impl true
   def insert!(params) when is_map(params) do
     %User{}
     |> User.changeset_insert(params)
@@ -70,7 +66,7 @@ defmodule AuthShield.Resources.Users do
     })
     ```
   """
-  @spec update(user :: User.t(), params :: map()) :: success_response() | failed_response()
+  @impl true
   def update(%User{} = user, params) when is_map(params) do
     user
     |> User.changeset_update(params)
@@ -82,7 +78,7 @@ defmodule AuthShield.Resources.Users do
 
   Similar to `update/2` but returns the struct or raises if the changeset is invalid.
   """
-  @spec update!(user :: User.t(), params :: map()) :: User.t() | no_return()
+  @impl true
   def update!(%User{} = user, params) when is_map(params) do
     user
     |> User.changeset_update(params)
@@ -101,7 +97,7 @@ defmodule AuthShield.Resources.Users do
     AuthShield.Resources.Users.list(name: "Lucas")
     ```
   """
-  @spec list(filters :: keyword()) :: list(User.t())
+  @impl true
   def list(filters \\ []) when is_list(filters) do
     User
     |> Ecto.Query.where([u], ^filters)
@@ -116,7 +112,7 @@ defmodule AuthShield.Resources.Users do
     AuthShield.Resources.Users.get_by(email: "lucas@gmail.com")
     ```
   """
-  @spec get_by(filters :: keyword()) :: User.t() | nil
+  @impl true
   def get_by(filters) when is_list(filters), do: Repo.get_by(User, filters)
 
   @doc """
@@ -124,7 +120,7 @@ defmodule AuthShield.Resources.Users do
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec get_by!(filters :: keyword()) :: User.t() | no_return()
+  @impl true
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(User, filters)
 
   @doc """
@@ -135,7 +131,7 @@ defmodule AuthShield.Resources.Users do
     AuthShield.Resources.Users.delete(user)
     ```
   """
-  @spec delete(user :: User.t()) :: success_response() | failed_response()
+  @impl true
   def delete(%User{} = user), do: Repo.delete(user)
 
   @doc """
@@ -143,7 +139,7 @@ defmodule AuthShield.Resources.Users do
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(user :: User.t()) :: User.t() | no_return()
+  @impl true
   def delete!(%User{} = user), do: Repo.delete!(user)
 
   @doc """
@@ -154,7 +150,10 @@ defmodule AuthShield.Resources.Users do
     AuthShield.Resources.Users.status(user, true)
     ```
   """
-  @spec status(user :: User.t(), status :: boolean()) :: success_response() | failed_response()
+  @spec status(
+          user :: User.t(),
+          status :: boolean()
+        ) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def status(%User{} = user, status) when is_boolean(status) do
     user
     |> User.changeset_status(%{is_active: status})
@@ -186,8 +185,10 @@ defmodule AuthShield.Resources.Users do
     AuthShield.Resources.Users.change_roles(user, roles)
     ```
   """
-  @spec change_roles(user :: User.t(), roles :: list(Role.t())) ::
-          success_response() | failed_response()
+  @spec change_roles(
+          user :: User.t(),
+          roles :: list(Role.t())
+        ) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def change_roles(%User{} = user, roles) when is_list(roles) do
     user
     |> Repo.preload(:roles)

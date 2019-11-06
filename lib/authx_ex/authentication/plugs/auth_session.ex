@@ -21,15 +21,20 @@ defmodule AuthShield.Authentication.Plugs.AuthSession do
          {:ip, remote_ip} when not is_nil(remote_ip) <- {:ip, current_remote_ip(conn)},
          {:agent, [user_agent]} when not is_nil(user_agent) <- {:agent, current_user_agent(conn)},
          {:valid_ip?, true} <- {:valid_ip?, session.remote_ip == remote_ip},
-         {:valid_agent?, true} <- {:valid_agent?, session.user_agent == user_agent},
-         {:expired?, true} <- {:expired?, Timex.after?(session.expiration, Timex.now())} do
+         {:valid_agent?, true} <- {:valid_agent?, session.user_agent == user_agent} do
       session
       |> AuthShield.refresh_session()
       |> case do
         {:ok, session} ->
+          Logger.debug("[AuthPlug] session authenticated.")
+
           conn
           |> put_private(:session, session)
           |> put_status(200)
+
+        {:error, :session_expired} ->
+          Logger.debug("[AuthPlug] session expired.")
+          handle_fallback(conn, {:error, :unauthenticated}, opts)
 
         {:error, _error} ->
           Logger.debug("[AuthPlug] failed to create the session.")
@@ -54,10 +59,6 @@ defmodule AuthShield.Authentication.Plugs.AuthSession do
 
       {:valid_agent?, false} ->
         Logger.debug("[AuthPlug] user_agent is invalid for session.")
-        handle_fallback(conn, {:error, :unauthenticated}, opts)
-
-      {:expired?, false} ->
-        Logger.debug("[AuthPlug] sesion expired.")
         handle_fallback(conn, {:error, :unauthenticated}, opts)
     end
   end

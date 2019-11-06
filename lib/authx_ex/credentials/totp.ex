@@ -16,11 +16,7 @@ defmodule AuthShield.Credentials.TOTP do
   alias AuthShield.Credentials.Schemas.TOTP
   alias AuthShield.Repo
 
-  @typedoc "Transactional responses of success"
-  @type success_response :: {:ok, TOTP.t()}
-
-  @typedoc "Transactional responses of failed"
-  @type failed_response :: {:error, Ecto.Changeset.t()}
+  @behaviour AuthShield.Credentials.Behaviour
 
   @doc """
   Creates a new `AuthShield.Credentials.Schemas.TOTP` register.
@@ -43,7 +39,7 @@ defmodule AuthShield.Credentials.TOTP do
     })
     ```
   """
-  @spec insert(params :: map()) :: success_response() | failed_response()
+  @impl true
   def insert(params) when is_map(params) do
     %TOTP{}
     |> TOTP.changeset(params)
@@ -55,7 +51,7 @@ defmodule AuthShield.Credentials.TOTP do
 
   Similar to `insert/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec insert!(params :: map()) :: TOTP.t() | no_return()
+  @impl true
   def insert!(params) when is_map(params) do
     %TOTP{}
     |> TOTP.changeset(params)
@@ -74,7 +70,7 @@ defmodule AuthShield.Credentials.TOTP do
     AuthShield.Credentials.TOTP.list(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec list(filters :: keyword()) :: list(TOTP.t())
+  @impl true
   def list(filters \\ []) when is_list(filters) do
     TOTP
     |> Ecto.Query.where([t], ^filters)
@@ -89,7 +85,7 @@ defmodule AuthShield.Credentials.TOTP do
     AuthShield.Credentials.TOTP.get_by(user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec get_by(filters :: keyword()) :: TOTP.t() | nil
+  @impl true
   def get_by(filters) when is_list(filters), do: Repo.get_by(TOTP, filters)
 
   @doc """
@@ -97,7 +93,7 @@ defmodule AuthShield.Credentials.TOTP do
 
   Similar to `get_by/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec get_by!(filters :: keyword()) :: TOTP.t() | no_return()
+  @impl true
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(TOTP, filters)
 
   @doc """
@@ -108,7 +104,7 @@ defmodule AuthShield.Credentials.TOTP do
     AuthShield.Credentials.TOTP.delete(totp)
     ```
   """
-  @spec delete(totp :: TOTP.t()) :: success_response() | failed_response()
+  @impl true
   def delete(%TOTP{} = totp), do: Repo.delete(totp)
 
   @doc """
@@ -116,7 +112,7 @@ defmodule AuthShield.Credentials.TOTP do
 
   Similar to `delete/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec delete!(totp :: TOTP.t()) :: TOTP.t() | no_return()
+  @impl true
   def delete!(%TOTP{} = totp), do: Repo.delete!(totp)
 
   @doc """
@@ -128,12 +124,12 @@ defmodule AuthShield.Credentials.TOTP do
     AuthShield.Credentials.TOTP.check_pin?(totp, "332456")
 
     # Defining timestamp
-    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", Timex.now("America/Chicago"))
+    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", NaiveDateTime.utc_now())
     ```
   """
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()
-  def check_totp?(%TOTP{} = totp, code, datetime_now \\ Timex.now()) when is_binary(code) do
-    credential_totp = TOTP.generate_totp(totp.secret, totp.period, totp.digits, datetime_now)
+  def check_totp?(%TOTP{} = totp, code, now \\ NaiveDateTime.utc_now()) when is_binary(code) do
+    credential_totp = TOTP.generate_totp(totp.secret, totp.period, totp.digits, now)
     if credential_totp == code, do: true, else: false
   end
 end

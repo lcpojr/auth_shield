@@ -10,7 +10,7 @@ defmodule AuthShield.Credentials.PasswordTest do
 
   describe "insert/1" do
     setup ctx do
-      {:ok, params: params_for(:password) |> Map.put(:user_id, ctx.user.id)}
+      {:ok, params: %{params_for(:password) | user_id: ctx.user.id}}
     end
 
     test "creates a new password on database", ctx do
@@ -67,6 +67,49 @@ defmodule AuthShield.Credentials.PasswordTest do
     test "fails if params are invalid" do
       assert_raise Ecto.InvalidChangesetError, fn ->
         Passwords.insert!(%{name: 1, description: 1})
+      end
+    end
+  end
+
+  describe "update/2" do
+    setup ctx do
+      {:ok, password: insert(:password, user_id: ctx.user.id)}
+    end
+
+    test "updates a password on database", ctx do
+      assert {:ok, password} =
+               Passwords.update(
+                 ctx.password,
+                 %{password: "MynewpassW@rd", user_id: ctx.user.id}
+               )
+
+      assert password != ctx.password
+    end
+
+    test "fails if params are invalid", ctx do
+      assert {:error, changeset} = Passwords.update(ctx.password, %{password: 1, user_id: 1})
+      assert %{password: ["is invalid"], user_id: ["is invalid"]} == errors_on(changeset)
+    end
+  end
+
+  describe "update!/2" do
+    setup ctx do
+      {:ok, password: insert(:password, user_id: ctx.user.id)}
+    end
+
+    test "updates a password on database", ctx do
+      assert password =
+               Passwords.update!(
+                 ctx.password,
+                 %{password: "MynewpassW@rd", user_id: ctx.user.id}
+               )
+
+      assert password != ctx.password
+    end
+
+    test "fails if params are invalid", ctx do
+      assert_raise Ecto.InvalidChangesetError, fn ->
+        Passwords.update!(ctx.password, %{password: 1, user_id: 1})
       end
     end
   end

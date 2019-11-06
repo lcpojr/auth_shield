@@ -11,7 +11,7 @@ defmodule AuthShield.Authentication.SessionsTest do
   describe "insert/1" do
     test "creates a new session on database", ctx do
       # Preparing params
-      assert params = Map.put(params_for(:session), :user_id, ctx.user.id)
+      assert params = %{params_for(:session) | user_id: ctx.user.id}
 
       # Inserting session
       assert {:ok, session} = Sessions.insert(params)
@@ -23,7 +23,6 @@ defmodule AuthShield.Authentication.SessionsTest do
 
       assert %{
                expiration: ["can't be blank"],
-               remote_ip: ["can't be blank"],
                login_at: ["can't be blank"],
                user_id: ["can't be blank"]
              } == errors_on(changeset)
@@ -31,11 +30,18 @@ defmodule AuthShield.Authentication.SessionsTest do
 
     test "fails if params are invalid" do
       assert {:error, changeset} =
-               Sessions.insert(%{expiration: 1, remote_ip: 1, login_at: 1, user_id: 1})
+               Sessions.insert(%{
+                 expiration: 1,
+                 remote_ip: 1,
+                 login_at: 1,
+                 user_id: 1,
+                 user_agent: 1
+               })
 
       assert %{
                expiration: ["is invalid"],
                remote_ip: ["is invalid"],
+               user_agent: ["is invalid"],
                login_at: ["is invalid"],
                user_id: ["is invalid"]
              } == errors_on(changeset)
@@ -45,7 +51,7 @@ defmodule AuthShield.Authentication.SessionsTest do
   describe "insert!/1" do
     test "creates a new session on database", ctx do
       # Preparing params
-      assert params = Map.put(params_for(:session), :user_id, ctx.user.id)
+      assert params = %{params_for(:session) | user_id: ctx.user.id}
 
       # Inserting session
       assert session = Sessions.insert!(params)
@@ -64,15 +70,15 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "update/2" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "updates a session on database", ctx do
       assert {:ok, session} =
                Sessions.update(
                  ctx.session,
-                 params_for(:session) |> Map.put(:expiration, Timex.now())
+                 %{params_for(:session) | expiration: NaiveDateTime.utc_now()}
                )
 
       assert session != ctx.session
@@ -85,15 +91,15 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "update!/2" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "updates a user on database", ctx do
       assert session =
                Sessions.update!(
                  ctx.session,
-                 params_for(:session) |> Map.put(:expiration, Timex.now())
+                 %{params_for(:session) | expiration: NaiveDateTime.utc_now()}
                )
 
       assert session != ctx.session
@@ -107,8 +113,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "list/1" do
-    setup do
-      {:ok, sessions: insert_list(3, :session)}
+    setup ctx do
+      {:ok, sessions: insert_list(3, :session, user_id: ctx.user.id)}
     end
 
     test "return a list of sessions", ctx do
@@ -125,8 +131,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "get_by/1" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "can get user by database fields", ctx do
@@ -136,8 +142,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "get_by!/1" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "can get user by database fields", ctx do

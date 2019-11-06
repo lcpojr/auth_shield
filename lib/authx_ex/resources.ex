@@ -10,6 +10,8 @@ defmodule AuthShield.Resources do
   This module provides an interaface that delegates to the specific resource functions.
   """
 
+  use Delx, otp_app: :auth_shield
+
   alias AuthShield.Resources.{Permissions, Roles, Users}
 
   # Users
@@ -39,13 +41,13 @@ defmodule AuthShield.Resources do
   defdelegate create_permission(params), to: Permissions, as: :insert
   defdelegate create_permission!(params), to: Permissions, as: :insert!
 
+  defdelegate update_permission(permission, params), to: Permissions, as: :update
+  defdelegate update_permission!(permission, params), to: Permissions, as: :update!
+
   defdelegate list_permissions(params \\ []), to: Permissions, as: :list
 
   defdelegate get_permission_by(filters), to: Permissions, as: :get_by
   defdelegate get_permission_by!(filters), to: Permissions, as: :get_by!
-
-  defdelegate update_permission(permission, params), to: Permissions, as: :update
-  defdelegate update_permission!(permission, params), to: Permissions, as: :update!
 
   defdelegate delete_permission(permission), to: Permissions, as: :delete
   defdelegate delete_permission!(permission), to: Permissions, as: :delete!
@@ -54,13 +56,13 @@ defmodule AuthShield.Resources do
   defdelegate create_role(params), to: Roles, as: :insert
   defdelegate create_role!(params), to: Roles, as: :insert!
 
+  defdelegate update_role(role, params), to: Roles, as: :update
+  defdelegate update_role!(role, params), to: Roles, as: :update!
+
   defdelegate list_roles(params \\ []), to: Roles, as: :list
 
   defdelegate get_role_by(filters), to: Roles, as: :get_by
   defdelegate get_role_by!(filters), to: Roles, as: :get_by!
-
-  defdelegate update_role(role, params), to: Roles, as: :update
-  defdelegate update_role!(role, params), to: Roles, as: :update!
 
   defdelegate delete_role(role), to: Roles, as: :delete
   defdelegate delete_role!(role), to: Roles, as: :delete!
