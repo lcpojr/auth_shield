@@ -12,7 +12,7 @@ You can configure AuthX to use you database by setting on your `config.exs`:
 
 ```elixir
 config :auth_shield, AuthShield.Repo,
-  database: "authx_ex_#{Mix.env()}",
+  database: "authshield_#{Mix.env()}",
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
