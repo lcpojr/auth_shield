@@ -2,6 +2,7 @@ defmodule AuthShieldTest do
   use AuthShield.DataCase, async: true
 
   alias AuthShield.{DelegatorMock, Credentials, Resources}
+  alias AuthShield.Authentication
   alias AuthShield.Authentication.Schemas.Session
 
   describe "signup/1" do
@@ -71,6 +72,14 @@ defmodule AuthShieldTest do
            [pass, _pass_code] ->
           assert password == pass
           true
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_session}, {Authentication.Sessions, :insert}, [params] ->
+          {:ok, insert(:session, params)}
         end
       )
 
@@ -147,36 +156,144 @@ defmodule AuthShieldTest do
   end
 
   describe "refresh_session/1" do
-    test "succeeds session is valid" do
-      assert session = insert(:session)
+    setup do
+      {:ok, user: insert(:user)}
+    end
+
+    test "succeeds session id is valid", ctx do
+      assert session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by}, {Authentication.Sessions, :get_by}, [[id: id]] ->
+          assert session.id == id
+          session
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session},
+           {Authentication.Sessions, :update},
+           [%Session{} = sess, _params] ->
+          assert session.id == sess.id
+          {:ok, session}
+        end
+      )
+
       assert {:ok, %Session{}} = AuthShield.refresh_session(session.id)
     end
 
+    test "succeeds complete session is valid", ctx do
+      assert session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session},
+           {Authentication.Sessions, :update},
+           [%Session{} = sess, _params] ->
+          assert session.id == sess.id
+          {:ok, session}
+        end
+      )
+
+      assert {:ok, %Session{}} = AuthShield.refresh_session(session)
+    end
+
     test "fails if session does not exist" do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by}, {Authentication.Sessions, :get_by}, [[id: _id]] ->
+          nil
+        end
+      )
+
       assert {:error, :session_not_found} == AuthShield.refresh_session(Ecto.UUID.generate())
     end
 
-    test "fails if session is expired" do
+    test "fails if session is expired", ctx do
       assert expiration =
                NaiveDateTime.utc_now()
                |> NaiveDateTime.add(-(60 * 20), :second)
 
-      assert session = insert(:session, expiration: expiration)
+      assert session = insert(:session, user_id: ctx.user.id, expiration: expiration)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by}, {Authentication.Sessions, :get_by}, [[id: id]] ->
+          assert session.id == id
+          session
+        end
+      )
+
       assert {:error, :session_expired} == AuthShield.refresh_session(session.id)
     end
   end
 
   describe "logout/1" do
     setup do
-      {:ok, session: insert(:session)}
+      {:ok, user: insert(:user)}
     end
 
-    test "succeeds if session is valid", ctx do
-      assert {:ok, session} = AuthShield.logout(ctx.session.id)
+    test "succeeds if session id is valid", ctx do
+      assert session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by}, {Authentication.Sessions, :get_by}, [[id: id]] ->
+          assert session.id == id
+          session
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session},
+           {Authentication.Sessions, :update},
+           [%Session{} = sess, _params] ->
+          assert session.id == sess.id
+          {:ok, %{session | logout_at: NaiveDateTime.utc_now()}}
+        end
+      )
+
+      assert {:ok, session} = AuthShield.logout(session.id)
+      assert nil != session.logout_at
+    end
+
+    test "succeeds if complete session is valid", ctx do
+      assert session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session},
+           {Authentication.Sessions, :update},
+           [%Session{} = sess, _params] ->
+          assert session.id == sess.id
+          {:ok, %{session | logout_at: NaiveDateTime.utc_now()}}
+        end
+      )
+
+      assert {:ok, session} = AuthShield.logout(session)
       assert nil != session.logout_at
     end
 
     test "fails if session does not exist" do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by}, {Authentication.Sessions, :get_by}, [[id: _id]] ->
+          nil
+        end
+      )
+
       assert {:error, :session_not_found} == AuthShield.logout(Ecto.UUID.generate())
     end
 
@@ -185,8 +302,18 @@ defmodule AuthShieldTest do
                NaiveDateTime.utc_now()
                |> NaiveDateTime.add(-(60 * 20), :second)
 
-      assert Repo.update(Session.update_changeset(ctx.session, %{expiration: expiration}))
-      assert {:error, :session_expired} == AuthShield.logout(ctx.session.id)
+      assert session = insert(:session, user_id: ctx.user.id, expiration: expiration)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by}, {Authentication.Sessions, :get_by}, [[id: id]] ->
+          assert session.id == id
+          session
+        end
+      )
+
+      assert {:error, :session_expired} == AuthShield.logout(session.id)
     end
   end
 end

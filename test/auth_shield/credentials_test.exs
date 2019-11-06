@@ -11,7 +11,8 @@ defmodule AuthShield.CredentialsTest do
 
     # PASSWORD CREDENTIALS
 
-    test "delegates from create_password/1 to user #{inspect(Passwords)}.insert/1", ctx do
+    test "delegates from create_password/1 to user #{inspect(Credentials.Passwords)}.insert/1",
+         ctx do
       expect(
         DelegatorMock,
         :apply,
@@ -23,7 +24,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.create_password(%{params_for(:password) | user_id: ctx.user.id})
     end
 
-    test "delegates from create_password!/1 to user #{inspect(Passwords)}.insert!/1", ctx do
+    test "delegates from create_password!/1 to user #{inspect(Credentials.Passwords)}.insert!/1",
+         ctx do
       expect(
         DelegatorMock,
         :apply,
@@ -35,7 +37,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.create_password!(%{params_for(:password) | user_id: ctx.user.id})
     end
 
-    test "delegates from update_password/2 to user #{inspect(Passwords)}.update/2", ctx do
+    test "delegates from update_password/2 to user #{inspect(Credentials.Passwords)}.update/2",
+         ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -51,7 +54,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.update_password(password, %{params_for(:password) | user_id: ctx.user.id})
     end
 
-    test "delegates from update_password!/2 to user #{inspect(Passwords)}.update!/2", ctx do
+    test "delegates from update_password!/2 to user #{inspect(Credentials.Passwords)}.update!/2",
+         ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -70,7 +74,7 @@ defmodule AuthShield.CredentialsTest do
              })
     end
 
-    test "delegates from list_password/1 to user #{inspect(Passwords)}.list/1", ctx do
+    test "delegates from list_password/1 to user #{inspect(Credentials.Passwords)}.list/1", ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -85,7 +89,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.list_password(user_id: ctx.user.id)
     end
 
-    test "delegates from get_password_by/1 to user #{inspect(Passwords)}.get_by/1", ctx do
+    test "delegates from get_password_by/1 to user #{inspect(Credentials.Passwords)}.get_by/1",
+         ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -100,7 +105,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.get_password_by(user_id: ctx.user.id)
     end
 
-    test "delegates from get_password_by!/1 to user #{inspect(Passwords)}.get_by!/1", ctx do
+    test "delegates from get_password_by!/1 to user #{inspect(Credentials.Passwords)}.get_by!/1",
+         ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -115,7 +121,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.get_password_by!(user_id: ctx.user.id)
     end
 
-    test "delegates from delete_password/1 to user #{inspect(Passwords)}.delete/1", ctx do
+    test "delegates from delete_password/1 to user #{inspect(Credentials.Passwords)}.delete/1",
+         ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -131,7 +138,8 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.delete_password(password)
     end
 
-    test "delegates from delete_password!/1 to user #{inspect(Passwords)}.delete!/1", ctx do
+    test "delegates from delete_password!/1 to user #{inspect(Credentials.Passwords)}.delete!/1",
+         ctx do
       password = insert(:password, user_id: ctx.user.id)
 
       expect(
@@ -147,7 +155,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.delete_password!(password)
     end
 
-    test "delegates from check_password?/2 to user #{inspect(Passwords)}.check_password?/2",
+    test "delegates from check_password?/2 to user #{inspect(Credentials.Passwords)}.check_password?/2",
          ctx do
       password = insert(:password, user_id: ctx.user.id)
 
@@ -166,7 +174,7 @@ defmodule AuthShield.CredentialsTest do
 
     # PIN CREDENTIALS
 
-    test "delegates from create_pin/1 to user #{inspect(PIN)}.insert/1", ctx do
+    test "delegates from create_pin/1 to user #{inspect(Credentials.PIN)}.insert/1", ctx do
       expect(
         DelegatorMock,
         :apply,
@@ -178,7 +186,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.create_pin(%{params_for(:pin) | user_id: ctx.user.id})
     end
 
-    test "delegates from create_pin!/1 to user #{inspect(PIN)}.insert!/1", ctx do
+    test "delegates from create_pin!/1 to user #{inspect(Credentials.PIN)}.insert!/1", ctx do
       expect(
         DelegatorMock,
         :apply,
@@ -190,7 +198,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.create_pin!(%{params_for(:pin) | user_id: ctx.user.id})
     end
 
-    test "delegates from list_pin/1 to user #{inspect(PIN)}.list/1", ctx do
+    test "delegates from list_pin/1 to user #{inspect(Credentials.PIN)}.list/1", ctx do
       pin = insert(:pin, user_id: ctx.user.id)
 
       expect(
@@ -205,7 +213,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.list_pin(user_id: ctx.user.id)
     end
 
-    test "delegates from get_pin_by/1 to user #{inspect(PIN)}.get_by/1", ctx do
+    test "delegates from get_pin_by/1 to user #{inspect(Credentials.PIN)}.get_by/1", ctx do
       pin = insert(:pin, user_id: ctx.user.id)
 
       expect(
@@ -220,7 +228,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.get_pin_by(user_id: ctx.user.id)
     end
 
-    test "delegates from get_pin_by!/1 to user #{inspect(PIN)}.get_by!/1", ctx do
+    test "delegates from get_pin_by!/1 to user #{inspect(Credentials.PIN)}.get_by!/1", ctx do
       pin = insert(:pin, user_id: ctx.user.id)
 
       expect(
@@ -235,7 +243,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.get_pin_by!(user_id: ctx.user.id)
     end
 
-    test "delegates from delete_pin/1 to user #{inspect(PIN)}.delete/1", ctx do
+    test "delegates from delete_pin/1 to user #{inspect(Credentials.PIN)}.delete/1", ctx do
       pin = insert(:pin, user_id: ctx.user.id)
 
       expect(
@@ -249,7 +257,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.delete_pin(pin)
     end
 
-    test "delegates from delete_pin!/1 to user #{inspect(PIN)}.delete!/1", ctx do
+    test "delegates from delete_pin!/1 to user #{inspect(Credentials.PIN)}.delete!/1", ctx do
       pin = insert(:pin, user_id: ctx.user.id)
 
       expect(
@@ -263,7 +271,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.delete_pin!(pin)
     end
 
-    test "delegates from check_pin?/2 to user #{inspect(PIN)}.check_pin?/2",
+    test "delegates from check_pin?/2 to user #{inspect(Credentials.PIN)}.check_pin?/2",
          ctx do
       pin = insert(:pin, user_id: ctx.user.id)
 
@@ -280,7 +288,7 @@ defmodule AuthShield.CredentialsTest do
 
     # TOTP CREDENTIALS
 
-    test "delegates from create_totp/1 to user #{inspect(TOTP)}.insert/1", ctx do
+    test "delegates from create_totp/1 to user #{inspect(Credentials.TOTP)}.insert/1", ctx do
       expect(
         DelegatorMock,
         :apply,
@@ -292,7 +300,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.create_totp(%{params_for(:totp) | user_id: ctx.user.id})
     end
 
-    test "delegates from create_totp!/1 to user #{inspect(TOTP)}.insert!/1", ctx do
+    test "delegates from create_totp!/1 to user #{inspect(Credentials.TOTP)}.insert!/1", ctx do
       expect(
         DelegatorMock,
         :apply,
@@ -304,7 +312,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.create_totp!(%{params_for(:totp) | user_id: ctx.user.id})
     end
 
-    test "delegates from list_totp/1 to user #{inspect(TOTP)}.list/1", ctx do
+    test "delegates from list_totp/1 to user #{inspect(Credentials.TOTP)}.list/1", ctx do
       totp = insert(:totp, user_id: ctx.user.id)
 
       expect(
@@ -319,7 +327,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.list_totp(user_id: ctx.user.id)
     end
 
-    test "delegates from get_totp_by/1 to user #{inspect(TOTP)}.get_by/1", ctx do
+    test "delegates from get_totp_by/1 to user #{inspect(Credentials.TOTP)}.get_by/1", ctx do
       totp = insert(:totp, user_id: ctx.user.id)
 
       expect(
@@ -334,7 +342,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.get_totp_by(user_id: ctx.user.id)
     end
 
-    test "delegates from get_totp_by!/1 to user #{inspect(TOTP)}.get_by!/1", ctx do
+    test "delegates from get_totp_by!/1 to user #{inspect(Credentials.TOTP)}.get_by!/1", ctx do
       totp = insert(:totp, user_id: ctx.user.id)
 
       expect(
@@ -349,7 +357,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.get_totp_by!(user_id: ctx.user.id)
     end
 
-    test "delegates from delete_totp/1 to user #{inspect(TOTP)}.delete/1", ctx do
+    test "delegates from delete_totp/1 to user #{inspect(Credentials.TOTP)}.delete/1", ctx do
       totp = insert(:totp, user_id: ctx.user.id)
 
       expect(
@@ -363,7 +371,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.delete_totp(totp)
     end
 
-    test "delegates from delete_totp!/1 to user #{inspect(TOTP)}.delete!/1", ctx do
+    test "delegates from delete_totp!/1 to user #{inspect(Credentials.TOTP)}.delete!/1", ctx do
       totp = insert(:totp, user_id: ctx.user.id)
 
       expect(
@@ -377,7 +385,7 @@ defmodule AuthShield.CredentialsTest do
       assert Credentials.delete_totp!(totp)
     end
 
-    test "delegates from check_totp?/3 to user #{inspect(TOTP)}.check_totp?/3",
+    test "delegates from check_totp?/3 to user #{inspect(Credentials.TOTP)}.check_totp?/3",
          ctx do
       totp = insert(:totp, user_id: ctx.user.id)
 

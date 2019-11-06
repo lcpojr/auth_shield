@@ -2,26 +2,127 @@ defmodule AuthShield.AuthenticationTest do
   use AuthShield.DataCase, async: true
 
   alias AuthShield.{Authentication, DelegatorMock, Credentials}
+  alias AuthShield.Authentication.Schemas.Session
 
-  describe "create_session/2" do
-  end
+  describe "AuthShield.Authentication" do
+    setup do
+      {:ok, user: insert(:user)}
+    end
 
-  describe "create_session!/2" do
-  end
+    test "delegates from create_session/1 to #{inspect(Authentication.Sessions)}.insert/1", ctx do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_session}, {Authentication.Sessions, :insert}, [params] ->
+          {:ok, insert(:session, params)}
+        end
+      )
 
-  describe "update_session/2" do
-  end
+      assert Authentication.create_session(%{params_for(:session) | user_id: ctx.user.id})
+    end
 
-  describe "update_session!/2" do
-  end
+    test "delegates from create_session!/1 to #{inspect(Authentication.Sessions)}.insert!/1",
+         ctx do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_session!}, {Authentication.Sessions, :insert!}, [params] ->
+          {:ok, insert(:session, params)}
+        end
+      )
 
-  describe "list_session/1" do
-  end
+      assert Authentication.create_session!(%{params_for(:session) | user_id: ctx.user.id})
+    end
 
-  describe "get_session_by/1" do
-  end
+    test "delegates from update_session/2 to #{inspect(Authentication.Sessions)}.update/2",
+         ctx do
+      session = insert(:session, user_id: ctx.user.id)
 
-  describe "get_session_by!/1" do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session},
+           {Authentication.Sessions, :update},
+           [%Session{} = sess, _params] ->
+          assert session.id == sess.id
+          session
+        end
+      )
+
+      assert Authentication.update_session(session, %{params_for(:session) | user_id: ctx.user.id})
+    end
+
+    test "delegates from update_session!/2 to #{inspect(Authentication.Sessions)}.update!/2",
+         ctx do
+      session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session!},
+           {Authentication.Sessions, :update!},
+           [%Session{} = sess, _params] ->
+          assert session.id == sess.id
+          session
+        end
+      )
+
+      assert Authentication.update_session!(session, %{
+               params_for(:session)
+               | user_id: ctx.user.id
+             })
+    end
+
+    test "delegates from list_session/1 to #{inspect(Authentication.Sessions)}.list/1", ctx do
+      session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_session}, {Authentication.Sessions, :list}, [[user_id: id]] ->
+          assert ctx.user.id == id
+          [session]
+        end
+      )
+
+      assert Authentication.list_session(user_id: ctx.user.id)
+    end
+
+    test "delegates from get_session_by/1 to #{inspect(Authentication.Sessions)}.get_by/1",
+         ctx do
+      session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by},
+           {Authentication.Sessions, :get_by},
+           [[user_id: id]] ->
+          assert ctx.user.id == id
+          session
+        end
+      )
+
+      assert Authentication.get_session_by(user_id: ctx.user.id)
+    end
+
+    test "delegates from get_session_by!/1 to #{inspect(Authentication.Sessions)}.get_by!/1",
+         ctx do
+      session = insert(:session, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_session_by!},
+           {Authentication.Sessions, :get_by!},
+           [[user_id: id]] ->
+          assert ctx.user.id == id
+          session
+        end
+      )
+
+      assert Authentication.get_session_by!(user_id: ctx.user.id)
+    end
   end
 
   describe "authenticate_password/2" do
