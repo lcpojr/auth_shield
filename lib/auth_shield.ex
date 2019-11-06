@@ -1,6 +1,33 @@
 defmodule AuthShield do
   @moduledoc """
-  Elixir authentication and authorization framework
+  AuthShield is an simple implementation that was created to be used
+  with other frameworks (as Phoenix) or applications in order to provide
+  an simple authentication and authorization management to the services.
+
+  ## Installation
+
+  To install the dependency set `{:auth_shield, "~> 0.0.1"}` on your mix deps.
+
+  You can configure AuthX to use you database by setting on your `config.exs`:
+
+  ## Configuration
+
+  ```elixir
+  config :auth_shield, AuthShield.Repo,
+    database: "authx_ex_#{Mix.env()}",
+    username: "postgres",
+    password: "postgres",
+    hostname: "localhost",
+    port: 5432
+  ```
+
+  The default session expiration is 15 minutes but you can change it setting on your `config.exs`:
+
+  ```elixir
+  config :auth_shield, AuthShield,
+    # 15 minutes (in seconds)
+    session_expiration: 60 * 15
+  ```
   """
 
   alias AuthShield.Authentication
