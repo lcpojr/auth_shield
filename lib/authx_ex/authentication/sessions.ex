@@ -112,9 +112,16 @@ defmodule AuthShield.Authentication.Sessions do
   @spec get_by!(filters :: keyword()) :: Session.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(Session, filters)
 
-  @doc "Checks if the give `AuthShield.Authentication.Schemas.Session` is expired"
+  @doc """
+  Checks if the give `AuthShield.Authentication.Schemas.Session` is expired
+
+  ## Exemples:
+    ```elixir
+    AuthShield.Authentication.Sessions.is_expired?(session)
+    ```
+  """
   @spec is_expired?(session :: Session.t()) :: boolean()
-  def is_expired?(session) do
+  def is_expired?(%Session{} = session) do
     case NaiveDateTime.compare(session.expiration, NaiveDateTime.utc_now()) do
       :gt -> false
       :lt -> true

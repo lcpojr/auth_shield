@@ -6,9 +6,17 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.0.2] - 06-11-2019
+
+Alpha release for test purposes.
+
+### Changed
+
+- Update docs and add mocks to tests;
+
 ## [0.0.1] - 01-11-2019
 
-Alpha release for test purposes
+Alpha release for test purposes.
 
 ### Added
 
@@ -16,5 +24,5 @@ Alpha release for test purposes
 - Password, PIN and TOTP credentials (in development);
 - Session authentication flow;
 
-[unreleased]: https://github.com/dlpco/banking-panda/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/dlpco/banking-panda/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/dlpco/banking-panda/compare/v0.0.1...v0.0.2
+[0.0.2]: https://github.com/dlpco/banking-panda/compare/v0.0.2...HEAD

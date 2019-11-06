@@ -4,7 +4,7 @@ Elixir authentication and authorization
 
 AuthShield is an simple implementation that was created to be used with other frameworks (as Phoenix) or applications in order to provide an simple authentication and authorization management to the services.
 
-### How to use
+## How to use
 
 To install the dependency set `{:auth_shield, "~> 0.0.1"}` on your mix deps.
 
@@ -46,7 +46,8 @@ AuthShield.login(
     remote_ip: "172.31.4.1",
     user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0"
 )
-``
+```
+
 AuthShield has an authentication Plug (`AuthShield.Authentication.Plugs.AuthSession`) that can
 be used to check if an user is authenticated or not in other endpoints.
 
@@ -59,7 +60,7 @@ conn
 |> put_status(200)
 ```
 
-### Documentation
+## Documentation
 
 You can check out the documentation [here](https://hexdocs.pm/auth_shield/AuthShield.html).
 

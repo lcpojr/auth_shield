@@ -1,7 +1,7 @@
 defmodule AuthShield.MixProject do
   use Mix.Project
 
-  @version "0.0.1"
+  @version "0.0.2"
   @url "https://github.com/lcpojr/auth_shield"
   @maintainers ["Luiz Carlos", "Yashin Santos"]
   @licenses ["Apache 2.0"]
