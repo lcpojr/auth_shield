@@ -109,7 +109,7 @@ defmodule AuthShield.Credentials.PasswordTest do
 
     test "fails if params are invalid", ctx do
       assert_raise Ecto.InvalidChangesetError, fn ->
-        Passwords.update!(ctx.password, %{password: 1, user_id: 1}) |> IO.inspect()
+        Passwords.update!(ctx.password, %{password: 1, user_id: 1})
       end
     end
   end

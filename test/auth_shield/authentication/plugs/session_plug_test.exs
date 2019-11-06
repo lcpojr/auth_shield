@@ -3,8 +3,8 @@ defmodule AuthShield.Authentication.Plugs.AuthSessionTest do
   use Plug.Test
 
   alias AuthShield.{Authentication, DelegatorMock}
-  alias AuthShield.Authentication.Schemas.Session
   alias AuthShield.Authentication.Plugs.AuthSession
+  alias AuthShield.Authentication.Schemas.Session
 
   describe "GET /users" do
     setup do

@@ -1,8 +1,7 @@
 defmodule AuthShieldTest do
   use AuthShield.DataCase, async: true
 
-  alias AuthShield.{DelegatorMock, Credentials, Resources}
-  alias AuthShield.Authentication
+  alias AuthShield.{Authentication, Credentials, DelegatorMock, Resources}
   alias AuthShield.Authentication.Schemas.Session
 
   describe "signup/1" do
