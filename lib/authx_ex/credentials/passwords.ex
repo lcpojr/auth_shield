@@ -76,7 +76,7 @@ defmodule AuthShield.Credentials.Passwords do
   def update!(%Password{} = password, params) when is_map(params) do
     password
     |> Password.changeset(params)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   @doc """

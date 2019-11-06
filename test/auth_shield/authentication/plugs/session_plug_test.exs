@@ -2,15 +2,31 @@ defmodule AuthShield.Authentication.Plugs.AuthSessionTest do
   use AuthShield.DataCase, async: true
   use Plug.Test
 
+  alias AuthShield.{Authentication, DelegatorMock}
+  alias AuthShield.Authentication.Schemas.Session
   alias AuthShield.Authentication.Plugs.AuthSession
 
   describe "GET /users" do
     setup do
-      {:ok, session: insert(:session)}
+      user = insert(:user)
+      session = insert(:session, user_id: user.id)
+
+      {:ok, user: user, session: session}
     end
 
     test "succeeds session if authenticated and is the same application", ctx do
       assert {:ok, remote_ip} = :inet.parse_address('#{ctx.session.remote_ip}')
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :update_session},
+           {Authentication.Sessions, :update},
+           [%Session{} = sess, _params] ->
+          assert ctx.session.id == sess.id
+          {:ok, ctx.session}
+        end
+      )
 
       assert conn =
                :get

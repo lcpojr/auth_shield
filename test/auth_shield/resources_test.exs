@@ -204,12 +204,12 @@ defmodule AuthShield.ResourcesTest do
       expect(
         DelegatorMock,
         :apply,
-        fn {Resources, :preload_user}, {Resources.Users, :preload}, [%User{} = user, [:role]] ->
-          {:ok, user}
+        fn {Resources, :preload_user}, {Resources.Users, :preload}, [%User{} = user, [:roles]] ->
+          user
         end
       )
 
-      assert Resources.preload_user(user, [:role])
+      assert Resources.preload_user(user, [:roles])
     end
 
     # PERMISSIONS RESOURCES

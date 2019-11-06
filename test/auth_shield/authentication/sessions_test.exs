@@ -70,8 +70,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "update/2" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "updates a session on database", ctx do
@@ -91,8 +91,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "update!/2" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "updates a user on database", ctx do
@@ -113,8 +113,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "list/1" do
-    setup do
-      {:ok, sessions: insert_list(3, :session)}
+    setup ctx do
+      {:ok, sessions: insert_list(3, :session, user_id: ctx.user.id)}
     end
 
     test "return a list of sessions", ctx do
@@ -131,8 +131,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "get_by/1" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "can get user by database fields", ctx do
@@ -142,8 +142,8 @@ defmodule AuthShield.Authentication.SessionsTest do
   end
 
   describe "get_by!/1" do
-    setup do
-      {:ok, session: insert(:session)}
+    setup ctx do
+      {:ok, session: insert(:session, user_id: ctx.user.id)}
     end
 
     test "can get user by database fields", ctx do
