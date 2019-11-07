@@ -14,7 +14,7 @@ defmodule AuthShield do
 
   ```elixir
   config :auth_shield, AuthShield.Repo,
-    database: "authx_ex_#{Mix.env()}",
+    database: "authshield_dev",
     username: "postgres",
     password: "postgres",
     hostname: "localhost",
