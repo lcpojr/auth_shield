@@ -6,7 +6,7 @@ AuthShield is an simple implementation that was created to be used with other fr
 
 ## How to use
 
-To install the dependency set `{:auth_shield, "~> 0.0.1"}` on your mix deps.
+To install the dependency set `{:auth_shield, "~> 0.0.2"}` on your mix deps.
 
 You can configure AuthX to use you database by setting on your `config.exs`:
 
