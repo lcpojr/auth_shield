@@ -6,7 +6,7 @@ defmodule AuthShield do
 
   ## Installation
 
-  AuthShield is published on Hex. Add `{:auth_shield, "~> 0.0.2"}` to your list of dependencies in mix.exs.
+  AuthShield is published on Hex. Add `{:auth_shield, "~> 0.0.3"}` to your list of dependencies in mix.exs.
 
   Then run `mix deps.get` to install AuthShield and its dependencies, including Ecto, Plug and Argon2.
 
