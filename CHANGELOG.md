@@ -6,6 +6,18 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.0.3] - 09-11-2019
+
+Alpha release for test purposes.
+
+## Changed
+
+- README.md was updated to add a better installation guide;
+
+## Fixed
+
+- Migrations now are done by using the module and can be easily extendable;
+
 ## [0.0.2] - 06-11-2019
 
 Alpha release for test purposes.

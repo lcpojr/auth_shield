@@ -4,30 +4,68 @@ Elixir authentication and authorization
 
 AuthShield is an simple implementation that was created to be used with other frameworks (as Phoenix) or applications in order to provide an simple authentication and authorization management to the services.
 
-## How to use
+## Installation
 
-To install the dependency set `{:auth_shield, "~> 0.0.2"}` on your mix deps.
+AuthShield is published on Hex. Add `{:auth_shield, "~> 0.0.2"}` to your list of dependencies in mix.exs.
 
-You can configure AuthX to use you database by setting on your `config.exs`:
+Then run `mix deps.get` to install AuthShield and its dependencies, including Ecto, Plug and Argon2.
+
+After the packages are installed you must configure your database and generates an migration to add the AuthShield tables to it.
+
+On your `config.exs` set the configuration bellow:
 
 ```elixir
+# This is the default auth_shield database configuration
+# but its highly recomendate that you configure it to be in
+# the same database if you want to extend the identity to
+# your on custom tables.
+
+config :auth_shield, ecto_repos: [AuthShield.Repo]
+
 config :auth_shield, AuthShield.Repo,
   database: "authshield_#{Mix.env()}",
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
   port: 5432
+
+# You can set the session expiration by changing this config
+# The default expiration is 15 minutes (in seconds)
+config :auth_shield, AuthShield, session_expiration: 60 * 15
 ```
 
-The default session expiration is 15 minutes but you can change it setting on your `config.exs`:
+In your `test.exs` use the configuration bellow to run it in sandbox mode:
 
 ```elixir
-config :auth_shield, AuthShield,
-  # 15 minutes (in seconds)
-  session_expiration: 60 * 15
+config :auth_shield, AuthShield.Repo, pool: Ecto.Adapters.SQL.Sandbox
 ```
 
-To create a new user use:
+After you finish the configurations use `mix ecto.gen.migration create_auth_shield_tables` to generate the migration that will be use on database and tables criation.
+
+Go to the generated migration and call the AuthShield `up` and `down` migration functions as the exemple bellow:
+
+```elixir
+defmodule AuthShield.Repo.Migrations.CreateAuthShieldTables do
+  use Ecto.Migration
+
+  def up do
+    AuthShield.Migrations.up()
+  end
+
+  def down do
+    AuthShield.Migrations.down()
+  end
+end
+```
+
+Create the database database (if its not created yet) by using `mix ecto.migrate` and
+then run the migrations with `mix ecto.migrate`.
+
+## Usage
+
+We will only cover the basic usage here, so if you want to know more check our documentation on hex by clicking [here](https://hexdocs.pm/auth_shield/AuthShield.html) or on the session bellow.
+
+To create a new user try this:
 
 ```elixir
 AuthShield.signup(%{
@@ -38,7 +76,7 @@ AuthShield.signup(%{
 })
 ```
 
-To login an user use:
+Now to test if the user can authenticate do:
 
 ```elixir
 AuthShield.login(
