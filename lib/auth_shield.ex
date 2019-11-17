@@ -104,11 +104,7 @@ defmodule AuthShield do
 
   ## Exemples:
     ```elixir
-    AuthShield.login(
-      %{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"},
-      remote_ip: "172.31.4.1",
-      user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0"
-    )
+    AuthShield.login(%{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
     ```
   """
   @spec login(params :: Login.t(), opts :: session_options()) ::
