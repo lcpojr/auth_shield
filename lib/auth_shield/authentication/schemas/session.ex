@@ -19,7 +19,7 @@ defmodule AuthShield.Authentication.Schemas.Session do
           user_agent: String.t(),
           expiration: String.t(),
           login_at: NaiveDateTime.t(),
-          loout_at: NaiveDateTime.t(),
+          logout_at: NaiveDateTime.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
