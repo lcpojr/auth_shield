@@ -104,6 +104,42 @@ defmodule AuthShield do
 
   ## Exemples:
     ```elixir
+    AuthShield.login(%Plug.Conn%{body_params: "email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
+    ```
+  """
+  @spec login(connection :: Plug.Conn.t()) ::
+          {:ok, Session.t()}
+          | {:error, :user_not_found}
+          | {:error, :unauthenticated}
+          | {:error, Ecto.Changeset.t()}
+  def login(%Plug.Conn{remote_ip: ip, req_headers: headers, body_params: body}) do
+    with remote_ip when is_binary(remote_ip) <- get_remote_ip(ip),
+         user_agent when is_binary(user_agent) <- get_user_agent(headers),
+         params when is_map(params) <- body do
+    login(params, remote_ip: remote_ip, user_agent: user_agent)
+  end
+
+  defp get_remote_ip(remote_ip) do
+    remote_ip
+    |> :inet_parse.ntoa()
+    |> to_string()
+  end
+
+  defp get_user_agent(headers) do
+    headers
+    |> Plug.Conn.get_req_header("user-agent")
+    |> hd()
+  end
+
+  @doc """
+  Login the user by its password credential.
+
+  If the user and its credential is authenticated it will return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
+
+  This session should be stored and used on authentication to keep users logged.
+
+  ## Exemples:
+    ```elixir
     AuthShield.login(%{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
     ```
   """
