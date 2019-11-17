@@ -116,7 +116,8 @@ defmodule AuthShield do
     with remote_ip when is_binary(remote_ip) <- get_remote_ip(ip),
          user_agent when is_binary(user_agent) <- get_user_agent(headers),
          params when is_map(params) <- body do
-    login(params, remote_ip: remote_ip, user_agent: user_agent)
+      login(params, remote_ip: remote_ip, user_agent: user_agent)
+    end
   end
 
   defp get_remote_ip(remote_ip) do
