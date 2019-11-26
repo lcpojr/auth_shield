@@ -112,22 +112,22 @@ defmodule AuthShield do
           | {:error, :user_not_found}
           | {:error, :unauthenticated}
           | {:error, Ecto.Changeset.t()}
-  def login(%Plug.Conn{remote_ip: ip, req_headers: headers, body_params: body}) do
-    with remote_ip when is_binary(remote_ip) <- get_remote_ip(ip),
-         user_agent when is_binary(user_agent) <- get_user_agent(headers),
-         params when is_map(params) <- body do
+  def login(%Plug.Conn{} = conn) do
+    with remote_ip when is_binary(remote_ip) <- get_remote_ip(conn),
+         user_agent when is_binary(user_agent) <- get_user_agent(conn),
+         params when is_map(params) <- conn.body_params do
       login(params, remote_ip: remote_ip, user_agent: user_agent)
     end
   end
 
-  defp get_remote_ip(remote_ip) do
-    remote_ip
+  defp get_remote_ip(%Plug.Conn{} = conn) do
+    conn.remote_ip
     |> :inet_parse.ntoa()
     |> to_string()
   end
 
-  defp get_user_agent(headers) do
-    headers
+  defp get_user_agent(%Plug.Conn{} = conn) do
+    conn
     |> Plug.Conn.get_req_header("user-agent")
     |> hd()
   end

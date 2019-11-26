@@ -1,5 +1,6 @@
 defmodule AuthShieldTest do
   use AuthShield.DataCase, async: true
+  use Plug.Test
 
   alias AuthShield.{Authentication, Credentials, DelegatorMock, Resources}
   alias AuthShield.Authentication.Schemas.Session
@@ -41,6 +42,58 @@ defmodule AuthShieldTest do
   end
 
   describe "login/1" do
+    test "succeeds if params are valid" do
+      user = insert(:user, is_active: true)
+      password = insert(:password, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          true
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_session}, {Authentication.Sessions, :insert}, [params] ->
+          {:ok, insert(:session, params)}
+        end
+      )
+
+      conn =
+        :get
+        |> conn("/users")
+        |> put_req_header("user-agent", "Googlebot/2.1 (+http://www.google.com/bot.html)")
+        |> Map.put(:body_params, %{"email" => user.email, "password" => "My_passw@rd1"})
+
+      assert {:ok, %Session{}} = AuthShield.login(conn)
+    end
+  end
+
+  describe "login/2" do
     test "succeeds if params are valid" do
       user = insert(:user, is_active: true)
       password = insert(:password, user_id: user.id)
