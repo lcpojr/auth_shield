@@ -6,6 +6,10 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## Changed
+
+- Improve on documentations and validation schemas;
+
 ## [0.0.3] - 09-11-2019
 
 Alpha release for test purposes.

@@ -21,9 +21,9 @@ defmodule AuthShield.Validations.SignUp do
     field(:password, :string, virtual: true)
   end
 
-  @doc "Validates if the given params are valid"
-  @spec validate(params :: map()) :: {:ok, __MODULE__.t()}
-  def validate(params) when is_map(params) do
+  @doc "Generates an `Ecto.Changeset` struct with the changes."
+  @spec changeset(params :: map()) :: {:ok, __MODULE__.t()}
+  def changeset(params \\ %{}) when is_map(params) do
     %__MODULE__{}
     |> cast(params, @required_fields ++ [:last_name])
     |> validate_required(@required_fields)
@@ -32,6 +32,13 @@ defmodule AuthShield.Validations.SignUp do
     |> validate_length(:email, min: 7, max: 150)
     |> validate_format(:email, ~r/@/)
     |> validate_length(:password, min: 6, max: 150)
+  end
+
+  @doc "Validates if the given params are valid"
+  @spec validate(params :: map()) :: {:ok, __MODULE__.t()}
+  def validate(params \\ %{}) when is_map(params) do
+    params
+    |> changeset()
     |> check_validation()
   end
 
