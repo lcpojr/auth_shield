@@ -47,6 +47,7 @@ defmodule AuthShield.Migrations do
     create_if_not_exists table(:password_credentials, primary_key: false) do
       add(:id, :uuid, primary_key: true)
       add(:password_hash, :string, null: false)
+      add(:algorithm, :string, null: false, default: "argon2")
 
       add(:user_id, references(:users, type: :uuid), null: false)
 
@@ -60,6 +61,7 @@ defmodule AuthShield.Migrations do
     create_if_not_exists table(:pin_credentials, primary_key: false) do
       add(:id, :uuid, primary_key: true)
       add(:pin_hash, :string, null: false)
+      add(:algorithm, :string, null: false, default: "argon2")
 
       add(:user_id, references(:users, type: :uuid), null: false)
 

@@ -9,6 +9,7 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 ## Changed
 
 - Improve on documentations and validation schemas;
+- Change domain authentication functions to accept credential structs;
 
 ## [0.0.3] - 09-11-2019
 

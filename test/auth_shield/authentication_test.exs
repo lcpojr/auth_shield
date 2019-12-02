@@ -155,7 +155,16 @@ defmodule AuthShield.AuthenticationTest do
 
     test "unauthenticates if user is not active" do
       assert user = insert(:user)
-      assert insert(:password, user_id: user.id)
+      assert password = insert(:password, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
 
       assert {:error, :unauthenticated} ==
                Authentication.authenticate_password(
@@ -220,7 +229,17 @@ defmodule AuthShield.AuthenticationTest do
 
     test "unauthenticates if user is not active" do
       assert user = insert(:user)
-      assert insert(:pin, user_id: user.id)
+      assert pin = insert(:pin, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_pin_by}, {Credentials.PIN, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          pin
+        end
+      )
+
       assert {:error, :unauthenticated} == Authentication.authenticate_pin(user, "123456")
     end
 
@@ -251,13 +270,7 @@ defmodule AuthShield.AuthenticationTest do
   end
 
   describe "authenticate_totp/2" do
-    # This is an work in progress and we need to solve TOTP instabilities before
-    # put some tests
-
-    test "unauthenticates if user is not active" do
-      assert user = insert(:user, is_active: false)
-      assert insert(:totp, user_id: user.id)
-      assert {:error, :unauthenticated} == Authentication.authenticate_totp(user, "123456")
-    end
+    # This is an work in progress and we need to solve
+    # TOTP instabilities before put some tests
   end
 end

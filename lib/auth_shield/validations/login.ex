@@ -18,7 +18,7 @@ defmodule AuthShield.Validations.Login do
   end
 
   @doc "Generates an `Ecto.Changeset` struct with the changes."
-  @spec changeset(params :: map()) :: {:ok, __MODULE__.t()}
+  @spec changeset(params :: map()) :: Ecto.Changeset.t()
   def changeset(params \\ %{}) when is_map(params) do
     %__MODULE__{}
     |> cast(params, @required_fields)
@@ -29,7 +29,7 @@ defmodule AuthShield.Validations.Login do
   end
 
   @doc "Validates if the given params are valid"
-  @spec validate(params :: map()) :: {:ok, __MODULE__.t()}
+  @spec validate(params :: map()) :: {:ok, t()} | {:error, atom() | map()}
   def validate(params \\ %{}) when is_map(params) do
     params
     |> changeset()
