@@ -59,11 +59,7 @@ defmodule AuthShield.Resources.Users do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Users.update(user, %{
-      first_name: "Marcos",
-      last_name: "Farias",
-      email: "marcos@gmail.com"
-    })
+    AuthShield.Resources.Users.update(user, %{first_name: "Marcos", last_name: "Farias", email: "marcos@gmail.com"})
     ```
   """
   @impl true

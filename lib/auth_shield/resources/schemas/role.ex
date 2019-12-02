@@ -12,9 +12,7 @@ defmodule AuthShield.Resources.Schemas.Role do
 
   alias AuthShield.Resources.Schemas.{Permission, RolesPermissions, User, UsersRoles}
 
-  @typedoc """
-  Abstract role module type.
-  """
+  @typedoc "Abstract role module type."
   @type t :: %__MODULE__{
           id: binary(),
           name: String.t(),

@@ -43,11 +43,11 @@ defmodule AuthShield.Authorization do
       check_user_roles(user.roles, roles, opts[:rule] || :all)
     else
       {:active?, false} ->
-        Logger.debug("[AuthShield.Authorization] failed because user is inactive")
+        Logger.info("[#{__MODULE__}] failed because user is inactive")
         {:error, :unauthorized}
 
       {:user, nil} ->
-        Logger.debug("[AuthShield.Authorization] failed because user could not preload roles")
+        Logger.info("[#{__MODULE__}] failed because user could not preload roles")
         {:error, :unauthorized}
     end
   end
@@ -56,10 +56,7 @@ defmodule AuthShield.Authorization do
     if Enum.all?(user_roles, &(&1.name in roles)) do
       {:ok, :authorized}
     else
-      Logger.debug(
-        "[AuthShield.Authorization] failed because user does not have all required roles"
-      )
-
+      Logger.info("[#{__MODULE__}] failed because user does not have all required roles")
       {:error, :unauthorized}
     end
   end
@@ -68,10 +65,7 @@ defmodule AuthShield.Authorization do
     if Enum.any?(user_roles, &(&1.name in roles)) do
       {:ok, :authorized}
     else
-      Logger.debug(
-        "[AuthShield.Authorization] failed because user does not have any required roles"
-      )
-
+      Logger.info("[#{__MODULE__}] failed because user does not have any required roles")
       {:error, :unauthorized}
     end
   end
@@ -102,14 +96,11 @@ defmodule AuthShield.Authorization do
       check_user_permissions(user.roles, permissions, opts[:rule] || :all)
     else
       {:active?, false} ->
-        Logger.debug("[AuthShield.Authorization] failed because user is inactive")
+        Logger.info("[#{__MODULE__}] failed because user is inactive")
         {:error, :unauthorized}
 
       {:user, nil} ->
-        Logger.debug(
-          "[AuthShield.Authorization] failed because user could not preload permissions"
-        )
-
+        Logger.info("[#{__MODULE__}] failed because user could not preload permissions")
         {:error, :unauthorized}
     end
   end
@@ -122,10 +113,7 @@ defmodule AuthShield.Authorization do
         {:ok, :authorized}
 
       false ->
-        Logger.debug(
-          "[AuthShield.Authorization] failed because user does not have all required permission"
-        )
-
+        Logger.info("[#{__MODULE__}] failed because user does not have all required permission")
         {:error, :unauthorized}
     end
   end
@@ -138,10 +126,7 @@ defmodule AuthShield.Authorization do
         {:ok, :authorized}
 
       false ->
-        Logger.debug(
-          "[AuthShield.Authorization] failed because user does not have any required permission"
-        )
-
+        Logger.info("[#{__MODULE__}] failed because user does not have any required permission")
         {:error, :unauthorized}
     end
   end

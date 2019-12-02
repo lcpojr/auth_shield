@@ -33,7 +33,7 @@ defmodule AuthShield.Authentication do
   defdelegate get_session_by!(params), to: Sessions, as: :get_by!
 
   @doc """
-  Gets an user password and calls `#{__MODULE__}.authenticate_password/3`
+  Gets an user password and calls `AuthShield.Authentication.authenticate_password/3`
   to authenticates user given a password code.
 
   ## Exemples:
@@ -47,7 +47,7 @@ defmodule AuthShield.Authentication do
     |> Credentials.get_password_by()
     |> case do
       nil ->
-        Logger.debug("[#{__MODULE__}] failed because Password credential was not found.")
+        Logger.info("[#{__MODULE__}] failed because Password credential was not found.")
         {:error, :unauthenticated}
 
       %Password{} = password ->
@@ -73,21 +73,26 @@ defmodule AuthShield.Authentication do
         ) :: responses()
   def authenticate_password(%User{} = user, %Password{} = pass, code) when is_binary(code) do
     with {:active?, true} <- {:active?, user.is_active},
+         {:locked?, false} <- {:locked?, not is_nil(user.locked_until)},
          {:pass?, true} <- {:pass?, Credentials.check_password?(pass, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[#{__MODULE__}] failed because user is inactive")
+        Logger.info("[#{__MODULE__}] failed because user is inactive")
+        {:error, :unauthenticated}
+
+      {:locked?, true} ->
+        Logger.info("[#{__MODULE__}] failed because user is locked")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[#{__MODULE__}] failed because Password was wrong")
+        Logger.info("[#{__MODULE__}] failed because Password was wrong")
         {:error, :unauthenticated}
     end
   end
 
   @doc """
-  Gets an user pin and calls `#{__MODULE__}.authenticate_pin/3`
+  Gets an user pin and calls `AuthShield.Authentication.authenticate_pin/3`
   to authenticates user given a pin code.
 
   ## Exemples:
@@ -101,7 +106,7 @@ defmodule AuthShield.Authentication do
     |> Credentials.get_pin_by()
     |> case do
       nil ->
-        Logger.debug("[#{__MODULE__}] failed because PIN credential was not found")
+        Logger.info("[#{__MODULE__}] failed because PIN credential was not found")
         {:error, :unauthenticated}
 
       %PIN{} = pin ->
@@ -123,21 +128,26 @@ defmodule AuthShield.Authentication do
   @spec authenticate_pin(user :: User.t(), pin :: PIN.t(), pin_code :: String.t()) :: responses()
   def authenticate_pin(%User{} = user, %PIN{} = pin, code) when is_binary(code) do
     with {:active?, true} <- {:active?, user.is_active},
+         {:locked?, false} <- {:locked?, not is_nil(user.locked_until)},
          {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[#{__MODULE__}] failed because user is inactive")
+        Logger.info("[#{__MODULE__}] failed because user is inactive")
+        {:error, :unauthenticated}
+
+      {:locked?, true} ->
+        Logger.info("[#{__MODULE__}] failed because user is locked")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[#{__MODULE__}] failed because PIN was wrong")
+        Logger.info("[#{__MODULE__}] failed because PIN was wrong")
         {:error, :unauthenticated}
     end
   end
 
   @doc """
-  Gets an user totp and calls `#{__MODULE__}.authenticate_totp/3`
+  Gets an user totp and calls `AuthShield.Authentication.authenticate_totp/3`
   to authenticates user given a totp code.
 
   ## Exemples:
@@ -151,7 +161,7 @@ defmodule AuthShield.Authentication do
     |> Credentials.get_totp_by()
     |> case do
       nil ->
-        Logger.debug("[#{__MODULE__}] failed because TOTP credential was not found")
+        Logger.info("[#{__MODULE__}] failed because TOTP credential was not found")
         {:error, :unauthenticated}
 
       %TOTP{} = totp ->
@@ -173,15 +183,20 @@ defmodule AuthShield.Authentication do
   @spec authenticate_totp(user :: User.t(), totp :: TOTP.t(), code :: String.t()) :: responses()
   def authenticate_totp(%User{} = user, %TOTP{} = totp, code) when is_binary(code) do
     with {:active?, true} <- {:active?, user.is_active},
+         {:locked?, false} <- {:locked?, not is_nil(user.locked_until)},
          {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[#{__MODULE__}] failed because user is inactive")
+        Logger.info("[#{__MODULE__}] failed because user is inactive")
+        {:error, :unauthenticated}
+
+      {:locked?, true} ->
+        Logger.info("[#{__MODULE__}] failed because user is locked")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[#{__MODULE__}] failed because TOTP was wrong")
+        Logger.info("[#{__MODULE__}] failed because TOTP was wrong")
         {:error, :unauthenticated}
     end
   end

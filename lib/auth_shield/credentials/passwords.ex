@@ -21,10 +21,7 @@ defmodule AuthShield.Credentials.Passwords do
 
   ## Exemples:
     ```elixir
-    AuthShield.Credentials.Passwords.insert(%{
-      user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
-      password: "Mypass@rd123"
-    })
+    AuthShield.Credentials.Passwords.insert(%{user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e", password: "Mypass@rd123"})
     ```
   """
   @impl true
@@ -51,10 +48,7 @@ defmodule AuthShield.Credentials.Passwords do
 
   ## Exemples:
     ```elixir
-    AuthShield.Credentials.Passwords.update(password, %{
-      user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e",
-      password: "Mypass@rd123"
-    })
+    AuthShield.Credentials.Passwords.update(password, %{user_id: "ecb4c67d-6380-4984-ae04-1563e885d59e", password: "Mypass@rd123"})
     ```
   """
   @spec update(

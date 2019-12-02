@@ -26,10 +26,7 @@ defmodule AuthShield.Resources.Roles do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Roles.insert(%{
-      name: "admin",
-      description: "System administrator"
-    })
+    AuthShield.Resources.Roles.insert(%{name: "admin", description: "System administrator"})
     ```
   """
   @impl true
@@ -55,10 +52,7 @@ defmodule AuthShield.Resources.Roles do
   Updates a `AuthShield.Resources.Schemas.Role` register.
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Roles.update(role, %{
-      name: "sales",
-      description: "The sales user roles"
-    })
+    AuthShield.Resources.Roles.update(role, %{name: "sales", description: "The sales user roles"})
     ```
   """
   @impl true

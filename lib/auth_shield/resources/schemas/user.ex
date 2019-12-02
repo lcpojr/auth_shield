@@ -41,6 +41,7 @@ defmodule AuthShield.Resources.Schemas.User do
     field(:last_name, :string)
     field(:email, :string)
     field(:is_active, :boolean, default: false)
+    field(:locked_until, :naive_datetime_usec)
 
     # Authorizations
     many_to_many(:roles, Role, join_through: UsersRoles)

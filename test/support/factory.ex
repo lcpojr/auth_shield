@@ -3,7 +3,7 @@ defmodule AuthShield.Factory do
 
   use ExMachina.Ecto, repo: AuthShield.Repo
 
-  alias AuthShield.Authentication.Schemas.Session
+  alias AuthShield.Authentication.Schemas.{LoginAttempt, Session}
   alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
   alias AuthShield.Resources.Schemas.{Permission, Role, User}
 
@@ -14,6 +14,15 @@ defmodule AuthShield.Factory do
       user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
       login_at: NaiveDateTime.utc_now(),
       expiration: NaiveDateTime.utc_now() |> NaiveDateTime.add(60 * 15, :second)
+    }
+  end
+
+  def login_attempt_factory do
+    %LoginAttempt{
+      user_id: Ecto.UUID.generate(),
+      remote_ip: sequence(:session_remote_ip, &"172.31.4.#{&1}"),
+      user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
+      status: "success"
     }
   end
 

@@ -104,7 +104,12 @@ defmodule AuthShield do
 
   ## Exemples:
     ```elixir
-    AuthShield.login(%Plug.Conn%{body_params: "email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
+    AuthShield.login(%Plug.Conn%{
+      body_params: %{
+        "email" => "lucas@gmail.com",
+        "password" => "Mypass@rd23"
+      }
+    )
     ```
   """
   @spec login(connection :: Plug.Conn.t()) ::
@@ -174,7 +179,7 @@ defmodule AuthShield do
   end
 
   @doc """
-  Refresh the authenticated user session.
+  Refresh the authenticated user session by a given `session` or `session_id`
 
   If the user is authenticated and has an active session it will
   return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
@@ -183,21 +188,15 @@ defmodule AuthShield do
 
   ## Exemples:
     ```elixir
+    AuthShield.refresh_session(session)
     AuthShield.refresh_session("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec refresh_session(session_id :: String.t() | Session.t()) ::
+  @spec refresh_session(session :: Session.t() | String.t()) ::
           {:ok, Session.t()}
           | {:error, :session_expired}
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
-  def refresh_session(session_id) when is_binary(session_id) do
-    case Authentication.get_session_by(id: session_id) do
-      %Session{} = session -> refresh_session(session)
-      nil -> {:error, :session_not_found}
-    end
-  end
-
   def refresh_session(%Session{} = session) do
     case Sessions.is_expired?(session) do
       false -> Authentication.update_session(session, %{expiration: get_default_expiration()})
@@ -205,8 +204,15 @@ defmodule AuthShield do
     end
   end
 
+  def refresh_session(session_id) when is_binary(session_id) do
+    case Authentication.get_session_by(id: session_id) do
+      %Session{} = session -> refresh_session(session)
+      nil -> {:error, :session_not_found}
+    end
+  end
+
   @doc """
-  Logout the authenticated user session.
+  Logout the authenticated user session by a given `session` or `session_id`.
 
   If the user is authenticated and has an active session it will
   return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
@@ -218,21 +224,21 @@ defmodule AuthShield do
     AuthShield.logout("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec logout(session_id :: String.t() | Session.t()) ::
+  @spec logout(session :: Session.t() | String.t()) ::
           {:ok, Session.t()}
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
-  def logout(session_id) when is_binary(session_id) do
-    case Authentication.get_session_by(id: session_id) do
-      %Session{} = session -> logout(session)
-      nil -> {:error, :session_not_found}
-    end
-  end
-
   def logout(%Session{} = session) do
     case Sessions.is_expired?(session) do
       false -> Authentication.update_session(session, %{logout_at: NaiveDateTime.utc_now()})
       true -> {:error, :session_expired}
+    end
+  end
+
+  def logout(session_id) when is_binary(session_id) do
+    case Authentication.get_session_by(id: session_id) do
+      %Session{} = session -> logout(session)
+      nil -> {:error, :session_not_found}
     end
   end
 
