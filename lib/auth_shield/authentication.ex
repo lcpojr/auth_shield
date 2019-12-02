@@ -12,7 +12,7 @@ defmodule AuthShield.Authentication do
 
   require Logger
 
-  alias AuthShield.Authentication.Sessions
+  alias AuthShield.Authentication.{LoginAttempts, Sessions}
   alias AuthShield.Credentials
   alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
   alias AuthShield.Resources.Schemas.User
@@ -31,6 +31,15 @@ defmodule AuthShield.Authentication do
 
   defdelegate get_session_by(params), to: Sessions, as: :get_by
   defdelegate get_session_by!(params), to: Sessions, as: :get_by!
+
+  # Login Attempts
+  defdelegate create_login_attempt(params), to: LoginAttempts, as: :insert
+  defdelegate create_login_attempt!(params), to: LoginAttempts, as: :insert!
+
+  defdelegate list_login_attempt(filters), to: LoginAttempts, as: :list
+
+  defdelegate get_login_attempt_by(params), to: LoginAttempts, as: :get_by
+  defdelegate get_login_attempt_by!(params), to: LoginAttempts, as: :get_by!
 
   @doc """
   Gets an user password and calls `AuthShield.Authentication.authenticate_password/3`

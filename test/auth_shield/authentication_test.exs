@@ -123,6 +123,96 @@ defmodule AuthShield.AuthenticationTest do
 
       assert Authentication.get_session_by!(user_id: ctx.user.id)
     end
+
+    test "delegates from create_login_attempt/1 to #{inspect(Authentication.LoginAttempts)}.insert/1",
+         ctx do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [params] ->
+          {:ok, insert(:login_attempt, params)}
+        end
+      )
+
+      assert Authentication.create_login_attempt(%{
+               params_for(:login_attempt)
+               | user_id: ctx.user.id
+             })
+    end
+
+    test "delegates from create_login_attempt!/1 to #{inspect(Authentication.LoginAttempts)}.insert!/1",
+         ctx do
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt!},
+           {Authentication.LoginAttempts, :insert!},
+           [params] ->
+          {:ok, insert(:login_attempt, params)}
+        end
+      )
+
+      assert Authentication.create_login_attempt!(%{
+               params_for(:login_attempt)
+               | user_id: ctx.user.id
+             })
+    end
+
+    test "delegates from list_login_attempt/1 to #{inspect(Authentication.LoginAttempts)}.list/1",
+         ctx do
+      login_attempt = insert(:login_attempt, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_login_attempt},
+           {Authentication.LoginAttempts, :list},
+           [[user_id: id]] ->
+          assert ctx.user.id == id
+          [login_attempt]
+        end
+      )
+
+      assert Authentication.list_login_attempt(user_id: ctx.user.id)
+    end
+
+    test "delegates from get_login_attempt_by/1 to #{inspect(Authentication.LoginAttempts)}.get_by/1",
+         ctx do
+      login_attempt = insert(:login_attempt, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_login_attempt_by},
+           {Authentication.LoginAttempts, :get_by},
+           [[user_id: id]] ->
+          assert ctx.user.id == id
+          login_attempt
+        end
+      )
+
+      assert Authentication.get_login_attempt_by(user_id: ctx.user.id)
+    end
+
+    test "delegates from get_login_attempt_by!/1 to #{inspect(Authentication.LoginAttempts)}.get_by!/1",
+         ctx do
+      login_attempt = insert(:login_attempt, user_id: ctx.user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :get_login_attempt_by!},
+           {Authentication.LoginAttempts, :get_by!},
+           [[user_id: id]] ->
+          assert ctx.user.id == id
+          login_attempt
+        end
+      )
+
+      assert Authentication.get_login_attempt_by!(user_id: ctx.user.id)
+    end
   end
 
   describe "authenticate_password/2" do

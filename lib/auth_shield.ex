@@ -29,9 +29,14 @@ defmodule AuthShield do
     hostname: "localhost",
     port: 5432
 
-  # You can set the session expiration by changing this config
+  # You can set the session expiration and block attempts by changing this config
   # The default expiration is 15 minutes (in seconds)
-  config :auth_shield, AuthShield, session_expiration: 60 * 15
+  # The default max attempts before block is 10
+  # The default block time is 30 minutes
+  config :auth_shield, AuthShield,
+    session_expiration: 60 * 15,
+    block_attempts: 10,
+    block_time: 60 * 15
   ```
 
   In your `test.exs` use the configuration bellow to run it in sandbox mode:
@@ -243,6 +248,7 @@ defmodule AuthShield do
   end
 
   defp get_default_expiration do
+    # Default expiration for sessions
     expiration =
       :auth_shield
       |> Application.get_env(AuthShield)
@@ -250,5 +256,23 @@ defmodule AuthShield do
 
     NaiveDateTime.utc_now()
     |> NaiveDateTime.add(expiration, :second)
+  end
+
+  defp get_default_block_attempts do
+    # Default attempts before user is blocked
+    :auth_shield
+    |> Application.get_env(AuthShield)
+    |> Keyword.get(:block_attempts)
+  end
+
+  defp get_default_block_time do
+    # Default block time when user surpasses max attempts
+    block_time =
+      :auth_shield
+      |> Application.get_env(AuthShield)
+      |> Keyword.get(:block_time)
+
+    NaiveDateTime.utc_now()
+    |> NaiveDateTime.add(block_time, :second)
   end
 end
