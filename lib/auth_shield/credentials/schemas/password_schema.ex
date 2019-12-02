@@ -20,6 +20,7 @@ defmodule AuthShield.Credentials.Schemas.Password do
   @type t :: %__MODULE__{
           id: binary(),
           user: User.t(),
+          algorithm: String.t(),
           password_hash: String.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
@@ -28,9 +29,11 @@ defmodule AuthShield.Credentials.Schemas.Password do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @required_fields [:password, :user_id]
+  @optional_fields [:algorithm]
   schema "password_credentials" do
     field(:password, :string, virtual: true)
     field(:password_hash, :string)
+    field(:algorithm, :string, default: "argon2")
 
     belongs_to(:user, User)
 
@@ -46,7 +49,7 @@ defmodule AuthShield.Credentials.Schemas.Password do
   @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
-    |> cast(params, @required_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_length(:password, min: 6, max: 150)
     |> unique_constraint(:user_id)

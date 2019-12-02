@@ -3,6 +3,7 @@
         "lib/repo.ex",
         "lib/auth_shield/resources/behaviour.ex",
         "lib/auth_shield/credentials/behaviour.ex",
-        "lib/auth_shield/migrations.ex"
+        "lib/auth_shield/migrations.ex",
+        "lib/auth_shield/credentials/totp.ex"
     ]
 }

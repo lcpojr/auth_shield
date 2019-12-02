@@ -33,10 +33,8 @@ defmodule AuthShield.Authentication do
   defdelegate get_session_by!(params), to: Sessions, as: :get_by!
 
   @doc """
-  Authenticates the user by password credential.
-
-  If the user is active and the password credentials are right it
-  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
+  Gets an user password and calls `#{__MODULE__}.authenticate_password/3`
+  to authenticates user given a password code.
 
   ## Exemples:
     ```elixir
@@ -45,25 +43,69 @@ defmodule AuthShield.Authentication do
   """
   @spec authenticate_password(user :: User.t(), pass_code :: String.t()) :: responses()
   def authenticate_password(%User{} = user, pass_code) when is_binary(pass_code) do
+    [user_id: user.id]
+    |> Credentials.get_password_by()
+    |> case do
+      nil ->
+        Logger.debug("[#{__MODULE__}] failed because Password credential was not found.")
+        {:error, :unauthenticated}
+
+      %Password{} = password ->
+        authenticate_password(user, password, pass_code)
+    end
+  end
+
+  @doc """
+  Authenticates the user by password credential.
+
+  If the user is active and the password credentials are right it
+  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
+
+  ## Exemples:
+    ```elixir
+    AuthShield.Authentication.authenticate_password(user, password, "Mypass@rd23")
+    ```
+  """
+  @spec authenticate_password(
+          user :: User.t(),
+          password :: Password.t(),
+          code :: String.t()
+        ) :: responses()
+  def authenticate_password(%User{} = user, %Password{} = pass, code) when is_binary(code) do
     with {:active?, true} <- {:active?, user.is_active},
-         {:cred, %Password{} = pass} <- {:cred, Credentials.get_password_by(user_id: user.id)},
-         {:pass?, true} <- {:pass?, Credentials.check_password?(pass, pass_code)} do
+         {:pass?, true} <- {:pass?, Credentials.check_password?(pass, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[AuthShield.Authentication] failed because user is inactive")
-        {:error, :unauthenticated}
-
-      {:cred, nil} ->
-        Logger.debug(
-          "[AuthShield.Authentication] failed because Password credential was not found"
-        )
-
+        Logger.debug("[#{__MODULE__}] failed because user is inactive")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[AuthShield.Authentication] failed because Password was wrong")
+        Logger.debug("[#{__MODULE__}] failed because Password was wrong")
         {:error, :unauthenticated}
+    end
+  end
+
+  @doc """
+  Gets an user pin and calls `#{__MODULE__}.authenticate_pin/3`
+  to authenticates user given a pin code.
+
+  ## Exemples:
+    ```elixir
+    AuthShield.Authentication.authenticate_pin(user, "332145")
+    ```
+  """
+  @spec authenticate_pin(user :: User.t(), pin_code :: String.t()) :: responses()
+  def authenticate_pin(%User{} = user, pin_code) when is_binary(pin_code) do
+    [user_id: user.id]
+    |> Credentials.get_pin_by()
+    |> case do
+      nil ->
+        Logger.debug("[#{__MODULE__}] failed because PIN credential was not found")
+        {:error, :unauthenticated}
+
+      %PIN{} = pin ->
+        authenticate_pin(user, pin, pin_code)
     end
   end
 
@@ -78,24 +120,42 @@ defmodule AuthShield.Authentication do
     AuthShield.Authentication.authenticate_pin(user, "332145")
     ```
   """
-  @spec authenticate_pin(user :: User.t(), pin_code :: String.t()) :: responses()
-  def authenticate_pin(%User{} = user, pin_code) when is_binary(pin_code) do
+  @spec authenticate_pin(user :: User.t(), pin :: PIN.t(), pin_code :: String.t()) :: responses()
+  def authenticate_pin(%User{} = user, %PIN{} = pin, code) when is_binary(code) do
     with {:active?, true} <- {:active?, user.is_active},
-         {:cred, %PIN{} = pin} <- {:cred, Credentials.get_pin_by(user_id: user.id)},
-         {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, pin_code)} do
+         {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[AuthShield.Authentication] failed because user is inactive")
-        {:error, :unauthenticated}
-
-      {:cred, nil} ->
-        Logger.debug("[AuthShield.Authentication] failed because PIN credential was not found")
+        Logger.debug("[#{__MODULE__}] failed because user is inactive")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[AuthShield.Authentication] failed because PIN was wrong")
+        Logger.debug("[#{__MODULE__}] failed because PIN was wrong")
         {:error, :unauthenticated}
+    end
+  end
+
+  @doc """
+  Gets an user totp and calls `#{__MODULE__}.authenticate_totp/3`
+  to authenticates user given a totp code.
+
+  ## Exemples:
+    ```elixir
+    AuthShield.Authentication.authenticate_totp(user, "332145")
+    ```
+  """
+  @spec authenticate_totp(user :: User.t(), totp_code :: String.t()) :: responses()
+  def authenticate_totp(%User{} = user, totp_code) when is_binary(totp_code) do
+    [user_id: user.id]
+    |> Credentials.get_totp_by()
+    |> case do
+      nil ->
+        Logger.debug("[#{__MODULE__}] failed because TOTP credential was not found")
+        {:error, :unauthenticated}
+
+      %TOTP{} = totp ->
+        authenticate_totp(user, totp, totp_code)
     end
   end
 
@@ -110,23 +170,18 @@ defmodule AuthShield.Authentication do
     AuthShield.Authentication.authenticate_totp(user, "332145")
     ```
   """
-  @spec authenticate_totp(user :: User.t(), totp_code :: String.t()) :: responses()
-  def authenticate_totp(%User{} = user, totp_code) when is_binary(totp_code) do
+  @spec authenticate_totp(user :: User.t(), totp :: TOTP.t(), code :: String.t()) :: responses()
+  def authenticate_totp(%User{} = user, %TOTP{} = totp, code) when is_binary(code) do
     with {:active?, true} <- {:active?, user.is_active},
-         {:cred, %TOTP{} = totp} <- {:cred, Credentials.get_totp_by(user_id: user.id)},
-         {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, totp_code)} do
+         {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.debug("[AuthShield.Authentication] failed because user is inactive")
-        {:error, :unauthenticated}
-
-      {:cred, nil} ->
-        Logger.debug("[AuthShield.Authentication] failed because TOTP credential was not found")
+        Logger.debug("[#{__MODULE__}] failed because user is inactive")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.debug("[AuthShield.Authentication] failed because TOTP was wrong")
+        Logger.debug("[#{__MODULE__}] failed because TOTP was wrong")
         {:error, :unauthenticated}
     end
   end

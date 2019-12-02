@@ -21,6 +21,7 @@ defmodule AuthShield.Credentials.Schemas.PIN do
           id: binary(),
           user: User.t(),
           pin_hash: String.t(),
+          algorithm: String.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
@@ -28,9 +29,11 @@ defmodule AuthShield.Credentials.Schemas.PIN do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @required_fields [:pin, :user_id]
+  @optional_fields [:algorithm]
   schema "pin_credentials" do
     field(:pin, :string, virtual: true)
     field(:pin_hash, :string)
+    field(:algorithm, :string, default: "argon2")
 
     belongs_to(:user, User)
 
@@ -46,7 +49,7 @@ defmodule AuthShield.Credentials.Schemas.PIN do
   @spec changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
-    |> cast(params, @required_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_length(:pin, min: 4, max: 6)
     |> unique_constraint(:user_id)
