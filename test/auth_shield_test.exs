@@ -159,7 +159,7 @@ defmodule AuthShieldTest do
         end
       )
 
-      assert {:error, :user_not_found} ==
+      assert {:error, :unauthenticated} ==
                AuthShield.login(%{
                  "email" => "wrong_email@gmail.com",
                  "password" => "My_passw@rd1"
@@ -196,6 +196,17 @@ defmodule AuthShieldTest do
            [pass, _pass_code] ->
           assert password == pass
           false
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_failure_login_attempts},
+           {Authentication.LoginAttempts, :list_failure},
+           [user_id, _from_date] ->
+          assert user.id == user_id
+          [insert(:login_attempt, user_id: user.id)]
         end
       )
 

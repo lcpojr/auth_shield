@@ -117,11 +117,8 @@ defmodule AuthShield do
     )
     ```
   """
-  @spec login(connection :: Plug.Conn.t()) ::
-          {:ok, Session.t()}
-          | {:error, :user_not_found}
-          | {:error, :unauthenticated}
-          | {:error, Ecto.Changeset.t()}
+  @spec login(conn :: Plug.Conn.t()) ::
+          {:ok, Session.t()} | {:error, :unauthenticated | Ecto.Changeset.t()}
   def login(%Plug.Conn{} = conn) do
     with remote_ip when is_binary(remote_ip) <- get_remote_ip(conn),
          user_agent when is_binary(user_agent) <- get_user_agent(conn),
@@ -155,21 +152,30 @@ defmodule AuthShield do
     ```
   """
   @spec login(params :: Login.t(), opts :: session_options()) ::
-          {:ok, Session.t()}
-          | {:error, :user_not_found}
-          | {:error, :unauthenticated}
-          | {:error, Ecto.Changeset.t()}
+          {:ok, Session.t()} | {:error, :unauthenticated | Ecto.Changeset.t()}
   def login(params, opts \\ []) when is_map(params) and is_list(opts) do
     with {:ok, input} <- Login.validate(params),
          {:user, %User{} = user} <- {:user, Resources.get_user_by(email: input.email)},
-         {:ok, :authenticated} <- Authentication.authenticate_password(user, input.password) do
+         {:login, {:ok, :authenticated}, _user} <-
+           {:login, Authentication.authenticate_password(user, input.password), user} do
       user
       |> build_session(opts)
       |> Authentication.create_session()
     else
-      {:user, nil} -> {:error, :user_not_found}
-      {:error, :unauthenticated} -> {:error, :unauthenticated}
+      {:user, nil} -> {:error, :unauthenticated}
+      {:login, {:error, :unauthenticated}, user} -> try_to_block_user(user)
       {:error, error} -> {:error, error}
+    end
+  end
+
+  defp try_to_block_user(%User{} = user) do
+    attempts = Authentication.list_failure_login_attempts(user.id, get_login_attempt_time())
+
+    if length(attempts) >= block_attempts() do
+      # Blocking user temporarily
+      {:error, :unauthenticated}
+    else
+      {:error, :unauthenticated}
     end
   end
 
@@ -178,7 +184,7 @@ defmodule AuthShield do
       user_id: user.id,
       remote_ip: opts[:remote_ip] || nil,
       user_agent: opts[:user_agent] || nil,
-      expiration: get_default_expiration(),
+      expiration: get_session_expiration(),
       login_at: NaiveDateTime.utc_now()
     }
   end
@@ -204,7 +210,7 @@ defmodule AuthShield do
           | {:error, Ecto.Changeset.t()}
   def refresh_session(%Session{} = session) do
     case Sessions.is_expired?(session) do
-      false -> Authentication.update_session(session, %{expiration: get_default_expiration()})
+      false -> Authentication.update_session(session, %{expiration: get_session_expiration()})
       true -> {:error, :session_expired}
     end
   end
@@ -247,32 +253,19 @@ defmodule AuthShield do
     end
   end
 
-  defp get_default_expiration do
-    # Default expiration for sessions
-    expiration =
-      :auth_shield
-      |> Application.get_env(AuthShield)
-      |> Keyword.get(:session_expiration)
+  # Default timestamps
+  defp get_session_expiration,
+    do: NaiveDateTime.add(NaiveDateTime.utc_now(), session_expiration(), :second)
 
-    NaiveDateTime.utc_now()
-    |> NaiveDateTime.add(expiration, :second)
-  end
+  defp get_block_time,
+    do: NaiveDateTime.add(NaiveDateTime.utc_now(), block_time(), :second)
 
-  defp get_default_block_attempts do
-    # Default attempts before user is blocked
-    :auth_shield
-    |> Application.get_env(AuthShield)
-    |> Keyword.get(:block_attempts)
-  end
+  defp get_login_attempt_time,
+    do: NaiveDateTime.add(NaiveDateTime.utc_now(), -block_time(), :second)
 
-  defp get_default_block_time do
-    # Default block time when user surpasses max attempts
-    block_time =
-      :auth_shield
-      |> Application.get_env(AuthShield)
-      |> Keyword.get(:block_time)
-
-    NaiveDateTime.utc_now()
-    |> NaiveDateTime.add(block_time, :second)
-  end
+  # Configs
+  defp block_time, do: config() |> Keyword.get(:block_time)
+  defp block_attempts, do: config() |> Keyword.get(:block_attempts)
+  defp session_expiration, do: config() |> Keyword.get(:session_expiration)
+  defp config, do: Application.get_env(:auth_shield, AuthShield)
 end

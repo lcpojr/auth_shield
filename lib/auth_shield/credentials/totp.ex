@@ -124,7 +124,7 @@ defmodule AuthShield.Credentials.TOTP do
     AuthShield.Credentials.TOTP.check_pin?(totp, "332456")
 
     # Defining timestamp
-    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", NaiveDateTime.utc_now())
+    AuthShield.Credentials.TOTP.check_pin?(totp, "332456", ~N[2000-01-01 23:00:07])
     ```
   """
   @spec check_totp?(totp :: TOTP.t(), totp_code :: String.t(), now :: DateTime.t()) :: boolean()

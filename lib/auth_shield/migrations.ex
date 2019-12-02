@@ -181,7 +181,6 @@ defmodule AuthShield.Migrations do
       timestamps()
     end
 
-    create_if_not_exists(index(:login_attempts, [:user_id]))
     create_if_not_exists(index(:login_attempts, [:user_id, :status]))
   end
 

@@ -64,7 +64,7 @@ defmodule AuthShield.Authentication.LoginAttempts do
   @spec list(filters :: keyword()) :: list(LoginAttempt.t())
   def list(filters \\ []) when is_list(filters) do
     LoginAttempt
-    |> Ecto.Query.where([p], ^filters)
+    |> Ecto.Query.where([a], ^filters)
     |> Repo.all()
   end
 
@@ -86,4 +86,28 @@ defmodule AuthShield.Authentication.LoginAttempts do
   """
   @spec get_by!(filters :: keyword()) :: LoginAttempt.t() | no_return()
   def get_by!(filters) when is_list(filters), do: Repo.get_by!(LoginAttempt, filters)
+
+  @doc """
+  Returns a list of `AuthShield.Authentication.Schemas.LoginAttempt` by its user_id, status and start date.
+
+  ## Exemples:
+    ```elixir
+    AuthShield.Authentication.LoginAttempts.list_failure(
+      "ecb4c67d-6380-4984-ae04-1563e885d59e",
+      ~N[2000-01-01 23:00:07]
+    )
+    ```
+  """
+  @spec list_failure(
+          user_id :: String.t(),
+          from_date :: NaiveDateTime.t()
+        ) :: list(LoginAttempt.t())
+  def list_failure(user_id, from_date) when is_binary(user_id) do
+    LoginAttempt
+    |> Ecto.Query.where(
+      [a],
+      a.user_id == ^user_id and a.status == "failed" and a.inserted_at >= ^from_date
+    )
+    |> Repo.all()
+  end
 end

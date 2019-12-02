@@ -22,7 +22,7 @@ defmodule AuthShield.Factory do
       user_id: Ecto.UUID.generate(),
       remote_ip: sequence(:session_remote_ip, &"172.31.4.#{&1}"),
       user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
-      status: "success"
+      status: "succeed"
     }
   end
 
