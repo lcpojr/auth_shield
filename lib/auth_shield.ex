@@ -67,6 +67,8 @@ defmodule AuthShield do
   then run the migrations with `mix ecto.migrate`.
   """
 
+  require Logger
+
   alias AuthShield.Authentication
   alias AuthShield.Authentication.Schemas.Session
   alias AuthShield.Authentication.Sessions
@@ -154,38 +156,78 @@ defmodule AuthShield do
   @spec login(params :: Login.t(), opts :: session_options()) ::
           {:ok, Session.t()} | {:error, :unauthenticated | Ecto.Changeset.t()}
   def login(params, opts \\ []) when is_map(params) and is_list(opts) do
-    with {:ok, input} <- Login.validate(params),
+    with {:ok, %{password: pass} = input} <- Login.validate(params),
          {:user, %User{} = user} <- {:user, Resources.get_user_by(email: input.email)},
-         {:login, {:ok, :authenticated}, _user} <-
-           {:login, Authentication.authenticate_password(user, input.password), user} do
+         {{:ok, :authenticated}, _} <- {Authentication.authenticate_password(user, pass), user},
+         {:ok, _attempt} <- save_login_attempt(user, "succeed", opts) do
       user
       |> build_session(opts)
       |> Authentication.create_session()
     else
-      {:user, nil} -> {:error, :unauthenticated}
-      {:login, {:error, :unauthenticated}, user} -> try_to_block_user(user)
-      {:error, error} -> {:error, error}
+      {:user, nil} ->
+        Logger.debug("[#{__MODULE__}] failed to login because user was not found")
+        {:error, :unauthenticated}
+
+      {{:error, :unauthenticated}, user} ->
+        save_login_attempt(user, "failed", opts)
+        try_to_block_user(user, opts)
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
-  defp try_to_block_user(%User{} = user) do
+  defp save_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
+    user
+    |> build_login_attempt(status, opts)
+    |> Authentication.create_login_attempt()
+    |> case do
+      {:ok, attempt} ->
+        {:ok, attempt}
+
+      {:error, error} ->
+        Logger.error("[#{__MODULE__}] failed to save login attempt")
+        {:error, error}
+    end
+  end
+
+  defp try_to_block_user(user, opts) when is_list(opts) do
     attempts = Authentication.list_failure_login_attempts(user.id, get_login_attempt_time())
 
     if length(attempts) >= block_attempts() do
       # Blocking user temporarily
-      {:error, :unauthenticated}
+      user
+      |> Resources.change_locked_user(get_block_time())
+      |> case do
+        {:ok, _user} ->
+          Logger.warn("[#{__MODULE__} user was locked because of failed attempts")
+          {:error, :unauthenticated}
+
+        {:error, error} ->
+          Logger.error("[#{__MODULE__}] failed to lock the user")
+          {:error, error}
+      end
     else
       {:error, :unauthenticated}
     end
   end
 
-  defp build_session(user, opts) do
+  defp build_session(user, opts) when is_list(opts) do
     %{
       user_id: user.id,
       remote_ip: opts[:remote_ip] || nil,
       user_agent: opts[:user_agent] || nil,
       expiration: get_session_expiration(),
       login_at: NaiveDateTime.utc_now()
+    }
+  end
+
+  defp build_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
+    %{
+      user_id: user.id,
+      remote_ip: opts[:remote_ip] || nil,
+      user_agent: opts[:user_agent] || nil,
+      status: status
     }
   end
 
@@ -254,14 +296,17 @@ defmodule AuthShield do
   end
 
   # Default timestamps
-  defp get_session_expiration,
-    do: NaiveDateTime.add(NaiveDateTime.utc_now(), session_expiration(), :second)
+  defp get_session_expiration do
+    NaiveDateTime.add(NaiveDateTime.utc_now(), session_expiration(), :second)
+  end
 
-  defp get_block_time,
-    do: NaiveDateTime.add(NaiveDateTime.utc_now(), block_time(), :second)
+  defp get_block_time do
+    NaiveDateTime.add(NaiveDateTime.utc_now(), block_time(), :second)
+  end
 
-  defp get_login_attempt_time,
-    do: NaiveDateTime.add(NaiveDateTime.utc_now(), -block_time(), :second)
+  defp get_login_attempt_time do
+    NaiveDateTime.add(NaiveDateTime.utc_now(), -block_time(), :second)
+  end
 
   # Configs
   defp block_time, do: config() |> Keyword.get(:block_time)

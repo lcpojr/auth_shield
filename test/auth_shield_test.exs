@@ -78,6 +78,17 @@ defmodule AuthShieldTest do
       expect(
         DelegatorMock,
         :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [params] ->
+          assert is_map(params)
+          {:ok, insert(:login_attempt, user_id: user.id)}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
         fn {Authentication, :create_session}, {Authentication.Sessions, :insert}, [params] ->
           {:ok, insert(:session, params)}
         end
@@ -130,6 +141,17 @@ defmodule AuthShieldTest do
       expect(
         DelegatorMock,
         :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [params] ->
+          assert is_map(params)
+          {:ok, insert(:login_attempt, user_id: user.id)}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
         fn {Authentication, :create_session}, {Authentication.Sessions, :insert}, [params] ->
           {:ok, insert(:session, params)}
         end
@@ -169,6 +191,7 @@ defmodule AuthShieldTest do
     test "fails if password is wrong" do
       user = insert(:user, is_active: true)
       password = insert(:password, user_id: user.id)
+      login_attempt = insert(:login_attempt, user_id: user.id, status: "failed")
 
       expect(
         DelegatorMock,
@@ -202,11 +225,97 @@ defmodule AuthShieldTest do
       expect(
         DelegatorMock,
         :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [params] ->
+          assert is_map(params)
+          {:ok, login_attempt}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
         fn {Authentication, :list_failure_login_attempts},
            {Authentication.LoginAttempts, :list_failure},
            [user_id, _from_date] ->
           assert user.id == user_id
-          [insert(:login_attempt, user_id: user.id)]
+          [login_attempt]
+        end
+      )
+
+      assert {:error, :unauthenticated} ==
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
+               })
+    end
+
+    test "blocks user if it fails to many times" do
+      user = insert(:user, is_active: true)
+      password = insert(:password, user_id: user.id)
+      login_attempts = insert_list(9, :login_attempt, user_id: user.id, status: "failed")
+      last_attempt = insert(:login_attempt, user_id: user.id, status: "failed")
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          false
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [params] ->
+          assert is_map(params)
+          {:ok, last_attempt}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_failure_login_attempts},
+           {Authentication.LoginAttempts, :list_failure},
+           [user_id, _from_date] ->
+          assert user.id == user_id
+          [last_attempt | login_attempts]
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :change_locked_user},
+           {Resources.Users, :change_locked},
+           [param_user, _locked_until] ->
+          assert user == param_user
+          {:ok, user}
         end
       )
 

@@ -85,21 +85,16 @@ defmodule AuthShield.Authentication do
           code :: String.t()
         ) :: responses()
   def authenticate_password(%User{} = user, %Password{} = pass, code) when is_binary(code) do
-    with {:active?, true} <- {:active?, user.is_active},
-         {:locked?, false} <- {:locked?, not is_nil(user.locked_until)},
+    with {:active?, true} <- {:active?, active_and_not_locked?(user)},
          {:pass?, true} <- {:pass?, Credentials.check_password?(pass, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.info("[#{__MODULE__}] failed because user is inactive")
-        {:error, :unauthenticated}
-
-      {:locked?, true} ->
-        Logger.info("[#{__MODULE__}] failed because user is locked")
+        Logger.warn("[#{__MODULE__}] failed to authenticate password because user is inactive")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.info("[#{__MODULE__}] failed because Password was wrong")
+        Logger.debug("[#{__MODULE__}] failed because password is incorrect")
         {:error, :unauthenticated}
     end
   end
@@ -140,21 +135,16 @@ defmodule AuthShield.Authentication do
   """
   @spec authenticate_pin(user :: User.t(), pin :: PIN.t(), pin_code :: String.t()) :: responses()
   def authenticate_pin(%User{} = user, %PIN{} = pin, code) when is_binary(code) do
-    with {:active?, true} <- {:active?, user.is_active},
-         {:locked?, false} <- {:locked?, not is_nil(user.locked_until)},
+    with {:active?, true} <- {:active?, active_and_not_locked?(user)},
          {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.info("[#{__MODULE__}] failed because user is inactive")
-        {:error, :unauthenticated}
-
-      {:locked?, true} ->
-        Logger.info("[#{__MODULE__}] failed because user is locked")
+        Logger.warn("[#{__MODULE__}] failed to authenticate PIN because user is inactive")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.info("[#{__MODULE__}] failed because PIN was wrong")
+        Logger.debug("[#{__MODULE__}] failed because PIN is incorrect")
         {:error, :unauthenticated}
     end
   end
@@ -195,22 +185,25 @@ defmodule AuthShield.Authentication do
   """
   @spec authenticate_totp(user :: User.t(), totp :: TOTP.t(), code :: String.t()) :: responses()
   def authenticate_totp(%User{} = user, %TOTP{} = totp, code) when is_binary(code) do
-    with {:active?, true} <- {:active?, user.is_active},
-         {:locked?, false} <- {:locked?, not is_nil(user.locked_until)},
+    with {:active?, true} <- {:active?, active_and_not_locked?(user)},
          {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
-        Logger.info("[#{__MODULE__}] failed because user is inactive")
-        {:error, :unauthenticated}
-
-      {:locked?, true} ->
-        Logger.info("[#{__MODULE__}] failed because user is locked")
+        Logger.warn("[#{__MODULE__}] failed to authenticate TOTP because user is inactive")
         {:error, :unauthenticated}
 
       {:pass?, false} ->
-        Logger.info("[#{__MODULE__}] failed because TOTP was wrong")
+        Logger.debug("[#{__MODULE__}] failed because TOTP is incorrect")
         {:error, :unauthenticated}
+    end
+  end
+
+  defp active_and_not_locked?(user) do
+    cond do
+      not user.is_active -> false
+      not is_nil(user.locked_until) and user.locked_until > NaiveDateTime.utc_now() -> false
+      true -> true
     end
   end
 end

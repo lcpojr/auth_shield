@@ -29,8 +29,11 @@ defmodule AuthShield.Resources do
   defdelegate delete_user(user), to: Users, as: :delete
   defdelegate delete_user!(user), to: Users, as: :delete!
 
-  defdelegate change_status_user(user, status), to: Users, as: :status
-  defdelegate change_status_user!(user, status), to: Users, as: :status!
+  defdelegate change_status_user(user, status), to: Users, as: :change_status
+  defdelegate change_status_user!(user, status), to: Users, as: :change_status!
+
+  defdelegate change_locked_user(user, locked_until), to: Users, as: :change_locked
+  defdelegate change_locked_user!(user, locked_until), to: Users, as: :change_locked!
 
   defdelegate change_roles_user(user, roles), to: Users, as: :change_roles
   defdelegate change_roles_user!(user, roles), to: Users, as: :change_roles!
