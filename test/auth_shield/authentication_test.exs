@@ -310,6 +310,21 @@ defmodule AuthShield.AuthenticationTest do
 
       assert {:error, :unauthenticated} == Authentication.authenticate_password(user, "234543")
     end
+
+    test "fails if user password credential not found" do
+      assert user = insert(:user, is_active: true)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          nil
+        end
+      )
+
+      assert {:error, :unauthenticated} == Authentication.authenticate_password(user, "234543")
+    end
   end
 
   describe "authenticate_pin/2" do
@@ -390,6 +405,21 @@ defmodule AuthShield.AuthenticationTest do
         fn {Credentials, :check_pin?}, {Credentials.PIN, :check_pin?}, [cred, _pin_code] ->
           assert pin == cred
           false
+        end
+      )
+
+      assert {:error, :unauthenticated} == Authentication.authenticate_pin(user, "654321")
+    end
+
+    test "fails if user password credential not found" do
+      assert user = insert(:user, is_active: true)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_pin_by}, {Credentials.PIN, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          nil
         end
       )
 
