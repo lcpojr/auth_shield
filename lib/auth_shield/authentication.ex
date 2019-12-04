@@ -18,7 +18,7 @@ defmodule AuthShield.Authentication do
   alias AuthShield.Resources.Schemas.User
 
   @typedoc "Authentication possible responses"
-  @type responses :: {:ok, :authenticated} | {:error, :unauthenticated}
+  @type responses :: {:ok, :authenticated} | {:error, :unauthenticated | :user_is_not_active}
 
   # Session
   defdelegate create_session(params), to: Sessions, as: :insert
@@ -71,8 +71,8 @@ defmodule AuthShield.Authentication do
   @doc """
   Authenticates the user by password credential.
 
-  If the user is active and the password credentials are right it
-  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
+  If the user is active and the password credential is right it
+  will be authenticated, otherwiese ir returns an error.
 
   ## Exemples:
     ```elixir
@@ -85,13 +85,18 @@ defmodule AuthShield.Authentication do
           code :: String.t()
         ) :: responses()
   def authenticate_password(%User{} = user, %Password{} = pass, code) when is_binary(code) do
-    with {:active?, true} <- {:active?, active_and_not_locked?(user)},
+    with {:active?, true} <- {:active?, user.is_active},
+         {:locked?, false} <- {:locked?, not is_nil(user.locked_until) or still_locked?(user)},
          {:pass?, true} <- {:pass?, Credentials.check_password?(pass, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
         Logger.warn("[#{__MODULE__}] failed to authenticate password because user is inactive")
-        {:error, :unauthenticated}
+        {:error, :user_is_not_active}
+
+      {:locked?, true} ->
+        Logger.warn("[#{__MODULE__}] failed to authenticate password because user is locked")
+        {:error, :user_is_locked}
 
       {:pass?, false} ->
         Logger.debug("[#{__MODULE__}] failed because password is incorrect")
@@ -125,8 +130,8 @@ defmodule AuthShield.Authentication do
   @doc """
   Authenticates the user by PIN credential.
 
-  If the user is active and the password credentials are right it
-  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
+  If the user is active and the pin credential is right it
+  will be authenticated, otherwiese ir returns an error.
 
   ## Exemples:
     ```elixir
@@ -135,13 +140,18 @@ defmodule AuthShield.Authentication do
   """
   @spec authenticate_pin(user :: User.t(), pin :: PIN.t(), pin_code :: String.t()) :: responses()
   def authenticate_pin(%User{} = user, %PIN{} = pin, code) when is_binary(code) do
-    with {:active?, true} <- {:active?, active_and_not_locked?(user)},
+    with {:active?, true} <- {:active?, user.is_active},
+         {:locked?, false} <- {:locked?, not is_nil(user.locked_until) or still_locked?(user)},
          {:pass?, true} <- {:pass?, Credentials.check_pin?(pin, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
         Logger.warn("[#{__MODULE__}] failed to authenticate PIN because user is inactive")
-        {:error, :unauthenticated}
+        {:error, :user_is_not_active}
+
+      {:locked?, true} ->
+        Logger.warn("[#{__MODULE__}] failed to authenticate password because user is locked")
+        {:error, :user_is_locked}
 
       {:pass?, false} ->
         Logger.debug("[#{__MODULE__}] failed because PIN is incorrect")
@@ -175,8 +185,8 @@ defmodule AuthShield.Authentication do
   @doc """
   Authenticates the user by TOTP credential.
 
-  If the user is active and the password credentials are right it
-  will return `{:ok, :authenticated}` otherwiese `{:error, :unauthorized}`.
+  If the user is active and the totp credential is right it
+  will be authenticated, otherwiese ir returns an error.
 
   ## Exemples:
     ```elixir
@@ -185,13 +195,18 @@ defmodule AuthShield.Authentication do
   """
   @spec authenticate_totp(user :: User.t(), totp :: TOTP.t(), code :: String.t()) :: responses()
   def authenticate_totp(%User{} = user, %TOTP{} = totp, code) when is_binary(code) do
-    with {:active?, true} <- {:active?, active_and_not_locked?(user)},
+    with {:active?, true} <- {:active?, user.is_active},
+         {:locked?, false} <- {:locked?, not is_nil(user.locked_until) or still_locked?(user)},
          {:pass?, true} <- {:pass?, Credentials.check_totp?(totp, code)} do
       {:ok, :authenticated}
     else
       {:active?, false} ->
         Logger.warn("[#{__MODULE__}] failed to authenticate TOTP because user is inactive")
-        {:error, :unauthenticated}
+        {:error, :user_is_not_active}
+
+      {:locked?, true} ->
+        Logger.warn("[#{__MODULE__}] failed to authenticate password because user is locked")
+        {:error, :user_is_locked}
 
       {:pass?, false} ->
         Logger.debug("[#{__MODULE__}] failed because TOTP is incorrect")
@@ -199,11 +214,5 @@ defmodule AuthShield.Authentication do
     end
   end
 
-  defp active_and_not_locked?(user) do
-    cond do
-      not user.is_active -> false
-      not is_nil(user.locked_until) and user.locked_until > NaiveDateTime.utc_now() -> false
-      true -> true
-    end
-  end
+  defp still_locked?(%User{} = user), do: user.locked_until > NaiveDateTime.utc_now()
 end

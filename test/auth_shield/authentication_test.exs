@@ -256,7 +256,28 @@ defmodule AuthShield.AuthenticationTest do
         end
       )
 
-      assert {:error, :unauthenticated} ==
+      assert {:error, :user_is_not_active} ==
+               Authentication.authenticate_password(
+                 user,
+                 "My_passw@rd1"
+               )
+    end
+
+    test "fails if user is locked" do
+      assert locked_until = NaiveDateTime.add(NaiveDateTime.utc_now(), 60 * 15, :second)
+      assert user = insert(:user, is_active: true, locked_until: locked_until)
+      assert password = insert(:password, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      assert {:error, :user_is_locked} ==
                Authentication.authenticate_password(
                  user,
                  "My_passw@rd1"
@@ -317,7 +338,7 @@ defmodule AuthShield.AuthenticationTest do
       assert {:ok, :authenticated} == Authentication.authenticate_pin(user, "123456")
     end
 
-    test "unauthenticates if user is not active" do
+    test "fails if user is not active" do
       assert user = insert(:user)
       assert pin = insert(:pin, user_id: user.id)
 
@@ -330,7 +351,24 @@ defmodule AuthShield.AuthenticationTest do
         end
       )
 
-      assert {:error, :unauthenticated} == Authentication.authenticate_pin(user, "123456")
+      assert {:error, :user_is_not_active} == Authentication.authenticate_pin(user, "123456")
+    end
+
+    test "fails if user is locked" do
+      assert locked_until = NaiveDateTime.add(NaiveDateTime.utc_now(), 60 * 15, :second)
+      assert user = insert(:user, is_active: true, locked_until: locked_until)
+      assert pin = insert(:pin, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_pin_by}, {Credentials.PIN, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          pin
+        end
+      )
+
+      assert {:error, :user_is_locked} == Authentication.authenticate_pin(user, "123456")
     end
 
     test "unauthenticates if the user pin credential is invalid" do

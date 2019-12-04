@@ -172,6 +172,14 @@ defmodule AuthShield do
         save_login_attempt(user, "failed", opts)
         try_to_block_user(user, opts)
 
+      {{:error, :user_is_not_active}, user} ->
+        save_login_attempt(user, "inactive", opts)
+        {:error, :unauthenticated}
+
+      {{:error, :user_is_locked}, user} ->
+        save_login_attempt(user, "locked", opts)
+        {:error, :unauthenticated}
+
       {:error, error} ->
         {:error, error}
     end

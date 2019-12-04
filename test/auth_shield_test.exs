@@ -143,8 +143,8 @@ defmodule AuthShieldTest do
         :apply,
         fn {Authentication, :create_login_attempt},
            {Authentication.LoginAttempts, :insert},
-           [params] ->
-          assert is_map(params)
+           [%{user_id: id, status: "succeed"}] ->
+          assert user.id == id
           {:ok, insert(:login_attempt, user_id: user.id)}
         end
       )
@@ -161,6 +161,287 @@ defmodule AuthShieldTest do
                AuthShield.login(%{
                  "email" => user.email,
                  "password" => "My_passw@rd1"
+               })
+    end
+
+    test "do not lock user if it succeed in it's last attempt" do
+      user = insert(:user, is_active: true)
+      password = insert(:password, user_id: user.id)
+      insert_list(9, :login_attempt, user_id: user.id, status: "failed")
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          true
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [%{user_id: id, status: "succeed"}] ->
+          assert user.id == id
+          {:ok, insert(:login_attempt, user_id: user.id, status: "succeed")}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_session}, {Authentication.Sessions, :insert}, [params] ->
+          {:ok, insert(:session, params)}
+        end
+      )
+
+      assert {:ok, %Session{}} =
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
+               })
+    end
+
+    test "do not lock user if it fails less than limit" do
+      user = insert(:user, is_active: true)
+      password = insert(:password, user_id: user.id)
+      login_attempts = insert_list(8, :login_attempt, user_id: user.id, status: "failed")
+      last_attempt = insert(:login_attempt, user_id: user.id, status: "failed")
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          false
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [%{user_id: id, status: "failed"}] ->
+          assert user.id == id
+          {:ok, last_attempt}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_failure_login_attempts},
+           {Authentication.LoginAttempts, :list_failure},
+           [user_id, _from_date] ->
+          assert user.id == user_id
+          [last_attempt | login_attempts]
+        end
+      )
+
+      assert {:error, :unauthenticated} ==
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
+               })
+    end
+
+    test "locks user if it fails more than limit" do
+      user = insert(:user, is_active: true)
+      password = insert(:password, user_id: user.id)
+      login_attempts = insert_list(9, :login_attempt, user_id: user.id, status: "failed")
+      last_attempt = insert(:login_attempt, user_id: user.id, status: "failed")
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          false
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [%{user_id: id, status: "failed"}] ->
+          assert user.id == id
+          {:ok, last_attempt}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_failure_login_attempts},
+           {Authentication.LoginAttempts, :list_failure},
+           [user_id, _from_date] ->
+          assert user.id == user_id
+          [last_attempt | login_attempts]
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :change_locked_user},
+           {Resources.Users, :change_locked},
+           [param_user, _locked_until] ->
+          assert user == param_user
+          {:ok, user}
+        end
+      )
+
+      assert {:error, :unauthenticated} ==
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
+               })
+    end
+
+    test "do not login inactive users" do
+      user = insert(:user, is_active: false)
+      password = insert(:password, user_id: user.id)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [%{user_id: id, status: "inactive"}] ->
+          assert user.id == id
+          {:ok, insert(:login_attempt, user_id: user.id, status: "inactive")}
+        end
+      )
+
+      assert {:error, :unauthenticated} ==
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
+               })
+    end
+
+    test "do not login locked users" do
+      locked_until = NaiveDateTime.add(NaiveDateTime.utc_now(), 60 * 15, :second)
+      user = insert(:user, is_active: true, locked_until: locked_until)
+      password = insert(:password, user_id: user.id)
+      insert_list(10, :login_attempt, user_id: user.id, status: "failed")
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [%{user_id: id, status: "locked"}] ->
+          assert user.id == id
+          {:ok, insert(:login_attempt, user_id: user.id, status: "locked")}
+        end
+      )
+
+      assert {:error, :unauthenticated} ==
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
                })
     end
 
@@ -241,81 +522,6 @@ defmodule AuthShieldTest do
            [user_id, _from_date] ->
           assert user.id == user_id
           [login_attempt]
-        end
-      )
-
-      assert {:error, :unauthenticated} ==
-               AuthShield.login(%{
-                 "email" => user.email,
-                 "password" => "123456"
-               })
-    end
-
-    test "blocks user if it fails to many times" do
-      user = insert(:user, is_active: true)
-      password = insert(:password, user_id: user.id)
-      login_attempts = insert_list(9, :login_attempt, user_id: user.id, status: "failed")
-      last_attempt = insert(:login_attempt, user_id: user.id, status: "failed")
-
-      expect(
-        DelegatorMock,
-        :apply,
-        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
-          assert user.email == email
-          user
-        end
-      )
-
-      expect(
-        DelegatorMock,
-        :apply,
-        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
-          assert user.id == id
-          password
-        end
-      )
-
-      expect(
-        DelegatorMock,
-        :apply,
-        fn {Credentials, :check_password?},
-           {Credentials.Passwords, :check_password?},
-           [pass, _pass_code] ->
-          assert password == pass
-          false
-        end
-      )
-
-      expect(
-        DelegatorMock,
-        :apply,
-        fn {Authentication, :create_login_attempt},
-           {Authentication.LoginAttempts, :insert},
-           [params] ->
-          assert is_map(params)
-          {:ok, last_attempt}
-        end
-      )
-
-      expect(
-        DelegatorMock,
-        :apply,
-        fn {Authentication, :list_failure_login_attempts},
-           {Authentication.LoginAttempts, :list_failure},
-           [user_id, _from_date] ->
-          assert user.id == user_id
-          [last_attempt | login_attempts]
-        end
-      )
-
-      expect(
-        DelegatorMock,
-        :apply,
-        fn {Resources, :change_locked_user},
-           {Resources.Users, :change_locked},
-           [param_user, _locked_until] ->
-          assert user == param_user
-          {:ok, user}
         end
       )
 

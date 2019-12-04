@@ -41,7 +41,7 @@ defmodule AuthShield.Authentication.Schemas.LoginAttempt do
   def changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
     |> cast(params, @required_fields ++ @optional_fields)
-    |> validate_inclusion(:status, ["succeed", "failed"])
+    |> validate_inclusion(:status, ["succeed", "failed", "inactive", "locked"])
     |> validate_required(@required_fields)
   end
 end

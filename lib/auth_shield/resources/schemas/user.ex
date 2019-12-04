@@ -27,6 +27,7 @@ defmodule AuthShield.Resources.Schemas.User do
           pin_credential: PIN.t(),
           totp_credential: TOTP.t(),
           password_credential: Password.t(),
+          locked_until: NaiveDateTime.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
