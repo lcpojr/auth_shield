@@ -132,14 +132,14 @@ defmodule AuthShield.ResourcesTest do
       assert Resources.delete_user!(user)
     end
 
-    test "delegates from change_status_user/2 to user #{inspect(Users)}.status/2" do
+    test "delegates from change_status_user/2 to user #{inspect(Users)}.change_status/2" do
       user = insert(:user)
 
       expect(
         DelegatorMock,
         :apply,
         fn {Resources, :change_status_user},
-           {Resources.Users, :status},
+           {Resources.Users, :change_status},
            [%User{} = user, _status] ->
           {:ok, user}
         end
@@ -148,20 +148,52 @@ defmodule AuthShield.ResourcesTest do
       assert Resources.change_status_user(user, true)
     end
 
-    test "delegates from change_status_user!/2 to user #{inspect(Users)}.status!/2" do
+    test "delegates from change_status_user!/2 to user #{inspect(Users)}.change_status!/2" do
       user = insert(:user)
 
       expect(
         DelegatorMock,
         :apply,
         fn {Resources, :change_status_user!},
-           {Resources.Users, :status!},
+           {Resources.Users, :change_status!},
            [%User{} = user, _status] ->
           user
         end
       )
 
       assert Resources.change_status_user!(user, true)
+    end
+
+    test "delegates from change_locked_user/2 to user #{inspect(Users)}.change_locked/2" do
+      user = insert(:user)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :change_locked_user},
+           {Resources.Users, :change_locked},
+           [%User{} = user, _status] ->
+          {:ok, user}
+        end
+      )
+
+      assert Resources.change_locked_user(user, true)
+    end
+
+    test "delegates from change_locked_user!/2 to user #{inspect(Users)}.change_locked!/2" do
+      user = insert(:user)
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :change_locked_user!},
+           {Resources.Users, :change_locked!},
+           [%User{} = user, _status] ->
+          user
+        end
+      )
+
+      assert Resources.change_locked_user!(user, true)
     end
 
     test "delegates from change_roles_user/2 to user #{inspect(Users)}.change_roles/2" do

@@ -26,10 +26,7 @@ defmodule AuthShield.Resources.Permissions do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Permissions.insert(%{
-      name: "can_create_users",
-      description: "Has permission to create users on the system"
-    })
+    AuthShield.Resources.Permissions.insert(%{name: "can_create_users", description: "Has permission to create users on the system"})
     ```
   """
   @impl true
@@ -56,10 +53,7 @@ defmodule AuthShield.Resources.Permissions do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Permissions.update(permission, %{
-      name: "can_update_users",
-      description: "Has permission to update users on the system"
-    })
+    AuthShield.Resources.Permissions.update(permission, %{name: "can_update_users", description: "Has permission to update users on the system"})
     ```
   """
   @impl true

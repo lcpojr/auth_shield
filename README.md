@@ -29,9 +29,14 @@ config :auth_shield, AuthShield.Repo,
   hostname: "localhost",
   port: 5432
 
-# You can set the session expiration by changing this config
+# You can set the session expiration and block attempts by changing this config
 # The default expiration is 15 minutes (in seconds)
-config :auth_shield, AuthShield, session_expiration: 60 * 15
+# The default max attempts before block is 10
+# The default block time is 30 minutes
+config :auth_shield, AuthShield,
+  session_expiration: 60 * 15,
+  block_attempts: 10,
+  block_time: 60 * 15
 ```
 
 In your `test.exs` use the configuration bellow to run it in sandbox mode:

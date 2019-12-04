@@ -64,6 +64,29 @@ defmodule AuthShield.Authentication.Plugs.AuthSessionTest do
       assert 401 == conn.status
     end
 
+    test "fails if user-agent not found", ctx do
+      assert {:ok, remote_ip} = :inet.parse_address('#{ctx.session.remote_ip}')
+
+      assert conn =
+               :get
+               |> conn("/users")
+               |> put_private(:session, ctx.session)
+               |> Map.put(:remote_ip, remote_ip)
+               |> AuthSession.call()
+
+      assert 401 == conn.status
+    end
+
+    test "fails if remote-ip not found" do
+      assert conn =
+               :get
+               |> conn("/users")
+               |> Map.put(:remote_ip, nil)
+               |> AuthSession.call()
+
+      assert 401 == conn.status
+    end
+
     test "fails if session not found", ctx do
       assert {:ok, remote_ip} = :inet.parse_address('#{ctx.session.remote_ip}')
 

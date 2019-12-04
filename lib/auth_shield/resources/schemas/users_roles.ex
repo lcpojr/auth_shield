@@ -1,6 +1,6 @@
-defmodule AuthShield.Resources.Schemas.RolesPermissions do
+defmodule AuthShield.Resources.Schemas.UsersRoles do
   @moduledoc """
-  Defines the association between roles and permissions.
+  Defines the association between users and roles.
 
   This is only used to create the many to many relations on
   the tables.
@@ -10,24 +10,22 @@ defmodule AuthShield.Resources.Schemas.RolesPermissions do
 
   import Ecto.Changeset
 
-  alias AuthShield.Resources.Schemas.{Permission, Role}
+  alias AuthShield.Resources.Schemas.{Role, User}
 
-  @typedoc """
-  Abstract role module type.
-  """
+  @typedoc "Abstract role module type."
   @type t :: %__MODULE__{
+          user: User.t(),
           role: Role.t(),
-          permission: Permission.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
 
   @primary_key false
   @foreign_key_type :binary_id
-  @required_fields [:role_id, :permission_id]
-  schema "roles_permissions" do
+  @required_fields [:user_id, :role_id]
+  schema "users_roles" do
+    belongs_to(:user, User, primary_key: true)
     belongs_to(:role, Role, primary_key: true)
-    belongs_to(:permission, Permission, primary_key: true)
 
     timestamps()
   end
@@ -38,9 +36,9 @@ defmodule AuthShield.Resources.Schemas.RolesPermissions do
     model
     |> cast(params, @required_fields)
     |> validate_required(@required_fields)
+    |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:role_id)
-    |> foreign_key_constraint(:permission_id)
-    |> unique_constraint(:role, name: :role_id_permission_id_unique_index)
-    |> unique_constraint(:permission, name: :role_id_permission_id_unique_index)
+    |> unique_constraint(:user, name: :user_id_role_id_unique_index)
+    |> unique_constraint(:role, name: :user_id_role_id_unique_index)
   end
 end

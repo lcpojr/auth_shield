@@ -59,11 +59,7 @@ defmodule AuthShield.Resources.Users do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Users.update(user, %{
-      first_name: "Marcos",
-      last_name: "Farias",
-      email: "marcos@gmail.com"
-    })
+    AuthShield.Resources.Users.update(user, %{first_name: "Marcos", last_name: "Farias", email: "marcos@gmail.com"})
     ```
   """
   @impl true
@@ -147,14 +143,14 @@ defmodule AuthShield.Resources.Users do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Users.status(user, true)
+    AuthShield.Resources.Users.change_status(user, true)
     ```
   """
-  @spec status(
+  @spec change_status(
           user :: User.t(),
           status :: boolean()
         ) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def status(%User{} = user, status) when is_boolean(status) do
+  def change_status(%User{} = user, status) when is_boolean(status) do
     user
     |> User.changeset_status(%{is_active: status})
     |> Repo.update()
@@ -163,12 +159,45 @@ defmodule AuthShield.Resources.Users do
   @doc """
   Changes a `AuthShield.Resources.Schemas.User` status.
 
-  Similar to `status/1` but returns the struct or raises if the changeset is invalid.
+  Similar to `change_status/1` but returns the struct or raises if the changeset is invalid.
   """
-  @spec status!(user :: User.t(), status :: boolean()) :: User.t() | no_return()
-  def status!(%User{} = user, status) when is_boolean(status) do
+  @spec change_status!(user :: User.t(), status :: boolean()) :: User.t() | no_return()
+  def change_status!(%User{} = user, status) when is_boolean(status) do
     user
     |> User.changeset_status(%{is_active: status})
+    |> Repo.update!()
+  end
+
+  @doc """
+  Changes a `User` locked_until.
+
+  ## Exemples:
+    ```elixir
+    AuthShield.Resources.Users.change_locked(user, true)
+    ```
+  """
+  @spec change_locked(
+          user :: User.t(),
+          locked_until :: NaiveDateTime.t() | nil
+        ) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def change_locked(%User{} = user, locked_until) do
+    user
+    |> User.changeset_status(%{locked_until: locked_until})
+    |> Repo.update()
+  end
+
+  @doc """
+  Changes a `AuthShield.Resources.Schemas.User` status.
+
+  Similar to `change_locked/1` but returns the struct or raises if the changeset is invalid.
+  """
+  @spec change_locked!(
+          user :: User.t(),
+          locked_until :: NaiveDateTime.t() | nil
+        ) :: User.t() | no_return()
+  def change_locked!(%User{} = user, locked_until) do
+    user
+    |> User.changeset_status(%{locked_until: locked_until})
     |> Repo.update!()
   end
 

@@ -29,9 +29,14 @@ defmodule AuthShield do
     hostname: "localhost",
     port: 5432
 
-  # You can set the session expiration by changing this config
+  # You can set the session expiration and block attempts by changing this config
   # The default expiration is 15 minutes (in seconds)
-  config :auth_shield, AuthShield, session_expiration: 60 * 15
+  # The default max attempts before block is 10
+  # The default block time is 30 minutes
+  config :auth_shield, AuthShield,
+    session_expiration: 60 * 15,
+    block_attempts: 10,
+    block_time: 60 * 15
   ```
 
   In your `test.exs` use the configuration bellow to run it in sandbox mode:
@@ -61,6 +66,8 @@ defmodule AuthShield do
   Create the database database (if its not created yet) by using `mix ecto.migrate` and
   then run the migrations with `mix ecto.migrate`.
   """
+
+  require Logger
 
   alias AuthShield.Authentication
   alias AuthShield.Authentication.Schemas.Session
@@ -104,14 +111,16 @@ defmodule AuthShield do
 
   ## Exemples:
     ```elixir
-    AuthShield.login(%Plug.Conn%{body_params: "email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
+    AuthShield.login(%Plug.Conn%{
+      body_params: %{
+        "email" => "lucas@gmail.com",
+        "password" => "Mypass@rd23"
+      }
+    )
     ```
   """
-  @spec login(connection :: Plug.Conn.t()) ::
-          {:ok, Session.t()}
-          | {:error, :user_not_found}
-          | {:error, :unauthenticated}
-          | {:error, Ecto.Changeset.t()}
+  @spec login(conn :: Plug.Conn.t()) ::
+          {:ok, Session.t()} | {:error, :unauthenticated | Ecto.Changeset.t()}
   def login(%Plug.Conn{} = conn) do
     with remote_ip when is_binary(remote_ip) <- get_remote_ip(conn),
          user_agent when is_binary(user_agent) <- get_user_agent(conn),
@@ -145,36 +154,93 @@ defmodule AuthShield do
     ```
   """
   @spec login(params :: Login.t(), opts :: session_options()) ::
-          {:ok, Session.t()}
-          | {:error, :user_not_found}
-          | {:error, :unauthenticated}
-          | {:error, Ecto.Changeset.t()}
+          {:ok, Session.t()} | {:error, :unauthenticated | Ecto.Changeset.t()}
   def login(params, opts \\ []) when is_map(params) and is_list(opts) do
-    with {:ok, input} <- Login.validate(params),
+    with {:ok, %{password: pass} = input} <- Login.validate(params),
          {:user, %User{} = user} <- {:user, Resources.get_user_by(email: input.email)},
-         {:ok, :authenticated} <- Authentication.authenticate_password(user, input.password) do
+         {{:ok, :authenticated}, _} <- {Authentication.authenticate_password(user, pass), user},
+         {:ok, _attempt} <- save_login_attempt(user, "succeed", opts) do
       user
       |> build_session(opts)
       |> Authentication.create_session()
     else
-      {:user, nil} -> {:error, :user_not_found}
-      {:error, :unauthenticated} -> {:error, :unauthenticated}
-      {:error, error} -> {:error, error}
+      {:user, nil} ->
+        Logger.debug("[#{__MODULE__}] failed to login because user was not found")
+        {:error, :unauthenticated}
+
+      {{:error, :unauthenticated}, user} ->
+        save_login_attempt(user, "failed", opts)
+        try_to_block_user(user, opts)
+
+      {{:error, :user_is_not_active}, user} ->
+        save_login_attempt(user, "inactive", opts)
+        {:error, :unauthenticated}
+
+      {{:error, :user_is_locked}, user} ->
+        save_login_attempt(user, "locked", opts)
+        {:error, :unauthenticated}
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
-  defp build_session(user, opts) do
+  defp save_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
+    user
+    |> build_login_attempt(status, opts)
+    |> Authentication.create_login_attempt()
+    |> case do
+      {:ok, attempt} ->
+        {:ok, attempt}
+
+      {:error, error} ->
+        Logger.error("[#{__MODULE__}] failed to save login attempt")
+        {:error, error}
+    end
+  end
+
+  defp try_to_block_user(user, opts) when is_list(opts) do
+    attempts = Authentication.list_failure_login_attempts(user.id, get_login_attempt_time())
+
+    if length(attempts) >= block_attempts() do
+      # Blocking user temporarily
+      user
+      |> Resources.change_locked_user(get_block_time())
+      |> case do
+        {:ok, _user} ->
+          Logger.warn("[#{__MODULE__} user was locked because of failed attempts")
+          {:error, :unauthenticated}
+
+        {:error, error} ->
+          Logger.error("[#{__MODULE__}] failed to lock the user")
+          {:error, error}
+      end
+    else
+      {:error, :unauthenticated}
+    end
+  end
+
+  defp build_session(user, opts) when is_list(opts) do
     %{
       user_id: user.id,
       remote_ip: opts[:remote_ip] || nil,
       user_agent: opts[:user_agent] || nil,
-      expiration: get_default_expiration(),
+      expiration: get_session_expiration(),
       login_at: NaiveDateTime.utc_now()
     }
   end
 
+  defp build_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
+    %{
+      user_id: user.id,
+      remote_ip: opts[:remote_ip] || nil,
+      user_agent: opts[:user_agent] || nil,
+      status: status
+    }
+  end
+
   @doc """
-  Refresh the authenticated user session.
+  Refresh the authenticated user session by a given `session` or `session_id`
 
   If the user is authenticated and has an active session it will
   return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
@@ -183,14 +249,22 @@ defmodule AuthShield do
 
   ## Exemples:
     ```elixir
+    AuthShield.refresh_session(session)
     AuthShield.refresh_session("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec refresh_session(session_id :: String.t() | Session.t()) ::
+  @spec refresh_session(session :: Session.t() | String.t()) ::
           {:ok, Session.t()}
           | {:error, :session_expired}
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
+  def refresh_session(%Session{} = session) do
+    case Sessions.is_expired?(session) do
+      false -> Authentication.update_session(session, %{expiration: get_session_expiration()})
+      true -> {:error, :session_expired}
+    end
+  end
+
   def refresh_session(session_id) when is_binary(session_id) do
     case Authentication.get_session_by(id: session_id) do
       %Session{} = session -> refresh_session(session)
@@ -198,15 +272,8 @@ defmodule AuthShield do
     end
   end
 
-  def refresh_session(%Session{} = session) do
-    case Sessions.is_expired?(session) do
-      false -> Authentication.update_session(session, %{expiration: get_default_expiration()})
-      true -> {:error, :session_expired}
-    end
-  end
-
   @doc """
-  Logout the authenticated user session.
+  Logout the authenticated user session by a given `session` or `session_id`.
 
   If the user is authenticated and has an active session it will
   return `{:ok, AuthShield.Authentication.Schemas.Session.t()}`.
@@ -218,17 +285,10 @@ defmodule AuthShield do
     AuthShield.logout("ecb4c67d-6380-4984-ae04-1563e885d59e")
     ```
   """
-  @spec logout(session_id :: String.t() | Session.t()) ::
+  @spec logout(session :: Session.t() | String.t()) ::
           {:ok, Session.t()}
           | {:error, :session_not_exist}
           | {:error, Ecto.Changeset.t()}
-  def logout(session_id) when is_binary(session_id) do
-    case Authentication.get_session_by(id: session_id) do
-      %Session{} = session -> logout(session)
-      nil -> {:error, :session_not_found}
-    end
-  end
-
   def logout(%Session{} = session) do
     case Sessions.is_expired?(session) do
       false -> Authentication.update_session(session, %{logout_at: NaiveDateTime.utc_now()})
@@ -236,13 +296,29 @@ defmodule AuthShield do
     end
   end
 
-  defp get_default_expiration do
-    expiration =
-      :auth_shield
-      |> Application.get_env(AuthShield)
-      |> Keyword.get(:session_expiration)
-
-    NaiveDateTime.utc_now()
-    |> NaiveDateTime.add(expiration, :second)
+  def logout(session_id) when is_binary(session_id) do
+    case Authentication.get_session_by(id: session_id) do
+      %Session{} = session -> logout(session)
+      nil -> {:error, :session_not_found}
+    end
   end
+
+  # Default timestamps
+  defp get_session_expiration do
+    NaiveDateTime.add(NaiveDateTime.utc_now(), session_expiration(), :second)
+  end
+
+  defp get_block_time do
+    NaiveDateTime.add(NaiveDateTime.utc_now(), block_time(), :second)
+  end
+
+  defp get_login_attempt_time do
+    NaiveDateTime.add(NaiveDateTime.utc_now(), -block_time(), :second)
+  end
+
+  # Configs
+  defp block_time, do: config() |> Keyword.get(:block_time)
+  defp block_attempts, do: config() |> Keyword.get(:block_attempts)
+  defp session_expiration, do: config() |> Keyword.get(:session_expiration)
+  defp config, do: Application.get_env(:auth_shield, AuthShield)
 end

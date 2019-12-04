@@ -27,6 +27,7 @@ defmodule AuthShield.Authentication.Schemas.Session do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @required_fields [:expiration, :login_at, :user_id]
+  @optional_fields [:remote_ip, :user_agent]
   schema "sessions" do
     field(:remote_ip, :string)
     field(:user_agent, :string)
@@ -43,7 +44,7 @@ defmodule AuthShield.Authentication.Schemas.Session do
   @spec insert_changeset(model :: t(), params :: map()) :: Ecto.Changeset.t()
   def insert_changeset(%__MODULE__{} = model, params) when is_map(params) do
     model
-    |> cast(params, @required_fields ++ [:remote_ip, :user_agent])
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
   end
 

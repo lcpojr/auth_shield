@@ -13,6 +13,7 @@ defmodule AuthShield.Migrations do
     create_role_permition()
     create_user_role()
     create_session()
+    create_login_attempt()
   end
 
   def down do
@@ -25,6 +26,7 @@ defmodule AuthShield.Migrations do
     drop_role_permition()
     drop_user_role()
     drop_session()
+    drop_login_attempts()
   end
 
   # CREATING TABLES
@@ -36,6 +38,7 @@ defmodule AuthShield.Migrations do
       add(:last_name, :string)
       add(:email, :string, null: false)
       add(:is_active, :boolean, null: false, default: false)
+      add(:locked_until, :naive_datetime_usec)
 
       timestamps()
     end
@@ -166,6 +169,21 @@ defmodule AuthShield.Migrations do
     create_if_not_exists(index(:sessions, [:user_id]))
   end
 
+  defp create_login_attempt do
+    create_if_not_exists table(:login_attempts, primary_key: false) do
+      add(:id, :uuid, primary_key: true)
+      add(:remote_ip, :string)
+      add(:user_agent, :string)
+      add(:status, :string, null: false)
+
+      add(:user_id, references(:users, type: :uuid), null: false)
+
+      timestamps()
+    end
+
+    create_if_not_exists(index(:login_attempts, [:user_id, :status]))
+  end
+
   # DROPING TABLES
 
   defp drop_user, do: drop_if_exists(table(:users))
@@ -177,4 +195,5 @@ defmodule AuthShield.Migrations do
   defp drop_role_permition, do: drop_if_exists(table(:roles_permissions))
   defp drop_user_role, do: drop_if_exists(table(:users_roles))
   defp drop_session, do: drop_if_exists(table(:sessions))
+  defp drop_login_attempts, do: drop_if_exists(table(:login_attempts))
 end

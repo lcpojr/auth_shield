@@ -27,6 +27,7 @@ defmodule AuthShield.Resources.Schemas.User do
           pin_credential: PIN.t(),
           totp_credential: TOTP.t(),
           password_credential: Password.t(),
+          locked_until: NaiveDateTime.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
@@ -36,11 +37,13 @@ defmodule AuthShield.Resources.Schemas.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @required_fields [:first_name, :email]
+  @optional_fields [:last_name, :is_active]
   schema "users" do
     field(:first_name, :string)
     field(:last_name, :string)
     field(:email, :string)
     field(:is_active, :boolean, default: false)
+    field(:locked_until, :naive_datetime_usec)
 
     # Authorizations
     many_to_many(:roles, Role, join_through: UsersRoles)
@@ -62,7 +65,7 @@ defmodule AuthShield.Resources.Schemas.User do
   @spec changeset_insert(model :: t(), params :: map()) :: Ecto.Changeset.t()
   def changeset_insert(%__MODULE__{} = model, params) when is_map(params) do
     model
-    |> cast(params, @required_fields ++ [:last_name, :is_active])
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_length(:first_name, min: 2, max: 150)
     |> validate_length(:last_name, min: 2, max: 150)
@@ -110,5 +113,17 @@ defmodule AuthShield.Resources.Schemas.User do
     model
     |> cast(params, [:is_active])
     |> validate_required([:is_active])
+  end
+
+  @doc """
+  Generates an `Ecto.Changeset` struct with the changes.
+
+  THIS ONLY ACCEPTS the `locked_until` field.
+  """
+  @spec changeset_locked_until(model :: t(), params :: map()) :: Ecto.Changeset.t()
+  def changeset_locked_until(%__MODULE__{} = model, params) when is_map(params) do
+    model
+    |> cast(params, [:locked_until])
+    |> validate_required([:locked_until])
   end
 end
