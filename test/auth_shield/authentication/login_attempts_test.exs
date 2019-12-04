@@ -1,8 +1,8 @@
 defmodule AuthShield.Authentication.LoginAttemptsTest do
   use AuthShield.DataCase, async: true
 
-  alias AuthShield.Authentication.Schemas.LoginAttempt
   alias AuthShield.Authentication.LoginAttempts
+  alias AuthShield.Authentication.Schemas.LoginAttempt
 
   setup do
     {:ok, user: insert(:user)}
