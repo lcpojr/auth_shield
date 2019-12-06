@@ -17,7 +17,6 @@ On your `config.exs` set the configuration bellow:
 # but its highly recomendate that you configure it to be in
 # the same database if you want to extend the identity to
 # your on custom tables.
-
 config :auth_shield, ecto_repos: [AuthShield.Repo]
 
 config :auth_shield, AuthShield.Repo,
@@ -68,7 +67,9 @@ then run the migrations with `mix ecto.migrate`.
 
 We will only cover the basic usage here, so if you want to know more check our documentation on hex by clicking [here](https://hexdocs.pm/auth_shield/AuthShield.html) or on the session bellow.
 
-To create a new user try this:
+### Creating an user
+
+To create a new user use this:
 
 ```elixir
 AuthShield.signup(%{
@@ -79,11 +80,18 @@ AuthShield.signup(%{
 })
 ```
 
+### Authenticating
+
 Now to test if the user can authenticate do:
 
 ```elixir
-AuthShield.login(conn)
 AuthShield.login(%{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
+```
+
+If you are using phoenix or any application that use `Plug.Conn` you can just pass it on login as:
+
+```elixir
+AuthShield.login(%Plug.Conn%{body_params: %{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
 ```
 
 AuthShield has an authentication Plug (`AuthShield.Authentication.Plugs.AuthSession`) that can
