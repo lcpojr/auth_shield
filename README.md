@@ -1,12 +1,10 @@
 # Auth Shield [![Build Status](https://travis-ci.com/lcpojr/auth_shield.svg?branch=master)](https://travis-ci.com/lcpojr/auth_shield) [![Coverage Status](https://coveralls.io/repos/github/lcpojr/auth_shield/badge.svg?branch=master)](https://coveralls.io/github/lcpojr/auth_shield?branch=master)
 
-Elixir authentication and authorization
-
 AuthShield is an simple implementation that was created to be used with other frameworks (as Phoenix) or applications in order to provide an simple authentication and authorization management to the services.
 
 ## Installation
 
-AuthShield is published on Hex. Add `{:auth_shield, "~> 0.0.3"}` to your list of dependencies in mix.exs.
+In order to download it add `{:auth_shield, "~> 0.0.3"}` to your list of dependencies in mix.exs.
 
 Then run `mix deps.get` to install AuthShield and its dependencies, including Ecto, Plug and Argon2.
 
@@ -84,11 +82,8 @@ AuthShield.signup(%{
 Now to test if the user can authenticate do:
 
 ```elixir
-AuthShield.login(
-    %{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"},
-    remote_ip: "172.31.4.1",
-    user_agent: "Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0"
-)
+AuthShield.login(conn)
+AuthShield.login(%{"email" => "lucas@gmail.com", "password" => "Mypass@rd23"})
 ```
 
 AuthShield has an authentication Plug (`AuthShield.Authentication.Plugs.AuthSession`) that can
