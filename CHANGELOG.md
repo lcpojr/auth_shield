@@ -6,6 +6,11 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## Added
+
+- Loggin attempts now are saved when user is authenticated by login function;
+- Login function now has brute force protection;
+
 ## Changed
 
 - Improve on documentations and validation schemas;
