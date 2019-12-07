@@ -9,8 +9,8 @@ defmodule AuthShield.Authentication.LoginAttempts do
   require Ecto.Query
 
   alias AuthShield.Authentication.Schemas.LoginAttempt
-  alias AuthShield.Resources.Schemas.User
   alias AuthShield.Repo
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, LoginAttempt.t()}
