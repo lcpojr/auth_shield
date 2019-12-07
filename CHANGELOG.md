@@ -6,6 +6,8 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.0.4] - 09-11-2019
+
 ## Added
 
 - Login attempts now are saved when user is authenticated by login function;
@@ -49,4 +51,6 @@ Alpha release for test purposes.
 - Session authentication flow;
 
 [0.0.1]: https://github.com/dlpco/banking-panda/compare/v0.0.1...v0.0.2
-[0.0.2]: https://github.com/dlpco/banking-panda/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/dlpco/banking-panda/compare/v0.0.2...v0.0.3
+[0.0.3]: https://github.com/dlpco/banking-panda/compare/v0.0.3...v0.0.4
+[0.0.4]: https://github.com/dlpco/banking-panda/compare/v0.0.4...HEAD
