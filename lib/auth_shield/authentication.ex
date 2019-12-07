@@ -38,7 +38,7 @@ defmodule AuthShield.Authentication do
 
   defdelegate list_login_attempt(filters), to: LoginAttempts, as: :list
 
-  defdelegate list_failure_login_attempts(user_id, from_date),
+  defdelegate list_failure_login_attempts(user, from_date),
     to: LoginAttempts,
     as: :list_failure
 

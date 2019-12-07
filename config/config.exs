@@ -15,12 +15,12 @@ config :auth_shield, AuthShield.Repo,
   port: 5432
 
 # You can set the session expiration and block attempts by changing this config
-# The default expiration is 15 minutes (in seconds)
-# The default max attempts before block is 10
-# The default block time is 30 minutes
+# All timestamps are in seconds.
 config :auth_shield, AuthShield,
   session_expiration: 60 * 15,
-  block_attempts: 10,
-  block_time: 60 * 15
+  max_login_attempts: 10,
+  login_block_time: 60 * 15,
+  brute_force_login_interval: 1,
+  brute_force_login_attempts: 5
 
 import_config "#{Mix.env()}.exs"

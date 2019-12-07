@@ -10,6 +10,7 @@ defmodule AuthShield.Authentication.LoginAttempts do
 
   alias AuthShield.Authentication.Schemas.LoginAttempt
   alias AuthShield.Repo
+  alias AuthShield.Resources.Schemas.User
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, LoginAttempt.t()}
@@ -92,22 +93,15 @@ defmodule AuthShield.Authentication.LoginAttempts do
 
   ## Exemples:
     ```elixir
-    AuthShield.Authentication.LoginAttempts.list_failure(
-      "ecb4c67d-6380-4984-ae04-1563e885d59e",
-      ~N[2000-01-01 23:00:07]
-    )
+    AuthShield.Authentication.LoginAttempts.list_failure(user, ~N[2000-01-01 23:00:07])
     ```
   """
-  @spec list_failure(
-          user_id :: String.t(),
-          from_date :: NaiveDateTime.t()
-        ) :: list(LoginAttempt.t())
-  def list_failure(user_id, from_date) when is_binary(user_id) do
+  @spec list_failure(user :: User.t(), from_date :: NaiveDateTime.t()) :: list(LoginAttempt.t())
+  def list_failure(%User{} = user, from_date) do
     LoginAttempt
-    |> Ecto.Query.where(
-      [a],
-      a.user_id == ^user_id and a.status == "failed" and a.inserted_at >= ^from_date
-    )
+    |> Ecto.Query.where([a], a.user_id == ^user.id)
+    |> Ecto.Query.where([a], a.status == "failed" and a.inserted_at >= ^from_date)
+    |> Ecto.Query.order_by(desc: :inserted_at)
     |> Repo.all()
   end
 end

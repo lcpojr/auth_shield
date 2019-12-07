@@ -79,7 +79,13 @@ defmodule AuthShield.MixProject do
   defp docs do
     [
       main: "AuthShield",
-      extras: ["README.md", "docs/database.md", "docs/authentication.md", "docs/authorization.md"],
+      extras: [
+        "README.md",
+        "docs/database.md",
+        "docs/authentication.md",
+        "docs/authorization.md",
+        "docs/utilities.md"
+      ],
       deps: [
         ecto_sql: "https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html",
         argon2_elixir: "https://hexdocs.pm/argon2_elixir/api-reference.html",

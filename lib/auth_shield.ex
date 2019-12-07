@@ -23,20 +23,20 @@ defmodule AuthShield do
   config :auth_shield, ecto_repos: [AuthShield.Repo]
 
   config :auth_shield, AuthShield.Repo,
-    database: "authshield_dev",
+    database: "authshield_#{Mix.env()}",
     username: "postgres",
     password: "postgres",
     hostname: "localhost",
     port: 5432
 
   # You can set the session expiration and block attempts by changing this config
-  # The default expiration is 15 minutes (in seconds)
-  # The default max attempts before block is 10
-  # The default block time is 30 minutes
+  # All timestamps are in seconds.
   config :auth_shield, AuthShield,
     session_expiration: 60 * 15,
-    block_attempts: 10,
-    block_time: 60 * 15
+    max_login_attempts: 10,
+    login_block_time: 60 * 15,
+    brute_force_login_interval: 1,
+    brute_force_login_attempts: 5
   ```
 
   In your `test.exs` use the configuration bellow to run it in sandbox mode:
@@ -171,6 +171,7 @@ defmodule AuthShield do
       {{:error, :unauthenticated}, user} ->
         save_login_attempt(user, "failed", opts)
         try_to_block_user(user, opts)
+        {:error, :unauthenticated}
 
       {{:error, :user_is_not_active}, user} ->
         save_login_attempt(user, "inactive", opts)
@@ -185,6 +186,7 @@ defmodule AuthShield do
     end
   end
 
+  # Saving last login attempt
   defp save_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
     user
     |> build_login_attempt(status, opts)
@@ -199,27 +201,17 @@ defmodule AuthShield do
     end
   end
 
-  defp try_to_block_user(user, opts) when is_list(opts) do
-    attempts = Authentication.list_failure_login_attempts(user.id, get_login_attempt_time())
-
-    if length(attempts) >= block_attempts() do
-      # Blocking user temporarily
-      user
-      |> Resources.change_locked_user(get_block_time())
-      |> case do
-        {:ok, _user} ->
-          Logger.warn("[#{__MODULE__} user was locked because of failed attempts")
-          {:error, :unauthenticated}
-
-        {:error, error} ->
-          Logger.error("[#{__MODULE__}] failed to lock the user")
-          {:error, error}
-      end
-    else
-      {:error, :unauthenticated}
-    end
+  # Build login attempt payload
+  defp build_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
+    %{
+      user_id: user.id,
+      remote_ip: opts[:remote_ip] || nil,
+      user_agent: opts[:user_agent] || nil,
+      status: status
+    }
   end
 
+  # Build session payload
   defp build_session(user, opts) when is_list(opts) do
     %{
       user_id: user.id,
@@ -230,13 +222,43 @@ defmodule AuthShield do
     }
   end
 
-  defp build_login_attempt(user, status, opts) when is_binary(status) and is_list(opts) do
-    %{
-      user_id: user.id,
-      remote_ip: opts[:remote_ip] || nil,
-      user_agent: opts[:user_agent] || nil,
-      status: status
-    }
+  # Checks if the user has failed more than the maximum
+  # login attempts or if it is trying to login in a
+  # very short interval of time.
+  defp try_to_block_user(user, opts) when is_list(opts) do
+    attempts = Authentication.list_failure_login_attempts(user, get_login_attempt_time())
+
+    cond do
+      length(attempts) >= max_attempts() -> block_user_temporarily(user)
+      check_login_interval(attempts, 0) >= brute_force_attempts() -> block_user_temporarily(user)
+      true -> {:ok, user}
+    end
+  end
+
+  # Checks and get the attempts that has less than
+  # the minimum configurated login interval
+  defp check_login_interval([attempt1, attempt2 | rest], acc) do
+    if NaiveDateTime.diff(attempt1.inserted_at, attempt2.inserted_at) <= brute_force_interval() do
+      check_login_interval([attempt2 | rest], acc + 1)
+    else
+      check_login_interval([attempt2 | rest], acc)
+    end
+  end
+
+  defp check_login_interval([attempt], []), do: 1
+  defp check_login_interval(_attempts, acc), do: acc
+
+  defp block_user_temporarily(%User{} = user) do
+    user
+    |> Resources.change_locked_user(get_block_time())
+    |> case do
+      {:ok, user} ->
+        {:ok, user}
+
+      {:error, error} ->
+        Logger.error("[#{__MODULE__}] failed to lock the user")
+        {:error, error}
+    end
   end
 
   @doc """
@@ -317,8 +339,10 @@ defmodule AuthShield do
   end
 
   # Configs
-  defp block_time, do: config() |> Keyword.get(:block_time)
-  defp block_attempts, do: config() |> Keyword.get(:block_attempts)
+  defp block_time, do: config() |> Keyword.get(:login_block_time)
+  defp max_attempts, do: config() |> Keyword.get(:max_login_attempts)
+  defp brute_force_interval, do: config() |> Keyword.get(:brute_force_login_interval)
+  defp brute_force_attempts, do: config() |> Keyword.get(:brute_force_login_attempts)
   defp session_expiration, do: config() |> Keyword.get(:session_expiration)
   defp config, do: Application.get_env(:auth_shield, AuthShield)
 end

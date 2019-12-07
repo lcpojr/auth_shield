@@ -90,7 +90,7 @@ defmodule AuthShield.Authentication.LoginAttemptsTest do
     test "return a list of login_attempts", ctx do
       assert from_date = NaiveDateTime.add(NaiveDateTime.utc_now(), -(60 * 15), :second)
       assert ids = Enum.map(ctx.login_attempts, & &1.id)
-      assert login_attempts = LoginAttempts.list_failure(ctx.user.id, from_date)
+      assert login_attempts = LoginAttempts.list_failure(ctx.user, from_date)
       assert Enum.all?(login_attempts, &(&1.id in ids))
     end
   end

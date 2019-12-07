@@ -6,6 +6,13 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## Added
+
+- Login attempts now are saved when user is authenticated by login function;
+- Login function now checks for multiple failed attempts and blocks user temporarily if necessary;
+- Login function now checks for brute force attempts;
+- Disabled or temporarily blocked user can't be authenticated anymore;
+
 ## Changed
 
 - Improve on documentations and validation schemas;

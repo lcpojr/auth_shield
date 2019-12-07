@@ -227,7 +227,7 @@ defmodule AuthShieldTest do
     test "do not lock user if it fails less than limit" do
       user = insert(:user, is_active: true)
       password = insert(:password, user_id: user.id)
-      login_attempts = insert_list(8, :login_attempt, user_id: user.id, status: "failed")
+      login_attempts = insert_list(4, :login_attempt, user_id: user.id, status: "failed")
       last_attempt = insert(:login_attempt, user_id: user.id, status: "failed")
 
       expect(
@@ -275,8 +275,8 @@ defmodule AuthShieldTest do
         :apply,
         fn {Authentication, :list_failure_login_attempts},
            {Authentication.LoginAttempts, :list_failure},
-           [user_id, _from_date] ->
-          assert user.id == user_id
+           [param_user, _from_date] ->
+          assert user == param_user
           [last_attempt | login_attempts]
         end
       )
@@ -289,6 +289,95 @@ defmodule AuthShieldTest do
     end
 
     test "locks user if it fails more than limit" do
+      user = insert(:user, is_active: true)
+      password = insert(:password, user_id: user.id)
+
+      login_attempts =
+        for _n <- 0..9 do
+          insert(:login_attempt,
+            user_id: user.id,
+            status: "failed",
+            inserted_at: NaiveDateTime.add(NaiveDateTime.utc_now(), 5)
+          )
+        end
+
+      last_attempt =
+        insert(:login_attempt,
+          user_id: user.id,
+          status: "failed",
+          inserted_at: NaiveDateTime.add(NaiveDateTime.utc_now(), 5)
+        )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :get_user_by}, {Resources.Users, :get_by}, [[email: email]] ->
+          assert user.email == email
+          user
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :get_password_by}, {Credentials.Passwords, :get_by}, [[user_id: id]] ->
+          assert user.id == id
+          password
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Credentials, :check_password?},
+           {Credentials.Passwords, :check_password?},
+           [pass, _pass_code] ->
+          assert password == pass
+          false
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :create_login_attempt},
+           {Authentication.LoginAttempts, :insert},
+           [%{user_id: id, status: "failed"}] ->
+          assert user.id == id
+          {:ok, last_attempt}
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Authentication, :list_failure_login_attempts},
+           {Authentication.LoginAttempts, :list_failure},
+           [param_user, _from_date] ->
+          assert user == param_user
+          [last_attempt | login_attempts]
+        end
+      )
+
+      expect(
+        DelegatorMock,
+        :apply,
+        fn {Resources, :change_locked_user},
+           {Resources.Users, :change_locked},
+           [param_user, _locked_until] ->
+          assert user == param_user
+          {:ok, user}
+        end
+      )
+
+      assert {:error, :unauthenticated} ==
+               AuthShield.login(%{
+                 "email" => user.email,
+                 "password" => "123456"
+               })
+    end
+
+    test "locks user if it fails consecutively in a short interval" do
       user = insert(:user, is_active: true)
       password = insert(:password, user_id: user.id)
       login_attempts = insert_list(9, :login_attempt, user_id: user.id, status: "failed")
@@ -339,8 +428,8 @@ defmodule AuthShieldTest do
         :apply,
         fn {Authentication, :list_failure_login_attempts},
            {Authentication.LoginAttempts, :list_failure},
-           [user_id, _from_date] ->
-          assert user.id == user_id
+           [param_user, _from_date] ->
+          assert user == param_user
           [last_attempt | login_attempts]
         end
       )
@@ -519,8 +608,8 @@ defmodule AuthShieldTest do
         :apply,
         fn {Authentication, :list_failure_login_attempts},
            {Authentication.LoginAttempts, :list_failure},
-           [user_id, _from_date] ->
-          assert user.id == user_id
+           [param_user, _from_date] ->
+          assert user == param_user
           [login_attempt]
         end
       )

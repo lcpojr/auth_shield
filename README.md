@@ -26,14 +26,14 @@ config :auth_shield, AuthShield.Repo,
   hostname: "localhost",
   port: 5432
 
-# You can set the session expiration and block attempts by changing this config
-# The default expiration is 15 minutes (in seconds)
-# The default max attempts before block is 10
-# The default block time is 30 minutes
+# You can set the session expiration and block attempts by changing this config.
+# All timestamps are in seconds.
 config :auth_shield, AuthShield,
   session_expiration: 60 * 15,
-  block_attempts: 10,
-  block_time: 60 * 15
+  max_login_attempts: 10,
+  login_block_time: 60 * 15,
+  brute_force_login_interval: 1,
+  brute_force_login_attempts: 3
 ```
 
 In your `test.exs` use the configuration bellow to run it in sandbox mode:
@@ -106,6 +106,8 @@ conn
 |> put_status(200)
 ```
 
+If you are using phoenix we recomend you to check out our utilities doc [here](https://github.com/lcpojr/auth_shield/blob/master/docs/utilities.md).
+
 ## Documentation
 
 You can check out the documentation [here](https://hexdocs.pm/auth_shield/AuthShield.html).
@@ -117,3 +119,4 @@ To know more about how we store the data and the authentication / authorization 
 - [Authentication architecture](https://github.com/lcpojr/auth_shield/blob/master/docs/authentication.md);
 - [Authorization architecture](https://github.com/lcpojr/auth_shield/blob/master/docs/authorization.md);
 - [Database architecture](https://github.com/lcpojr/auth_shield/blob/master/docs/database.md);
+- [Utilities](https://github.com/lcpojr/auth_shield/blob/master/docs/utilities.md);
