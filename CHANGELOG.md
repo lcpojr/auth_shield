@@ -8,6 +8,8 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [0.0.4] - 09-11-2019
 
+Alpha release for test purposes.
+
 ## Added
 
 - Login attempts now are saved when user is authenticated by login function;
