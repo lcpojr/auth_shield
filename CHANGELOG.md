@@ -6,7 +6,7 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
-## [0.0.4] - 09-11-2019
+## [0.0.4] - 07-12-2019
 
 Alpha release for test purposes.
 
