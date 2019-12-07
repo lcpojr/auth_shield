@@ -6,7 +6,7 @@ defmodule AuthShield do
 
   ## Installation
 
-  AuthShield is published on Hex. Add `{:auth_shield, "~> 0.0.3"}` to your list of dependencies in mix.exs.
+  AuthShield is published on Hex. Add `{:auth_shield, "~> 0.0.4"}` to your list of dependencies in mix.exs.
 
   Then run `mix deps.get` to install AuthShield and its dependencies, including Ecto, Plug and Argon2.
 
@@ -19,7 +19,6 @@ defmodule AuthShield do
   # but its highly recomendate that you configure it to be in
   # the same database if you want to extend the identity to
   # your on custom tables.
-
   config :auth_shield, ecto_repos: [AuthShield.Repo]
 
   config :auth_shield, AuthShield.Repo,
@@ -245,7 +244,7 @@ defmodule AuthShield do
     end
   end
 
-  defp check_login_interval([attempt], []), do: 1
+  defp check_login_interval([_attempt], []), do: 1
   defp check_login_interval(_attempts, acc), do: acc
 
   defp block_user_temporarily(%User{} = user) do

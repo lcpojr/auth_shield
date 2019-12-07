@@ -4,7 +4,7 @@ AuthShield is an simple implementation that was created to be used with other fr
 
 ## Installation
 
-In order to download it add `{:auth_shield, "~> 0.0.3"}` to your list of dependencies in mix.exs.
+In order to download it add `{:auth_shield, "~> 0.0.4"}` to your list of dependencies in mix.exs.
 
 Then run `mix deps.get` to install AuthShield and its dependencies, including Ecto, Plug and Argon2.
 
