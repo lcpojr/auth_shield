@@ -6,6 +6,11 @@ We based this file in [*Keep a Changelog*](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- New resource application and its public key credential;
+- New resource scopes that will be used with applications in Oauth2 flows;
+
 ### Changed
 
 - Reorder import, alias, use and requires;
