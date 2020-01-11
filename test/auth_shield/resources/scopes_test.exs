@@ -1,8 +1,8 @@
 defmodule AuthShield.Resources.ScopesTest do
   use AuthShield.DataCase, async: true
 
-  alias AuthShield.Resources.Scopes
   alias AuthShield.Resources.Schemas.Scope
+  alias AuthShield.Resources.Scopes
 
   describe "insert/1" do
     test "creates a new scope on database" do

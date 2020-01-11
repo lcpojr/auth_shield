@@ -1,8 +1,8 @@
 defmodule AuthShield.Resources.ApplicationsTest do
   use AuthShield.DataCase, async: true
 
-  alias AuthShield.Resources.Schemas.Application
   alias AuthShield.Resources.Applications
+  alias AuthShield.Resources.Schemas.Application
 
   describe "insert/1" do
     test "creates a new application on database" do

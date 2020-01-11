@@ -11,7 +11,7 @@ defmodule AuthShield.Resources.Applications do
   require Ecto.Query
 
   alias AuthShield.Repo
-  alias AuthShield.Resources.Schemas.{Scope, Application}
+  alias AuthShield.Resources.Schemas.{Application, Scope}
 
   @behaviour AuthShield.Resources.Behaviour
 

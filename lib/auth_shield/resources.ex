@@ -117,6 +117,9 @@ defmodule AuthShield.Resources do
   defdelegate delete_scope(scope), to: Scopes, as: :delete
   defdelegate delete_scope!(scope), to: Scopes, as: :delete!
 
-  defdelegate change_permissions_scope(scope, permission), to: Scopes, as: :change_permissions
-  defdelegate change_permissions_scope!(scope, permission), to: Scopes, as: :change_permissions!
+  defdelegate change_applications_scope(scope, application), to: Scopes, as: :change_applications
+
+  defdelegate change_applications_scope!(scope, application),
+    to: Scopes,
+    as: :change_applications!
 end
