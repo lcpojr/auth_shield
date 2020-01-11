@@ -11,10 +11,10 @@ defmodule AuthShield.Credentials.TOTP do
   as inserts, updates, deletes, etc.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Credentials.Schemas.TOTP
   alias AuthShield.Repo
+
+  require Ecto.Query
 
   @behaviour AuthShield.Credentials.Behaviour
 

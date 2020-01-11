@@ -7,11 +7,11 @@ defmodule AuthShield.DataCase do
 
   using do
     quote do
-      alias AuthShield.Ecto.Changeset
-      alias AuthShield.Repo
-
       import AuthShield.{DataCase, Factory}
       import Mox
+
+      alias AuthShield.Ecto.Changeset
+      alias AuthShield.Repo
 
       setup :verify_on_exit!
     end

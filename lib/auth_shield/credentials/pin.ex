@@ -10,10 +10,10 @@ defmodule AuthShield.Credentials.PIN do
   as inserts, updates, deletes, etc.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Credentials.Schemas.PIN
   alias AuthShield.Repo
+
+  require Ecto.Query
 
   @behaviour AuthShield.Credentials.Behaviour
 

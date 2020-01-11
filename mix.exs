@@ -46,6 +46,7 @@ defmodule AuthShield.MixProject do
       {:argon2_elixir, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:eqrcode, "~> 0.1.6"},
+      {:delx, "~> 3.0"},
 
       # Database
       {:postgrex, "~> 0.14", only: [:dev, :test], runtime: false},
@@ -57,8 +58,7 @@ defmodule AuthShield.MixProject do
       {:ex_machina, "~> 2.3.0", only: :test, runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:excoveralls, "~> 0.11", only: :test},
-      {:mox, "~> 0.5", only: :test},
-      {:delx, "~> 3.0"}
+      {:mox, "~> 0.5", only: :test}
     ]
   end
 

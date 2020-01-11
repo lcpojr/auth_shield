@@ -4,10 +4,10 @@ defmodule AuthShield.Authentication.Sessions do
   to keep the user logged in.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Authentication.Schemas.Session
   alias AuthShield.Repo
+
+  require Ecto.Query
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, Session.t()}

@@ -6,11 +6,11 @@ defmodule AuthShield.Authentication.LoginAttempts do
   It's done to mitigate attacks and suspicios login attempts.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Authentication.Schemas.LoginAttempt
   alias AuthShield.Repo
   alias AuthShield.Resources.Schemas.User
+
+  require Ecto.Query
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, LoginAttempt.t()}

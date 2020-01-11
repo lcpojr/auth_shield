@@ -9,10 +9,10 @@ defmodule AuthShield.Credentials.Passwords do
   as inserts, updates, deletes, etc.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Credentials.Schemas.Password
   alias AuthShield.Repo
+
+  require Ecto.Query
 
   @behaviour AuthShield.Credentials.Behaviour
 

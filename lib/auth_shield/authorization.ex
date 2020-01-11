@@ -9,10 +9,10 @@ defmodule AuthShield.Authorization do
   privileges for users changing his set of roles and its defined permissions.
   """
 
-  require Logger
-
   alias AuthShield.Resources
   alias AuthShield.Resources.Schemas.User
+
+  require Logger
 
   @typedoc "Authorization possible responses"
   @type responses :: {:ok, :authorized} | {:error, :unauthorized}
