@@ -66,14 +66,14 @@ defmodule AuthShield do
   then run the migrations with `mix ecto.migrate`.
   """
 
-  require Logger
-
   alias AuthShield.Authentication
   alias AuthShield.Authentication.Schemas.Session
   alias AuthShield.Authentication.Sessions
   alias AuthShield.Resources
   alias AuthShield.Resources.Schemas.User
   alias AuthShield.Validations.{Login, SignUp}
+
+  require Logger
 
   @typedoc "Session options used on authentication plug"
   @type session_options :: [user_agent: String.t(), remote_ip: String.t()]

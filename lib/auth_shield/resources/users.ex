@@ -11,10 +11,10 @@ defmodule AuthShield.Resources.Users do
   as inserts, updates, deletes, etc.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Repo
   alias AuthShield.Resources.Schemas.{Role, User}
+
+  require Ecto.Query
 
   @behaviour AuthShield.Resources.Behaviour
 

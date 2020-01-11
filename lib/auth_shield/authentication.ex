@@ -10,12 +10,12 @@ defmodule AuthShield.Authentication do
 
   use Delx, otp_app: :auth_shield
 
-  require Logger
-
   alias AuthShield.Authentication.{LoginAttempts, Sessions}
   alias AuthShield.Credentials
   alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
   alias AuthShield.Resources.Schemas.User
+
+  require Logger
 
   @typedoc "Authentication possible responses"
   @type responses :: {:ok, :authenticated} | {:error, :unauthenticated | :user_is_not_active}

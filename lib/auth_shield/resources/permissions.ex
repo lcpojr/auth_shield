@@ -14,10 +14,10 @@ defmodule AuthShield.Resources.Permissions do
   as inserts, updates, deletes, etc.
   """
 
-  require Ecto.Query
-
   alias AuthShield.Repo
   alias AuthShield.Resources.Schemas.Permission
+
+  require Ecto.Query
 
   @behaviour AuthShield.Resources.Behaviour
 
