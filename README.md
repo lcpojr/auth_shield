@@ -116,7 +116,7 @@ You can check out the documentation [here](https://hexdocs.pm/auth_shield/AuthSh
 
 To know more about how we store the data and the authentication / authorization flow check links bellow:
 
-- [Authentication architecture](https://github.com/lcpojr/auth_shield/blob/master/docs/authentication.md);
-- [Authorization architecture](https://github.com/lcpojr/auth_shield/blob/master/docs/authorization.md);
-- [Database architecture](https://github.com/lcpojr/auth_shield/blob/master/docs/database.md);
-- [Utilities](https://github.com/lcpojr/auth_shield/blob/master/docs/utilities.md);
+- [Authentication architecture](https://github.com/lcpojr/auth_shield/wiki/Authentication);
+- [Authorization architecture](https://github.com/lcpojr/auth_shield/wiki/Authorization);
+- [Database architecture](https://github.com/lcpojr/auth_shield/wiki/Database);
+- [Utilities](https://github.com/lcpojr/auth_shield/wiki/Utilities);
