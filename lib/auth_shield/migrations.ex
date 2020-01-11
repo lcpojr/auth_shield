@@ -14,6 +14,10 @@ defmodule AuthShield.Migrations do
     create_user_role()
     create_session()
     create_login_attempt()
+    create_application()
+    create_public_key_credential()
+    create_scopes()
+    create_application_scopes()
   end
 
   def down do
@@ -27,6 +31,10 @@ defmodule AuthShield.Migrations do
     drop_user_role()
     drop_session()
     drop_login_attempts()
+    drop_application()
+    drop_public_key_credential()
+    drop_scopes()
+    drop_application_scopes()
   end
 
   # CREATING TABLES
@@ -184,6 +192,67 @@ defmodule AuthShield.Migrations do
     create_if_not_exists(index(:login_attempts, [:user_id, :status]))
   end
 
+  defp create_application do
+    create_if_not_exists table(:applications, primary_key: false) do
+      add(:id, :uuid, primary_key: true)
+      add(:name, :string)
+      add(:description, :text)
+      add(:is_active, :boolean, null: false, default: true)
+      add(:direct_access_grants_enabled, :boolean, null: false, default: true)
+
+      timestamps()
+    end
+
+    create_if_not_exists(unique_index(:applications, [:name]))
+  end
+
+  defp create_public_key_credential do
+    create_if_not_exists table(:public_key_credentials, primary_key: false) do
+      add(:id, :uuid, primary_key: true)
+      add(:format, :string, null: false, default: "pem")
+      add(:key, :text, null: false)
+
+      add(:application_id, references(:applications, type: :uuid), null: false)
+
+      timestamps()
+    end
+
+    create_if_not_exists(unique_index(:public_key_credentials, [:application_id]))
+  end
+
+  defp create_scopes do
+    create_if_not_exists table(:scopes, primary_key: false) do
+      add(:id, :uuid, primary_key: true)
+      add(:name, :string, null: false)
+      add(:description, :text)
+
+      timestamps()
+    end
+
+    create_if_not_exists(unique_index(:scopes, [:name]))
+  end
+
+  defp create_application_scopes do
+    create_if_not_exists table(:applications_scopes, primary_key: false) do
+      add(:application_id, references(:applications, type: :uuid, on_delete: :delete_all),
+        primary_key: true
+      )
+
+      add(:scope_id, references(:scopes, type: :uuid, on_delete: :delete_all), primary_key: true)
+
+      timestamps()
+    end
+
+    create_if_not_exists(index(:applications_scopes, [:application_id]))
+    create_if_not_exists(index(:applications_scopes, [:scope_id]))
+
+    create_if_not_exists(
+      unique_index(:applications_scopes, [:application_id, :scope_id],
+        name: :application_id_scope_id_unique_index
+      )
+    )
+  end
+
   # DROPING TABLES
 
   defp drop_user, do: drop_if_exists(table(:users))
@@ -196,4 +265,8 @@ defmodule AuthShield.Migrations do
   defp drop_user_role, do: drop_if_exists(table(:users_roles))
   defp drop_session, do: drop_if_exists(table(:sessions))
   defp drop_login_attempts, do: drop_if_exists(table(:login_attempts))
+  defp drop_application, do: drop_if_exists(table(:applications))
+  defp drop_public_key_credential, do: drop_if_exists(table(:public_key_credentials))
+  defp drop_scopes, do: drop_if_exists(table(:scopes))
+  defp drop_application_scopes, do: drop_if_exists(table(:applications_scopes))
 end

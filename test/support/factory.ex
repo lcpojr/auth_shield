@@ -5,7 +5,7 @@ defmodule AuthShield.Factory do
 
   alias AuthShield.Authentication.Schemas.{LoginAttempt, Session}
   alias AuthShield.Credentials.Schemas.{Password, PIN, PublicKey, TOTP}
-  alias AuthShield.Resources.Schemas.{Application, Permission, Role, Scopes, User}
+  alias AuthShield.Resources.Schemas.{Application, Permission, Role, Scope, User}
 
   # Authentication
 
@@ -49,16 +49,21 @@ defmodule AuthShield.Factory do
     %User{
       first_name: sequence(:user_first_name, &"Jane #{&1}"),
       last_name: sequence(:user_last_name, &"Smith #{&1}"),
-      email: sequence(:user_email, &"#{&1}@AuthShield.com"),
-      is_active: true
+      email: sequence(:user_email, &"#{&1}@AuthShield.com")
     }
   end
 
   def application_factory do
     %Application{
-      name: sequence(:application_name, &"May application #{&1}"),
-      description: sequence(:application_description, &"Application #{&1}"),
-      is_active: true
+      name: sequence(:application_name, &"My application #{&1}"),
+      description: sequence(:application_description, &"Application #{&1}")
+    }
+  end
+
+  def scope_factory do
+    %Scope{
+      name: sequence(:role_name, &"user:#{&1}"),
+      description: sequence(:role_description, &"User scope #{&1}")
     }
   end
 

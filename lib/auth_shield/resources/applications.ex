@@ -168,42 +168,40 @@ defmodule AuthShield.Resources.Applications do
   end
 
   @doc """
-  Changes an set of `AuthShield.Resources.Schemas.Role` of the `AuthShield.Resources.Schemas.Application`.
+  Changes an set of `AuthShield.Resources.Schemas.Scope` of the `AuthShield.Resources.Schemas.Application`.
 
-  It will add or remove roles from the list, so you should pass
+  It will add or remove scopes from the list, so you should pass
   the complete list every time you use this function.
-
-  Roles are used in `AuthShield.Authorization` requests.
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Applications.change_scopes(application, roles)
+    AuthShield.Resources.Applications.change_scopes(application, scopes)
     ```
   """
   @spec change_scopes(
           application :: Application.t(),
-          roles :: list(Role.t())
+          scopes :: list(Scope.t())
         ) :: {:ok, Application.t()} | {:error, Ecto.Changeset.t()}
-  def change_scopes(%Application{} = application, roles) when is_list(roles) do
+  def change_scopes(%Application{} = application, scopes) when is_list(scopes) do
     application
-    |> Repo.preload(:roles)
-    |> Application.changeset_scopes(roles)
+    |> Repo.preload(:scopes)
+    |> Application.changeset_scopes(scopes)
     |> Repo.update()
   end
 
   @doc """
-  Changes an set of `AuthShield.Resources.Schemas.Role` of the `AuthShield.Resources.Schemas.Application`.
+  Changes an set of `AuthShield.Resources.Schemas.Scope` of the `AuthShield.Resources.Schemas.Application`.
 
   Similar to `append_role/2` but returns the struct or raises if the changeset is invalid.
   """
   @spec change_scopes!(
           application :: Application.t(),
-          roles :: list(Role.t())
+          scopes :: list(Scope.t())
         ) :: Application.t() | no_return()
-  def change_scopes!(%Application{} = application, roles) when is_list(roles) do
+  def change_scopes!(%Application{} = application, scopes) when is_list(scopes) do
     application
-    |> Repo.preload(:roles)
-    |> Application.changeset_scopes(roles)
+    |> Repo.preload(:scopes)
+    |> Application.changeset_scopes(scopes)
     |> Repo.update!()
   end
 
@@ -212,7 +210,7 @@ defmodule AuthShield.Resources.Applications do
 
   ## Exemples:
     ```elixir
-    AuthShield.Resources.Applications.preload(application, [:roles])
+    AuthShield.Resources.Applications.preload(application, [:scopes])
     ```
   """
   @spec preload(application :: Application.t(), fields :: keyword()) :: Application.t()

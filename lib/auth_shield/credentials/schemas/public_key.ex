@@ -31,7 +31,7 @@ defmodule AuthShield.Credentials.Schemas.PublicKey do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @required_fields [:key]
-  @optional_fields [:format]
+  @optional_fields [:application_id, :format]
   schema "public_key_credentials" do
     field(:format, :string, default: "pem")
     field(:key, :string)

@@ -1,4 +1,4 @@
-defmodule AuthShield.Resources.Schemas.Scopes do
+defmodule AuthShield.Resources.Schemas.Scope do
   @moduledoc """
   Defines all scopes that an application can have.
 

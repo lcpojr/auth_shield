@@ -31,7 +31,7 @@ defmodule AuthShield.Resources.Schemas.Application do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  @required_fields [:name, :public_key_credential]
+  @required_fields [:name]
   @optional_fields [:description, :is_active, :direct_access_grants_enabled]
   schema "applications" do
     field(:name, :string)
@@ -60,7 +60,7 @@ defmodule AuthShield.Resources.Schemas.Application do
     |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_length(:name, min: 2, max: 150)
-    |> cast_assoc(:public_key_credential, required: true, with: &PublicKey.changeset_assoc/2)
+    |> cast_assoc(:public_key_credential, required: true, with: &PublicKey.changeset/2)
     |> unique_constraint(:name)
   end
 
