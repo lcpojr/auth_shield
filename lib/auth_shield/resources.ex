@@ -12,7 +12,7 @@ defmodule AuthShield.Resources do
 
   use Delx, otp_app: :auth_shield
 
-  alias AuthShield.Resources.{Permissions, Roles, Users}
+  alias AuthShield.Resources.{Applications, Permissions, Roles, Scopes, Users}
 
   # Users
   defdelegate create_user(params), to: Users, as: :insert
@@ -72,4 +72,51 @@ defmodule AuthShield.Resources do
 
   defdelegate change_permissions_role(role, permission), to: Roles, as: :change_permissions
   defdelegate change_permissions_role!(role, permission), to: Roles, as: :change_permissions!
+
+  # Applications
+  defdelegate create_application(params), to: Applications, as: :insert
+  defdelegate create_application!(params), to: Applications, as: :insert!
+
+  defdelegate update_application(application, params), to: Applications, as: :update
+  defdelegate update_application!(application, params), to: Applications, as: :update!
+
+  defdelegate list_applications(params \\ []), to: Applications, as: :list
+
+  defdelegate get_application_by(filters), to: Applications, as: :get_by
+  defdelegate get_application_by!(filters), to: Applications, as: :get_by!
+
+  defdelegate delete_application(application), to: Applications, as: :delete
+  defdelegate delete_application!(application), to: Applications, as: :delete!
+
+  defdelegate change_status_application(application, status), to: Applications, as: :change_status
+
+  defdelegate change_status_application!(application, status),
+    to: Applications,
+    as: :change_status!
+
+  defdelegate change_scopes_application(application, roles), to: Applications, as: :change_scopes
+
+  defdelegate change_scopes_application!(application, roles),
+    to: Applications,
+    as: :change_scopes!
+
+  defdelegate preload_application(application, fields), to: Applications, as: :preload
+
+  # Scopes
+  defdelegate create_scope(params), to: Scopes, as: :insert
+  defdelegate create_scope!(params), to: Scopes, as: :insert!
+
+  defdelegate update_scope(scope, params), to: Scopes, as: :update
+  defdelegate update_scope!(scope, params), to: Scopes, as: :update!
+
+  defdelegate list_scopes(params \\ []), to: Scopes, as: :list
+
+  defdelegate get_scope_by(filters), to: Scopes, as: :get_by
+  defdelegate get_scope_by!(filters), to: Scopes, as: :get_by!
+
+  defdelegate delete_scope(scope), to: Scopes, as: :delete
+  defdelegate delete_scope!(scope), to: Scopes, as: :delete!
+
+  defdelegate change_permissions_scope(scope, permission), to: Scopes, as: :change_permissions
+  defdelegate change_permissions_scope!(scope, permission), to: Scopes, as: :change_permissions!
 end

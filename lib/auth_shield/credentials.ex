@@ -15,7 +15,7 @@ defmodule AuthShield.Credentials do
 
   use Delx, otp_app: :auth_shield
 
-  alias AuthShield.Credentials.{Passwords, PIN, TOTP}
+  alias AuthShield.Credentials.{Passwords, PIN, PublicKey, TOTP}
 
   # Password
   defdelegate create_password(params), to: Passwords, as: :insert
@@ -63,4 +63,16 @@ defmodule AuthShield.Credentials do
   defdelegate check_totp?(totp, totp_code, datetime \\ NaiveDateTime.utc_now()),
     to: TOTP,
     as: :check_totp?
+
+  # Public Key
+  defdelegate create_public_key(params), to: PublicKey, as: :insert
+  defdelegate create_public_key!(params), to: PublicKey, as: :insert!
+
+  defdelegate list_public_key(filters \\ []), to: PublicKey, as: :list
+
+  defdelegate get_public_key_by(filters), to: PublicKey, as: :get_by
+  defdelegate get_public_key_by!(filters), to: PublicKey, as: :get_by!
+
+  defdelegate delete_public_key(public_key), to: PublicKey, as: :delete
+  defdelegate delete_public_key!(public_key), to: PublicKey, as: :delete!
 end
