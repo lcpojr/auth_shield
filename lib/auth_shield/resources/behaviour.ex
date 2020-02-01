@@ -1,10 +1,10 @@
 defmodule AuthShield.Resources.Behaviour do
   @moduledoc "AuthShield Resources behaviour."
 
-  alias AuthShield.Resources.Schemas.{Permission, Role, User}
+  alias AuthShield.Resources.Schemas.{Application, Permission, Role, Scope, User}
 
   @typedoc "Resource schemas types"
-  @type resource :: Permission.t() | Role.t() | User.t()
+  @type resource :: Application.t() | Permission.t() | Role.t() | Scope.t() | User.t()
 
   @typedoc "Transactional responses of success"
   @type success_response :: {:ok, resource()}

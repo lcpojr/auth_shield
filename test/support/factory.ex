@@ -4,8 +4,10 @@ defmodule AuthShield.Factory do
   use ExMachina.Ecto, repo: AuthShield.Repo
 
   alias AuthShield.Authentication.Schemas.{LoginAttempt, Session}
-  alias AuthShield.Credentials.Schemas.{Password, PIN, TOTP}
-  alias AuthShield.Resources.Schemas.{Permission, Role, User}
+  alias AuthShield.Credentials.Schemas.{Password, PIN, PublicKey, TOTP}
+  alias AuthShield.Resources.Schemas.{Application, Permission, Role, Scope, User}
+
+  # Authentication
 
   def session_factory do
     %Session{
@@ -26,6 +28,8 @@ defmodule AuthShield.Factory do
       inserted_at: NaiveDateTime.utc_now()
     }
   end
+
+  # Resources
 
   def permission_factory do
     %Permission{
@@ -48,6 +52,22 @@ defmodule AuthShield.Factory do
       email: sequence(:user_email, &"#{&1}@AuthShield.com")
     }
   end
+
+  def application_factory do
+    %Application{
+      name: sequence(:application_name, &"My application #{&1}"),
+      description: sequence(:application_description, &"Application #{&1}")
+    }
+  end
+
+  def scope_factory do
+    %Scope{
+      name: sequence(:role_name, &"user:#{&1}"),
+      description: sequence(:role_description, &"User scope #{&1}")
+    }
+  end
+
+  # Credentials
 
   def password_factory do
     %Password{
@@ -73,11 +93,7 @@ defmodule AuthShield.Factory do
     digits = 6
     period = 30
 
-    qrcode_base64 =
-      "otpauth://totp/#{label}?secret=#{secret}&issuer=#{issuer}&digits=#{digits}&period=#{period}&algorithm=SHA1"
-      |> EQRCode.encode()
-      |> EQRCode.png()
-      |> Base.encode64(padding: false)
+    qrcode_base64 = gen_qrcode_base64(label, secret, issuer, digits, period)
 
     %TOTP{
       user_id: Ecto.UUID.generate(),
@@ -88,5 +104,36 @@ defmodule AuthShield.Factory do
       period: period,
       qrcode_base64: qrcode_base64
     }
+  end
+
+  def public_key_factory do
+    %PublicKey{
+      application_id: Ecto.UUID.generate(),
+      key: gen_public_key(),
+      format: "pem"
+    }
+  end
+
+  # Helpers
+
+  def gen_qrcode_base64(label, secret, issuer, digits, period) do
+    "otpauth://totp/#{label}?secret=#{secret}&issuer=#{issuer}&digits=#{digits}&period=#{period}&algorithm=SHA1"
+    |> EQRCode.encode()
+    |> EQRCode.png()
+    |> Base.encode64(padding: false)
+  end
+
+  def gen_public_key do
+    :auth_shield
+    |> :code.priv_dir()
+    |> Path.join("/keys/public-key.pub")
+    |> File.read!()
+  end
+
+  def gen_private_key do
+    :auth_shield
+    |> :code.priv_dir()
+    |> Path.join("/keys/private-key.pub")
+    |> File.read!()
   end
 end
